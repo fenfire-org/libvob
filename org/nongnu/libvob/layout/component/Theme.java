@@ -151,7 +151,8 @@ public class Theme {
 	Model checked = Parameter.model(CheckBox.CHECKED, new BoolModel());
 
 	Box hbox = new Box(Lob.X);
-	hbox.add(new SingleCheckBox(checked), "SingleCheckBox");
+	hbox.add(new NoGrowLob(Lob.X, new SingleCheckBox(checked)), 
+		 "SingleCheckBox");
 	hbox.glue(1, 10, 10);
 	hbox.add(new AlignLob(Parameter.lob(LobMonoLob.CONTENT), 
 			      0, .5f, 0, .5f),
