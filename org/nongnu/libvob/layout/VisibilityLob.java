@@ -35,17 +35,39 @@ import org.nongnu.libvob.util.*;
 public class VisibilityLob extends AbstractMonoLob {
 
     protected Model visibility;
+    protected boolean changeSize;
 
     public VisibilityLob(Lob content, Model visibility) {
+	this(content, visibility, false);
+    }
+
+    /**
+     * If changeSize is true, the size request of this lob will be zero
+     * (and the max request infinity) when 'visibility' is false.
+     */
+    public VisibilityLob(Lob content, Model visibility, boolean changeSize) {
 	super(content);
 	this.visibility = visibility;
+	this.changeSize = changeSize;
+
+	visibility.addObs(this);
     }
 
     protected Replaceable[] getParams() {
 	return new Replaceable[] { content, visibility };
     }
     protected Object clone(Object[] params) {
-	return new VisibilityLob((Lob)params[0], (Model)params[1]);
+	return new VisibilityLob((Lob)params[0], (Model)params[1], changeSize);
+    }
+
+    public float getMinSize(Axis axis) {
+	return (!changeSize || visibility.getBool()) ? content.getMinSize(axis) : 0;
+    }
+    public float getNatSize(Axis axis) {
+	return (!changeSize || visibility.getBool()) ? content.getNatSize(axis) : 0;
+    }
+    public float getMaxSize(Axis axis) {
+	return (!changeSize || visibility.getBool()) ? content.getMaxSize(axis) : Float.POSITIVE_INFINITY;
     }
 
     public boolean mouse(VobMouseEvent e, float x, float y,
