@@ -33,8 +33,6 @@ import java.util.*;
  * instances and metrics scaled to requested multiplications.
  * This exists because our target, the Java API 1.1.8 does not
  * contain scaling functionality.
- * <p>
- * Scale is used in units of one thousand, i.e. 1000 = "normal" size.
  */
 
 public final class ScalableFont {
@@ -138,7 +136,7 @@ public final class ScalableFont {
     }
 
     /** Get a scaled instance of the font.
-     * @param scale        Scaling factor is (scale/1000).
+     * @param scale        Scaling factor.
      * @return May not return null.
      */
     public Font getFont(float scale) {
@@ -154,7 +152,7 @@ public final class ScalableFont {
     float lastFMScale = -1;
 
     /** Get font metrics for a scaled instance of the font.
-     * @param scale        Scaling factor is (scale/1000).
+     * @param scale        Scaling factor.
      * @return May not return null.
      */
     public FontMetrics getFontMetrics(float scale) {
