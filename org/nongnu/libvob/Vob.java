@@ -29,6 +29,7 @@ Vob.java
  */
 package org.nongnu.libvob;
 import org.nongnu.libvob.util.ColorFader;
+import javolution.realtime.Realtime;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -48,7 +49,7 @@ import java.awt.Color;
  * @see VobCoorder
  */
 
-public interface Vob {
+public interface Vob extends Realtime {
 
     boolean intersect(int x, int y, RenderInfo info1, RenderInfo info2) ;
 

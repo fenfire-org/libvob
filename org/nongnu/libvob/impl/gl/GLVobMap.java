@@ -30,6 +30,7 @@ GLVobMap.java
 package org.nongnu.libvob.impl.gl;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.gl.*;
+import javolution.realtime.Realtime;
 import java.awt.*;
 
 public class GLVobMap implements VobMap {
@@ -62,7 +63,13 @@ public class GLVobMap implements VobMap {
 
 	for(int i=0; i<nvobs; i++) {
 	    cs[i] = 0;
-	    //vobs[i] = null; // causes gc -> takes too much time
+
+	    // decrement Javolution reference counter
+	    ((Vob)vobs[i]).move(Realtime.ObjectSpace.LOCAL);
+
+	    // XXX does this still cause gc and take too much time
+	    // even when using Realtime?
+	    vobs[i] = null; 
 	}
 	 
 	curs = 0;
@@ -71,6 +78,7 @@ public class GLVobMap implements VobMap {
 
     public void put(Vob vob, int[] scs) {
 	if(dbg) p("Add to GLVobMap "+this+":  "+vob+" "+cs+" "+cs.length);
+	vob.move(Realtime.ObjectSpace.HOLD);
 	int ind = vob.putGL(vs, cs);
 	if(ind == 0) return;
 	// Now, stash it away.
@@ -84,6 +92,7 @@ public class GLVobMap implements VobMap {
     public void put(Vob vob, int coordsys1, int coordsys2, int coordsys3) {
 	if(dbg) p("Add to GLVobMap "+this+":  "+vob+" "+coordsys1+" "
 		   +coordsys2+" "+coordsys3+" curs: "+curs);
+	vob.move(Realtime.ObjectSpace.HOLD);
 	int ind = vob.putGL(vs, coordsys1, coordsys2, coordsys3);
 	if(ind == 0) return;
 	// Now, stash it away.
@@ -97,6 +106,7 @@ public class GLVobMap implements VobMap {
     public void put(Vob vob, int coordsys1, int coordsys2) {
 	if(dbg) p("Add to GLVobMap "+this+":  "+vob+" "+coordsys1+" "
 		   +coordsys2+" curs: "+curs);
+	vob.move(Realtime.ObjectSpace.HOLD);
 	int ind = vob.putGL(vs, coordsys1, coordsys2);
 	if(ind == 0) return;
 	// Now, stash it away.
@@ -109,6 +119,7 @@ public class GLVobMap implements VobMap {
     public void put(Vob vob, int coordsys1) {
 	if(dbg) p("Add "+this+":  "+vob+" "+coordsys1+
 		   " curs: "+curs);
+	vob.move(Realtime.ObjectSpace.HOLD);
 	int ind = vob.putGL(vs, coordsys1);
 	if(ind == 0) return;
 	// Now, stash it away.
@@ -119,6 +130,7 @@ public class GLVobMap implements VobMap {
     }
     public void put(Vob vob) {
 	if(dbg) p("Add "+this+":  "+vob+ " curs: "+curs);
+	vob.move(Realtime.ObjectSpace.HOLD);
 	int ind = vob.putGL(vs);
 	if(ind == 0) return;
 	// Now, stash it away.

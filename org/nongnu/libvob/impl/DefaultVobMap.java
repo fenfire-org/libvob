@@ -28,6 +28,7 @@ DefaultVobMap.java
 package org.nongnu.libvob.impl;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.awt.AWTTextStyle;
+import javolution.realtime.Realtime;
 import java.awt.*;
 import java.util.*;
 
@@ -155,6 +156,8 @@ public class DefaultVobMap implements VobMap {
 	put(vob, coordsys, -1);
     }
     public void put(Vob vob, int coordsys, int coordsys2) {
+	vob.move(Realtime.ObjectSpace.HOLD);
+
 	try {
 	    vobs[nvobs] = vob;
 	    secondcs[nvobs] = coordsys2;
@@ -293,6 +296,15 @@ public class DefaultVobMap implements VobMap {
     }
 
     public void clear() {
+	for(int i=0; i<nvobs; i++) {
+	    // decrement Javolution reference counter
+	    vobs[i].move(Realtime.ObjectSpace.LOCAL);
+
+	    // XXX does this still cause gc and take too much time
+	    // even when using Realtime?
+	    vobs[i] = null;
+	}
+
 	nvobs = 1;
 	nclips = 0;
 	nclipranges = 1;

@@ -222,20 +222,21 @@ public class TableLob extends AbstractLob {
 		    float x = posX[c],     y = posY[r];
 		    float w = posX[c+1]-x, h = posY[r+1]-y;
 
-		    Layout layout;
+		    int cs = scene.coords.translate(into, x, y);
+
 		    float lobW;
 
 		    PoolContext.enter();
 		    try {
 			Lob lob = table.getLob(r, c);
-			layout = lob.layout(w, h);
+			Layout layout = lob.layout(w, h);
 			lobW = lob.getSizeRequest().natW;
+
+			layout.render(scene, cs, matchingParent, d, visible);
 		    } finally {
 			PoolContext.exit();
 		    }
 
-		    int cs = scene.coords.translate(into, x, y);
-		    layout.render(scene, cs, matchingParent, d, visible);
 	
 		    if(w == lobW) {
 			if(lastCS >= 0 && scene.map instanceof DefaultVobMap)
