@@ -108,7 +108,7 @@ public abstract class LobMain extends Main implements Obs {
     protected class LobBinder extends AbstractBinder {
 	public void keystroke(String key) {
 	    if (initialized) {
-		if(lob.key(key))
+		if(lob.key(key) && !windowAnim.hasSceneReplacementPending())
 		    windowAnim.animate();
 	    }
 	}
