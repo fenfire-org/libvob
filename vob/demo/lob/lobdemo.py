@@ -114,20 +114,12 @@ class Scene:
         loblist = Linebreaker.newInstance(Axis.X, loblist, 300)
         lob = BoxLob.newInstance(Axis.Y, loblist)
         lob = Lobs.frame(lob, None, Color.black, 1, 5, 0)
+
+        cursor_lob = Lobs.line(java.awt.Color.black, 0, 0, 0, 1)
+        cursor_lob = Lobs.key(cursor_lob, "textcursor")
+        lob = Lobs.decorate(lob, cursor_lob, "text", textcursor)
+        
         renderLob(scene, lob, "textbox", 600, 100)
-
-        cs = scene.matcher.getCS(0, "textbox")
-        cs = scene.matcher.getCS(cs, "text", textcursor)
-
-        if cs < 0:
-            print 'argh, cs < 0'
-        else:
-            cs = scene.coords.translate(cs, 0, 0)
-            scene.matcher.add(0, cs, "textcursor")
-
-            scene.put(org.nongnu.libvob.vobs.SimpleConnection(0,0,0,1,java.awt.Color.black), cs, cs)
-        
-        
 
         print 'scene rendered'
 

@@ -52,6 +52,12 @@ public class Lobs {
 	return VobLob.newInstance(FilledRectVob.newInstance(color));
     }
 
+    public static Lob line(Color color, float x1, float y1, 
+			   float x2, float y2) {
+	Vob conn = SimpleConnection.newInstance(x1, y1, x2, y2, color);
+	return VobLob.newInstance(conn);
+    }
+
     public static Lob translate(Lob l, float x, float y) {
 	return translate(l, x, y, 0);
     }
@@ -134,6 +140,11 @@ public class Lobs {
 	if(clip) content = clip(content);
 
 	return Between.newInstance(_bg, content, _border);
+    }
+
+    public static Lob decorate(Lob child, Lob decoration, Object key,
+			       int intKey) {
+	return DecoratorLob.newInstance(child, decoration, key, intKey);
     }
 
     public static LobFont font(Color color) {

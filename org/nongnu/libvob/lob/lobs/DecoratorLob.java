@@ -1,5 +1,5 @@
 /*
-Between.java
+DecoratorLob.java
  *    
  *    Copyright (c) 2004-2005, Benja Fallenstein
  *
@@ -28,65 +28,79 @@ Between.java
 package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.layout.IndexedVobMatcher;
 import java.awt.Color;
 import java.util.*;
 
-/** A lob drawing a lobs in front of and behind another lob.
+/** A lob that draws its child, then searches the scene for a cs with
+ *  a given key, then draws another lob in that cs.
  */
-public class Between extends AbstractLob {
+public class DecoratorLob extends AbstractLob {
 
-    protected Lob back, middle, front;
+    protected Lob child, decoration;
+    protected Object key;
+    protected int intKey;
 
-    private Between() {}
+    private DecoratorLob() {}
 
-    public static Between newInstance(Lob back, Lob middle, Lob front) {
-	Between b = (Between)LOB_FACTORY.object();
-	
-	b.back   = (back == null) ?   NullLob.instance : back;
-	b.middle = (middle == null) ? NullLob.instance : middle;
-	b.front  = (front == null) ?  NullLob.instance : front;
-
-	return b;
+    public static DecoratorLob newInstance(Lob child, Lob decoration,
+					   Object key, int intKey) {
+	DecoratorLob l = (DecoratorLob)LOB_FACTORY.object();
+	l.child = child; l.decoration = decoration;
+	l.key = key; l.intKey = intKey;
+	return l;
     }
 
     public SizeRequest getSizeRequest() {
-	return middle.getSizeRequest();
+	return child.getSizeRequest();
     }
 
     public Lob getInterface(Class clazz) {
 	if(clazz.isInstance(this))
 	    return this;
 	else
-	    return middle.getInterface(clazz);
+	    return child.getInterface(clazz);
     }
 
     public Lob layout(float w, float h) {
-	return newInstance(back.layout(w, h), middle.layout(w, h),
-			   front.layout(w, h));
+	return newInstance(child.layout(w, h), decoration, key, intKey);
     }
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
-	    back.move(os); middle.move(os); front.move(os);
+	    child.move(os);
+	    decoration.move(os);
 	    return true;
 	}
 	return false;
     }
 
+    float[] wh = new float[2];
     public void render(VobScene scene, int into, int matchingParent,
 		       float d, boolean visible) {
-	int _cs = into;
-	int cs = scene.coords.translate(_cs, 0, 0, 2*d/4);
-	back.render(scene, cs, matchingParent, d/4, visible);
-	cs = scene.coords.translate(_cs, 0, 0, d/4);
-	middle.render(scene, cs, matchingParent, d/4, visible);
-	cs = _cs;
-	front.render(scene, cs, matchingParent, d/4, visible);
+
+	child.render(scene, into, matchingParent, d, visible);
+
+	int cs;
+
+	if(scene.matcher instanceof IndexedVobMatcher) {
+	    IndexedVobMatcher m = (IndexedVobMatcher)scene.matcher;
+	    cs = m.getCS(matchingParent, key, intKey);
+	} else {
+	    cs = scene.matcher.getCS(matchingParent, key);
+	}
+
+	if(cs >= 0) {
+	    scene.coords.getSqSize(cs, wh);
+
+	    Lob layout = decoration.layout(wh[0], wh[1]);
+	    layout.render(scene, cs, matchingParent, d, visible);
+	}
     }
 
     private static final Factory LOB_FACTORY = new Factory() {
 	    public Object create() {
-		return new Between();
+		return new DecoratorLob();
 	    }
 	};
 }

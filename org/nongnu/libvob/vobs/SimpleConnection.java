@@ -62,6 +62,15 @@ public class SimpleConnection extends AbstractVob {
 	this.color = color;
     }
 
+    public static SimpleConnection newInstance(float x0, float y0,
+					       float x1, float y1, 
+					       Color color) {
+	SimpleConnection c = (SimpleConnection)FACTORY.object();
+	c.x0 = x0; c.y0 = y0; c.x1 = x1; c.y1 = y1;
+	c.color = color;
+	return c;
+    }
+
     public void render(Graphics g,
 				boolean fast,
 				Vob.RenderInfo info1,
@@ -93,6 +102,12 @@ public class SimpleConnection extends AbstractVob {
 	if(glteardown != null) vs.map.put(glteardown);
 	return 0;
     }
+
+    private static final Factory FACTORY = new Factory() {
+	    public Object create() { 
+		return new SimpleConnection(0, 0, 0, 0);
+	    }
+	};
 }
 
 
