@@ -107,7 +107,7 @@ public class Theme {
 	titleBox.addRequest(stipple, 0, 0, inf);
 
 	MonoLob titleLob = new Frame(darkColor, null, 0, 1, 
-				     false, false, false);
+				     false, false, true);
 	titleLob.setContent(titleBox);
 
 	l = Parameter.lob(LobMonoLob.CONTENT);

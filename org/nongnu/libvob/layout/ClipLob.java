@@ -35,13 +35,10 @@ public class ClipLob extends AbstractMonoLob {
     protected static final RectBgVob rectvob = new RectBgVob();
     protected static final Object UNCLIP = new Object();
 
-    protected static final Object DEFAULT_KEY = new Object();
-
     protected Object key;
 
     public ClipLob(Lob content) {
-	super(content);
-	this.key = DEFAULT_KEY;
+	this(content, null);
     }
 
     public ClipLob(Lob content, Object key) {
@@ -61,7 +58,9 @@ public class ClipLob extends AbstractMonoLob {
 	this.visible = visible;
 	this.cs = scene.coords.box(into, w, h);
 	this.matchingParent = matchingParent;
-	scene.matcher.add(matchingParent, cs, key);
+
+	if(key != null) 
+	    scene.matcher.add(matchingParent, cs, key);
 
 	GraphicsAPI api = GraphicsAPI.getInstance();
 	if(api instanceof org.nongnu.libvob.impl.awt.AWTAPI) {
