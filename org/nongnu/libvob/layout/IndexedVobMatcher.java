@@ -28,6 +28,7 @@ IndexedVobMatcher.java
 package org.nongnu.libvob.layout;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.ArrayVobMatcher;
+import javolution.realtime.*;
 
 public class IndexedVobMatcher extends ArrayVobMatcher {
     public static boolean dbg = false;
@@ -73,6 +74,30 @@ public class IndexedVobMatcher extends ArrayVobMatcher {
 	return csIndex[cs];
     }
 
+    protected Object getPath(int cs, Object subpath) {
+	if(cs == 0) {
+	    return subpath;
+	} else {
+	    IndexedTreePath tp = 
+		(IndexedTreePath)INDEXED_TREE_PATH_FACTORY.object();
+	    tp.key = getKey(cs);
+	    tp.intKey = getIndex(cs);
+	    tp.subpath = subpath;
+	    return getPath(getParent(cs), tp);
+	}
+    }
+
+    protected int getPathCS(int parent, Object path) {
+	if(path == null || parent < 0) {
+	    return parent;
+	} else if(path instanceof IndexedTreePath) {
+	    IndexedTreePath tp = (IndexedTreePath)path;
+	    return getPathCS(getCS(parent, tp.key, tp.intKey), tp.subpath);
+	} else {
+	    return super.getPathCS(parent, path);
+	}
+    }
+
     protected int getOtherCS(VobMatcher other, int oparent, int mycs) {
 	IndexedVobMatcher o = (IndexedVobMatcher)other;
 	return o.getCS(oparent, csKey[mycs], csIndex[mycs]);
@@ -85,5 +110,31 @@ public class IndexedVobMatcher extends ArrayVobMatcher {
 	System.arraycopy(csIndex, 0, nindex, 0, csIndex.length);
 	csIndex = nindex;
     }
+
+
+    public static class IndexedTreePath extends TreePath {
+	public int intKey;
+
+	public boolean equals(Object o) {
+	    IndexedTreePath tp = (IndexedTreePath)o;
+	    if(intKey != tp.intKey) return false;
+	    if(subpath != null)
+		return key.equals(tp.key) && subpath.equals(tp.subpath);
+	    else
+		return key.equals(tp.key) && tp.subpath == null;
+	}
+
+	public int hashCode() {
+	    return 43289*key.hashCode() + intKey +
+		(subpath!=null ? 2388*subpath.hashCode() : 0);
+	}
+    }
+    
+    public static final RealtimeObject.Factory INDEXED_TREE_PATH_FACTORY = 
+	new RealtimeObject.Factory() {
+	    public Object create() {
+		return new IndexedTreePath();
+	    }
+	};
 }
 				      

@@ -154,6 +154,10 @@ public class Lobs {
 	return DecoratorLob.newInstance(child, decoration, key, intKey);
     }
 
+    public static Lob clickController(Lob child, int button, Action action) {
+	return ClickController.newInstance(child, button, action);
+    }
+
     public static Lob hbox(LobList items) {
 	return box(Axis.X, items);
     }

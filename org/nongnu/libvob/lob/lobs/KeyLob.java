@@ -83,6 +83,19 @@ public class KeyLob extends AbstractDelegateLob {
 	delegate.render(scene, cs, cs, d, visible);
     }
 
+    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			 float x, float y) {
+	
+	if(scene.matcher instanceof IndexedVobMatcher) {
+	    IndexedVobMatcher m = (IndexedVobMatcher)scene.matcher;
+	    cs = m.getCS(cs, key, intKey);
+	} else {
+	    cs = scene.matcher.getCS(cs, key);
+	}
+
+	return delegate.mouse(e, scene, cs, x, y);
+    }
+
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
 	    if(key instanceof Realtime)

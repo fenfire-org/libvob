@@ -1,7 +1,7 @@
 /*
-AbstractLob.java
+Action.java
  *    
- *    Copyright (c) 2005, Benja Fallenstein
+ *    Copyright (c) 2004-2005, Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -26,33 +26,9 @@ AbstractLob.java
  * Written by Benja Fallenstein
  */
 package org.nongnu.libvob.lob;
-import org.nongnu.libvob.*;
 import javolution.realtime.*;
-import java.util.*;
 
-public abstract class AbstractLob extends RealtimeObject implements Lob {
-
-    public Lob getImplementation(Class clazz) {
-	if(clazz.isInstance(this))
-	    return this;
-	else
-	    return null;
-    }
-
-    public Axis getLayoutableAxis() {
-	return null;
-    }
-
-    public Lob layoutOneAxis(float size) {
-	throw new UnsupportedOperationException();
-    }
-
-    public boolean key(String key) {
-	return false;
-    }
-
-    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
-			 float x, float y) {
-	return false;
-    }
+public interface Action extends Realtime {
+    
+    void run();
 }

@@ -72,6 +72,16 @@ public class TranslateLob extends AbstractDelegateLob {
 	delegate.render(scene, cs, matchingParent, d, visible);
     }
 
+    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			 float x, float y) {
+
+	SizeRequest r = delegate.getSizeRequest();
+	if(x < this.x || x > this.x + r.width())  return false;
+	if(y < this.y || y > this.y + r.height()) return false;
+	
+	return delegate.mouse(e, scene, cs, x-this.x, y-this.y);
+    }
+
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
 		return new TranslateLob();

@@ -200,6 +200,11 @@ public class TableLob extends AbstractLob {
     public boolean key(String key) {
 	return keyImpl(table, key);
     }
+    
+    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			 float x, float y) {
+	throw new UnsupportedOperationException("not layouted");
+    }
 
     protected static boolean keyImpl(Table table, String key) {
 	for(int r=0; r<table.getRowCount(); r++) {
@@ -288,6 +293,26 @@ public class TableLob extends AbstractLob {
 
 	public boolean key(String key) {
 	    return keyImpl(table, key);
+	}
+
+	public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			     float x, float y) {
+
+	    if(x < 0 || x > posX[table.getColumnCount()]) return false;
+	    if(y < 0 || y > posY[table.getRowCount()])    return false;
+
+	    int row;
+	    for(row = 0; row<table.getRowCount()-1; row++)
+		if(posY[row+1] > y) break;
+
+	    int col;
+	    for(col = 0; col<table.getColumnCount()-1; col++)
+		if(posX[col+1] > x) break;
+
+	    x -= posX[col];
+	    y -= posY[row];
+
+	    return table.getLob(row, col).mouse(e, scene, cs, x, y);
 	}
     }
 

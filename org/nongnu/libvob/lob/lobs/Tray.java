@@ -97,6 +97,32 @@ public class Tray extends AbstractLob {
 	return false;
     }
 
+    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			 float x, float y) {
+	
+	if(sendEventsOnlyToFrontLob) {
+	    return lobs.getLob(0).mouse(e, scene, cs, x, y);
+	} else {
+	    for(int i=0; i<lobs.getLobCount(); i++) {
+		PoolContext.enter();
+		try {
+		    if(width < 0 || height < 0)
+			throw new UnsupportedOperationException("not layouted");
+
+		    Lob layout = lobs.getLob(i).layout(width, height);
+
+		    if(layout.mouse(e, scene, cs, x, y))
+			return true;
+		} finally {
+		    PoolContext.exit();
+		}
+	    }
+	}
+
+	return false;
+    }
+
+
     public Lob layout(float w, float h) {
 	Tray t = newInstance(lobs, sendEventsOnlyToFrontLob);
 	t.width = w; t.height = h;

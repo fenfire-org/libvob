@@ -114,20 +114,36 @@ public abstract class NewLobMain extends Main {
 
 	float origX, origY;
 
-	/*
 	public void mouse(VobMouseEvent e) {
 	    if (initialized) {
+		/*
 		if(e.getType() != e.MOUSE_DRAGGED) {
 		    origX = e.getX(); origY = e.getY();
 		}
+		*/
 
-		if(lob.mouse(e, e.getX(), e.getY(), origX, origY) &&
-		   !windowAnim.hasAnimModeSet())
-		    //if(e.getType() == e.MOUSE_CLICKED)
-		    windowAnim.animate();
+		VobScene sc = windowAnim.getCurrentVS();
+
+		PoolContext.enter();
+		LocalContext.enter();
+		try {
+		    Lobs.setWindowAnimation(windowAnim);
+		    
+		    Dimension size = ((Screen)windowAnim).window.getSize();
+
+		    Lob lob = createLob();
+		    lob = lob.layout(size.width, size.height);
+
+		    if(lob.mouse(e, sc, 0, e.getX(), e.getY()) &&
+		       !windowAnim.hasAnimModeSet())
+			//if(e.getType() == e.MOUSE_CLICKED)
+			windowAnim.animate();
+		} finally {
+		    LocalContext.exit();
+		    PoolContext.exit();
+		}
 	    }
 	}
-	*/
 
 	public void windowClosed() {
 	    System.exit(0);

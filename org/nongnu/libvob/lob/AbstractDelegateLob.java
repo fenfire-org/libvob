@@ -75,6 +75,11 @@ public abstract class AbstractDelegateLob extends AbstractLob {
 	return delegate.key(key);
     }
 
+    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			 float x, float y) {
+	return delegate.mouse(e, scene, cs, x, y);
+    }
+
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
 	    delegate.move(os);

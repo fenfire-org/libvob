@@ -66,11 +66,16 @@ public class ScaleLob extends AbstractDelegateLob {
     }
 
     public Axis getLayoutableAxis() {
-	return null;
+	return delegate.getLayoutableAxis();
     }
 
     public Lob layoutOneAxis(float size) {
-	throw new UnsupportedOperationException();
+	if(delegate.getLayoutableAxis() == Axis.X)
+	    return delegate.layoutOneAxis(size/scaleX);
+	else if(delegate.getLayoutableAxis() == Axis.Y)
+	    return delegate.layoutOneAxis(size/scaleY);
+	else
+	    throw new UnsupportedOperationException("delegate doesn't support layoutOneAxis()");
     }
 
     public void render(VobScene scene, int into, int matchingParent,
@@ -78,6 +83,13 @@ public class ScaleLob extends AbstractDelegateLob {
 	int cs = scene.coords.scale(into, scaleX, scaleY);
 	delegate.render(scene, cs, matchingParent, d, visible);
     }
+
+    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			 float x, float y) {
+	
+	return delegate.mouse(e, scene, cs, x/scaleX, y/scaleY);
+    }
+    
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {

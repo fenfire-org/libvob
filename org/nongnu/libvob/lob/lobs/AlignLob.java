@@ -57,17 +57,15 @@ public class AlignLob extends AbstractDelegateLob {
 	return l;
     }
 
-    public Lob layout(float w, float h) {
+    public Lob layout(float width, float height) {
 	SizeRequest s = delegate.getSizeRequest();
 
-	AlignLayout l = (AlignLayout)LAYOUT_FACTORY.object();
-	l.setSize(w, h);
-	l.child = delegate.layout(s.natW, s.natH);
+	float x = parentX*width  - childX*s.natW;
+	float y = parentY*height - childY*s.natH;
 
-	l.childX = childX; l.childY = childY;
-	l.parentX = parentX; l.parentY = parentY;
+	Lob l = delegate.layout(s.natW, s.natH);
 
-	return l;
+	return TranslateLob.newInstance(l, x, y, 0);
     }
 
     public Axis getLayoutableAxis() {
@@ -83,37 +81,9 @@ public class AlignLob extends AbstractDelegateLob {
 	throw new UnsupportedOperationException();
     }
 
-    private static class AlignLayout extends AbstractLayout {
-	private Lob child;
-
-	protected float childX, childY;
-	protected float parentX, parentY;
-
-	protected void setSize(float w, float h) { super.setSize(w, h); }
-
-	public void render(VobScene scene, int into, int matchingParent,
-			   float d, boolean visible) {
-	    
-	    SizeRequest s = child.getSizeRequest();
-	    
-	    float x = parentX*width  - childX*s.width();
-	    float y = parentY*height - childY*s.height();
-	    
-	    int cs = scene.coords.translate(into, x, y);
-	    
-	    child.render(scene, cs, matchingParent, d, visible);
-	}
-    }
-
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
 		return new AlignLob();
-	    }
-	};
-
-    private static final Factory LAYOUT_FACTORY = new Factory() {
-	    public Object create() {
-		return new AlignLayout();
 	    }
 	};
 }

@@ -2,21 +2,22 @@
 VobMatcher.java
  *    
  *    Copyright (c) 2002, Tuomas J. Lukka
+ *    Copyright (c) 2005, Benja Fallenstein
  *
- *    This file is part of Gzz.
+ *    This file is part of Libvob.
  *    
- *    Gzz is free software; you can redistribute it and/or modify it under
+ *    Libvob is free software; you can redistribute it and/or modify it under
  *    the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *    
- *    Gzz is distributed in the hope that it will be useful, but WITHOUT
+ *    Libvob is distributed in the hope that it will be useful, but WITHOUT
  *    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  *    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  *    Public License for more details.
  *    
  *    You should have received a copy of the GNU General
- *    Public License along with Gzz; if not, write to the Free
+ *    Public License along with Libvob; if not, write to the Free
  *    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  *    MA  02111-1307  USA
  *    
@@ -26,6 +27,7 @@ VobMatcher.java
  * Written by Tuomas J. Lukka
  */
 package org.nongnu.libvob;
+import javolution.realtime.*;
 import java.awt.*;
 
 /** An interface for matching coordinate systems  between different vobscenes.
@@ -72,6 +74,9 @@ public interface VobMatcher {
     boolean isAncestor(int cs, int ancestor);
 
 
+    Object getPath(int cs);
+    int getPathCS(Object path);
+
     Object getKey(int cs);
 
     /** Return, for each coordinate system of this matcher, an integer
@@ -94,6 +99,31 @@ public interface VobMatcher {
      *  a new matcher object, an old one can be re-used by clearing it.
      */
     void clear();
+
+
+    class TreePath {
+	public Object key;
+	public Object subpath;
+
+	public boolean equals(Object o) {
+	    TreePath tp = (TreePath)o;
+	    if(subpath != null)
+		return key.equals(tp.key) && subpath.equals(tp.subpath);
+	    else
+		return key.equals(tp.key) && tp.subpath == null;
+	}
+
+	public int hashCode() {
+	    return 43289*key.hashCode() + 
+		(subpath!=null ? 2388*subpath.hashCode() : 0);
+	}
+    }
+
+    RealtimeObject.Factory TREE_PATH_FACTORY = new RealtimeObject.Factory() {
+	    public Object create() {
+		return new TreePath();
+	    }
+	};
 }
 
 

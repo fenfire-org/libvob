@@ -2,7 +2,7 @@
  * EDIT THAT FILE INSTEAD!
  * All changes to this file will be lost.
  *//* -*-java-*-
-Components.java
+Components.rj
  *    
  *    Copyright (c) 2005, Benja Fallenstein
  *
@@ -78,7 +78,7 @@ public class Components {
 
 	Axis axis = (Axis)getParam(params, "axis", Axis.Y);
 
-	tr = new_Transform_1(tr);
+	tr = new_Transform_1(tr,selected);
 
 	LobList lobs = TransformLobList.newInstance(elements, tr);
 	lobs = ConcatLobList.newInstance(lobs, SingletonLobList.newInstance(Lobs.glue(axis, 0, 0, SizeRequest.INF)));
@@ -130,49 +130,22 @@ public class Components {
 	return new_Transform_2();
     }
 
-        private static class _Transform_2 extends RealtimeObject
-            implements Transform {
-
-                private _Transform_2() {}
-
-                ;
-
-                
-	    public Object transform(Object o) {
-		LobList text;
-
-		if(o instanceof Realtime)
-		    text = Lobs.text(((Realtime)o).toText());
-		else
-		    text = Lobs.text(o.toString());
-
-		return Lobs.key(Lobs.hbox(text), o);
-	    }
-	
-        }
-
-        private static final RealtimeObject.Factory _Transform_2_FACTORY =
-            new RealtimeObject.Factory() {
-                protected Object create() { return new _Transform_2(); }
-            };
-
-        private static _Transform_2 new_Transform_2() {
-            _Transform_2 o = (_Transform_2)_Transform_2_FACTORY.object();
-            
-            return o;
-        }
-    
         private static class _Transform_1 extends RealtimeObject
             implements Transform {
 
                 private _Transform_1() {}
 
-                Transform tr;
+                Transform tr; Model selected;
 
                 
 	    public Object transform(Object o) {
 		Lob lob = (Lob)tr.transform(o);
 		lob = Lobs.margin(lob, 1);
+
+		Action select = new_Action_3(selected,o);
+
+		lob = Lobs.clickController(lob, 1, select);
+                    
 		return Lobs.key(lob, o);
 	    }
 	
@@ -183,9 +156,64 @@ public class Components {
                 protected Object create() { return new _Transform_1(); }
             };
 
-        private static _Transform_1 new_Transform_1(Transform tr) {
-            _Transform_1 o = (_Transform_1)_Transform_1_FACTORY.object();
-            o.tr = tr;
-            return o;
+        private static _Transform_1 new_Transform_1(Transform tr, Model selected) {
+            _Transform_1 the_new_Transform_1 = (_Transform_1)_Transform_1_FACTORY.object();
+            the_new_Transform_1.tr = tr;
+the_new_Transform_1.selected = selected;
+            return the_new_Transform_1;
+        }
+    
+        private static class _Transform_2 extends RealtimeObject
+            implements Transform {
+
+                private _Transform_2() {}
+
+                ;
+
+                
+	    public Object transform(Object o) {
+		if(o instanceof Realtime)
+		    return Lobs.hbox(Lobs.text(((Realtime)o).toText()));
+		else
+		    return Lobs.hbox(Lobs.text(o.toString()));
+	    }
+	
+        }
+
+        private static final RealtimeObject.Factory _Transform_2_FACTORY =
+            new RealtimeObject.Factory() {
+                protected Object create() { return new _Transform_2(); }
+            };
+
+        private static _Transform_2 new_Transform_2() {
+            _Transform_2 the_new_Transform_2 = (_Transform_2)_Transform_2_FACTORY.object();
+            
+            return the_new_Transform_2;
+        }
+    
+        private static class _Action_3 extends RealtimeObject
+            implements Action {
+
+                private _Action_3() {}
+
+                Model selected;Object o;
+
+                
+		    public void run() {
+			selected.set(o);
+		    }
+		
+        }
+
+        private static final RealtimeObject.Factory _Action_3_FACTORY =
+            new RealtimeObject.Factory() {
+                protected Object create() { return new _Action_3(); }
+            };
+
+        private static _Action_3 new_Action_3(Model selected,Object o) {
+            _Action_3 the_new_Action_3 = (_Action_3)_Action_3_FACTORY.object();
+            the_new_Action_3.selected = selected;
+the_new_Action_3.o = o;
+            return the_new_Action_3;
         }
     }

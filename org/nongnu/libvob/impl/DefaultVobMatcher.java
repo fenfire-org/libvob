@@ -135,6 +135,38 @@ public class DefaultVobMatcher implements VobMatcher {
 	return false;
     }
 
+    
+    public Object getPath(int cs) {
+	return getPath(cs, null);
+    }
+
+    protected Object getPath(int cs, Object subpath) {
+	if(cs == 0) {
+	    return subpath;
+	} else {
+	    TreePath tp = (TreePath)TREE_PATH_FACTORY.object();
+	    tp.key = getKey(cs);
+	    tp.subpath = subpath;
+	    return getPath(getParent(cs), tp);
+	}
+    }
+
+    public int getPathCS(Object path) {
+	return getPathCS(0, path);
+    }
+
+    protected int getPathCS(int parent, Object path) {
+	if(path == null || parent < 0) {
+	    return parent;
+	} else if(path instanceof TreePath) {
+	    TreePath tp = (TreePath)path;
+	    return getPathCS(getCS(parent, tp.key), tp.subpath);
+	} else {
+	    throw new IllegalArgumentException("Not a DefaultVobMatcher path: "+path);
+	}
+    }
+
+
     public Object getKey(int cs) {
 	Object k = keyByCs[cs].key;
 	return k == NULL ? null : k;

@@ -85,6 +85,12 @@ public class Margin extends AbstractDelegateLob {
 	delegate.render(scene, cs, matchingParent, d, visible);
     }
 
+    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			 float x, float y) {
+	
+	return delegate.mouse(e, scene, cs, x-left, y-top);
+    }
+
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
 		return new Margin();
