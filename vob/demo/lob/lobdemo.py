@@ -75,7 +75,7 @@ class Scene:
         
     def mouse(self, m): pass
 
-    foo = 0
+    #foo = 0
     def scene(self, scene):
         _ = scene
         matcher = org.nongnu.libvob.layout.IndexedVobMatcher()
@@ -85,19 +85,19 @@ class Scene:
             
         scene.put(background((1,1,.8)))
 
-        if self.foo:
-            cs1 = scene.coords.box(0, 50, 50, 1, 1)
-            cs2 = scene.coords.box(0, 80, 80, 1, 1)
-        else:
-            cs1 = scene.coords.box(0, 80, 50, 1, 1)
-            cs2 = scene.coords.box(0, 50, 80, 1, 1)
-
-        self.foo = not self.foo
-
-        scene.matcher.add(0, cs1, "foo")
-        scene.matcher.add(0, cs2, "bar")
-
-        scene.put(org.nongnu.libvob.vobs.SimpleConnection(0,0,0,0,java.awt.Color.black), cs1, cs2)
+        #if self.foo:
+        #    cs1 = scene.coords.box(0, 50, 50, 1, 1)
+        #    cs2 = scene.coords.box(0, 80, 80, 1, 1)
+        #else:
+        #    cs1 = scene.coords.box(0, 80, 50, 1, 1)
+        #    cs2 = scene.coords.box(0, 50, 80, 1, 1)
+        #
+        #self.foo = not self.foo
+        #
+        #scene.matcher.add(0, cs1, "foo")
+        #scene.matcher.add(0, cs2, "bar")
+        #
+        #scene.put(org.nongnu.libvob.vobs.SimpleConnection(0,0,0,0,java.awt.Color.black), cs1, cs2)
 
         lob = TableLob.newInstance(Table())
         layout = lob.layout(400, 300)
@@ -115,6 +115,21 @@ class Scene:
         lob = BoxLob.newInstance(Axis.Y, loblist)
         lob = Lobs.frame(lob, None, Color.black, 1, 5, 0)
         renderLob(scene, lob, "textbox", 600, 100)
+
+        cs = scene.matcher.getCS(0, "textbox")
+        cs = scene.matcher.getCS(cs, "text", textcursor)
+
+        if cs < 0:
+            print 'argh, cs < 0'
+        else:
+            upper = scene.coords.translate(cs, 0, 0)
+            lower = scene.coords.translate(cs, 0, 20) # xxx y-size
+
+            scene.matcher.add(0, upper, "cursor.upper")
+            scene.matcher.add(0, lower, "cursor.lower")
+
+            scene.put(org.nongnu.libvob.vobs.SimpleConnection(0,0,0,0,java.awt.Color.black), upper, lower)
+        
         
 
         print 'scene rendered'
