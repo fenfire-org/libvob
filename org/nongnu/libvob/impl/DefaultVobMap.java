@@ -353,8 +353,7 @@ public class DefaultVobMap implements VobMap {
 
 	if(cs < textChar.length && textChar[cs] > 0)
 	    lastClip = renderText(cs, info, g, other, interpList, 
-				  lastClip, noClip, info2, setter
-);
+				  lastClip, noClip, info2, setter);
 
 	// It is possible that no vob has been put in 
 	// any coordinate system >= cs.
@@ -462,7 +461,7 @@ public class DefaultVobMap implements VobMap {
 
 	//System.out.println("prev != 0");
 
-	if(interpList == null) 
+	if(interpList == null)
 	    return false;
 	else {
 	    DefaultVobMap o = (DefaultVobMap)other.map;
@@ -471,7 +470,11 @@ public class DefaultVobMap implements VobMap {
 	    if(prev >= interpList.length) return true;
 
 	    int ocs = interpList[cs];
-	    if(ocs < 0) return true;
+
+	    if(ocs == VobMatcher.SHOW_IN_INTERP) return false;
+	    if(ocs == VobMatcher.DONT_INTERP) return true;
+	    if(ocs < 0) throw new Error("unhandled interp type: "+ocs);
+
 	    if(ocs >= o.prevInChain.length) return true;
 	    int oprev = o.prevInChain[ocs];
 
