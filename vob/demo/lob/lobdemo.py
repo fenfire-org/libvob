@@ -28,6 +28,7 @@ from java.awt import Color
 import vob, java, org
 
 vob.putil.demo.usingNormalBindings = 0
+vob.putil.demo.chgAfterKeyEvent = 0
 
 class Table(TableLob.Table):
     def getRowCount(self): return 10
@@ -37,13 +38,14 @@ class Table(TableLob.Table):
         return Lobs.filledRect(Color(50 + row*10, 0, 50 + col*10))
         #return Lobs.rect(Color.red, 2)
 
-def render(scene, layout, x, y):
+def render(scene, layout, key, x, y):
     cs = scene.coords.translate(0, x, y)
-    layout.render(scene, cs, 0, 1, 1)
+    scene.matcher.add(0, cs, key)
+    layout.render(scene, cs, cs, 1, 1)
 
-def renderLob(scene, lob, x, y):
+def renderLob(scene, lob, key, x, y):
     size = lob.getSizeRequest()
-    render(scene, lob.layout(size.natW, size.natH), x, y)
+    render(scene, lob.layout(size.natW, size.natH), key, x, y)
 
 class Scene:
     def key(self, k):
@@ -69,7 +71,7 @@ class Scene:
             textcursor += 1
 
         print self.anim
-        #self.anim.animate()
+        self.anim.animate()
         
     def mouse(self, m): pass
 
@@ -99,19 +101,20 @@ class Scene:
 
         lob = TableLob.newInstance(Table())
         layout = lob.layout(400, 300)
-        render(scene, layout, 100, 100)
+        render(scene, layout, "table", 100, 100)
 
         lob = Lobs.text(Lobs.font(Color.blue), "Hello world!")
         lob = Lobs.frame3d(lob, None, Color.red, 1, 5, 0, 1)
         size = lob.getSizeRequest()
-        render(scene, lob.layout(size.natW, size.natH), 300-size.natW/2, 50)
+        render(scene, lob.layout(size.natW, size.natH), "hello world",
+               300-size.natW/2, 50)
 
         loblist = TextLobList.newInstance(Lobs.font(), Text.valueOf(text))
         loblist = KeyLobList.newInstance(loblist, "text")
         loblist = Linebreaker.newInstance(Axis.X, loblist, 300)
         lob = BoxLob.newInstance(Axis.Y, loblist)
         lob = Lobs.frame(lob, None, Color.black, 1, 5, 0)
-        renderLob(scene, lob, 600, 100)
+        renderLob(scene, lob, "textbox", 600, 100)
         
 
         print 'scene rendered'
