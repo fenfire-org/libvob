@@ -73,11 +73,28 @@ public class Notebook extends NewLobMain {
 
 	RoleContext.enter("MENU"); 
 	try {
-	    menubar.add(Components.menuitem("Quit", quit));
-	    menubar.add(Lobs.glue(Axis.X, 8, 8, 8));
-	    menubar.add(Components.menuitem("New note", newNote));
-	    menubar.add(Lobs.glue(Axis.X, 8, 8, 8));
-	    menubar.add(Components.menuitem("Delete note", deleteNote));
+	    RoleContext.enter("File");
+	    try {
+		Lob filemenu = Components.menu();
+		filemenu.add(Components.menuitem("Quit", quit));
+
+		Lob l = RoleContext.lob(Components.menuitem("File", filemenu));
+		menubar.add(l);
+	    } finally {
+		RoleContext.exit();
+	    }
+
+	    RoleContext.enter("Note");
+	    try {
+		Lob notemenu = Components.menu();
+		notemenu.add(Components.menuitem("New note", newNote));
+		notemenu.add(Components.menuitem("Delete note", deleteNote));
+
+		Lob l = RoleContext.lob(Components.menuitem("Note", notemenu));
+		menubar.add(l);
+	    } finally {
+		RoleContext.exit();
+	    }
 
 	    outerVBox.add(RoleContext.lob(menubar));
 	} finally {
@@ -151,7 +168,7 @@ public class Notebook extends NewLobMain {
 	k.add("Ctrl-N", newNote);
 	*/
 
-	return lob;
+	return PopupManager.newInstance(lob);
     }
 
     public static void main(String[] argv) {

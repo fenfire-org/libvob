@@ -28,6 +28,7 @@ VobMatcher.java
  */
 package org.nongnu.libvob;
 import javolution.realtime.*;
+import javolution.lang.*;
 import java.awt.*;
 
 /** An interface for matching coordinate systems  between different vobscenes.
@@ -101,9 +102,24 @@ public interface VobMatcher {
     void clear();
 
 
-    class TreePath {
+    class TreePath extends RealtimeObject {
 	public Object key;
 	public Object subpath;
+
+	public Text toText() {
+	    return Text.valueOf("["+key+"]->"+subpath);
+	}
+
+	public boolean move(ObjectSpace os) {
+	    if(super.move(os)) {
+		if(key instanceof Realtime)
+		    ((Realtime)key).move(os);
+		if(subpath instanceof Realtime)
+		    ((Realtime)subpath).move(os);
+		return true;
+	    }
+	    return false;
+	}
 
 	public boolean equals(Object o) {
 	    TreePath tp = (TreePath)o;

@@ -28,6 +28,7 @@ IndexedVobMatcher.java
 package org.nongnu.libvob.layout;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.ArrayVobMatcher;
+import javolution.lang.*;
 import javolution.realtime.*;
 
 public class IndexedVobMatcher extends ArrayVobMatcher {
@@ -114,6 +115,10 @@ public class IndexedVobMatcher extends ArrayVobMatcher {
 
     public static class IndexedTreePath extends TreePath {
 	public int intKey;
+
+	public Text toText() {
+	    return Text.valueOf("["+key+", "+intKey+"]->"+subpath);
+	}
 
 	public boolean equals(Object o) {
 	    IndexedTreePath tp = (IndexedTreePath)o;

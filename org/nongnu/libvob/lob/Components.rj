@@ -155,8 +155,36 @@ public class Components {
     public static Lob menuitem(Lob lob, Action action) {
 	Action _action = action; // XXX close menu if necessary!
 
-	lob = Lobs.margin(lob, 2);
+	lob = Lobs.margin(lob, 8, 2);
 	return Lobs.clickController(lob, 1, _action);
+    }
+
+    public static Lob menuitem(String s, Lob submenu) {
+	return menuitem(Lobs.hbox(Lobs.text(s)), submenu);
+    }
+
+    public static Lob menuitem(Lob lob, Lob submenu) {
+	Model openModel = StateModel.newInstance("open", Boolean.FALSE);
+
+	Action action = new @realtime-i Action(Model openModel) {
+	    public void run() {
+		Boolean open = (Boolean)openModel.get();
+		if(open == Boolean.FALSE) {
+		    openModel.set(Boolean.TRUE);
+		} else {
+		    openModel.set(Boolean.FALSE);
+		}
+	    }
+	};
+
+	lob = Lobs.margin(lob, 8, 2);
+
+	if(openModel.get() == Boolean.TRUE)
+	    lob = Lobs.nextTo(Axis.Y, lob, submenu);
+	    
+	lob = Lobs.clickController(lob, 1, action);
+
+	return lob;
     }
 
     public static Lob menubar() {
@@ -168,13 +196,10 @@ public class Components {
     }
 
     public static Lob menu(Axis axis, List items) {
-        Lob glue = (axis == Axis.X) ? 
-	    Lobs.glue(Axis.X, 8, 8, 8) : Lobs.glue(Axis.Y, 3, 3, 3);
-
 	Lob l = Lobs.box(axis, items);
 	l = Lobs.align(l, 0, 0);
-	l = Lobs.frame3d(l, lightColor, darkColor, 1, 0, true, false);
-	l = Lobs.frame(l, null, darkColor, 1, 0, false);
+	l = Lobs.frame3d(l, lightColor, darkColor, 1, 0, false, true);
+	l = Lobs.frame(l, null, darkColor, 1, 0, true);
 
 	return l;
     }
