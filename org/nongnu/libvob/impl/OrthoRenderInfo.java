@@ -35,6 +35,8 @@ import java.awt.Rectangle;
 
 public class OrthoRenderInfo extends Vob.RenderInfo {
 
+    private static void p(String s) { System.out.println("OrthoRenderInfo: "+s); }
+
     float maxdepth = -1;
 
     public OrthoRenderInfo(ColorFader fader, float maxdepth) {

@@ -584,6 +584,11 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		    t.inverseTransformRect(anchorCoords, useInterp);
 		    t.pop();
 
+		    if(Float.isNaN(anchorCoords[0])) {
+			for(int i=0; i<anchorCoords.length; i++)
+			    anchorCoords[i] = 0;
+		    }
+
 		    float[] sqF = getarr();
 		    getSqSize(areaCS, sqF);
 
