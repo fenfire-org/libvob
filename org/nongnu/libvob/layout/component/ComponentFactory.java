@@ -99,6 +99,7 @@ public class ComponentFactory {
 
 	Label template = 
 	    label(Parameter.model(ListModel.PARAM, m0), c, slot, false);
-	return new ListBox(elements, template, new ObjectModel(key));
+	return new ListBox(elements, "template", template, 
+			   "key", new ObjectModel(key));
     }
 }

@@ -34,6 +34,9 @@ public class Models {
     }
 
     public static Model adaptSlot(Object o, String slot) {
+	if(o instanceof Model)
+	    throw new IllegalArgumentException("plese use adaptMethod(Model, "+
+					       "Class, getMethodName)");
 	return adaptSlot(new ObjectModel(o), o.getClass(), slot);
     }
 
@@ -44,12 +47,18 @@ public class Models {
     }
 
     public static Model adaptMethod(Object o, String getMethodName) {
+	if(o instanceof Model)
+	    throw new IllegalArgumentException("plese use adaptMethod(Model, "+
+					       "Class, getMethodName)");
 	return adaptMethod(new ObjectModel(o), o.getClass(),
 			   getMethodName);
     }
 
     public static Model adaptMethods(Object o, String getMethodName, 
 			      String setMethodName) {
+	if(o instanceof Model)
+	    throw new IllegalArgumentException("plese use adaptMethod(Model, "+
+					       "Class, getMethodName)");
 	return adaptMethods(new ObjectModel(o), o.getClass(),
 			    getMethodName, setMethodName);
     }

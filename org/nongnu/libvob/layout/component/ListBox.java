@@ -42,24 +42,35 @@ public class ListBox extends LobLob implements Component {
 	TEMPLATE = "XXX/ListBox/template";
 
     public ListBox(ListModel elements) {
-	this(elements, NullLob.instance);
+	this(elements, new Object[0]);
+    }
+    public ListBox(ListModel elements, String k1, Object v1) {
+	this(elements, params(k1, v1));
+    }
+    public ListBox(ListModel elements, String k1, Object v1, 
+		   String k2, Object v2) {
+	this(elements, params(k1, v1, k2, v2));
+    }
+    public ListBox(ListModel elements, String k1, Object v1, 
+		   String k2, Object v2, String k3, Object v3) {
+	this(elements, params(k1, v1, k2, v2, k3, v3));
     }
 
-    public ListBox(ListModel elements, Lob template) {
-	this(elements, template, new ObjectModel(null));
-    }
+    private Object[] PARAMS_SPEC = {
+	"template", TEMPLATE, Object.class,
+            new Label(Models.adaptMethod(Parameter.model(ListModel.PARAM, new ObjectModel("")), Object.class, "toString")),
+	"key", KEY, Model.class, null,
+	"selectionModel", SELECTED, Model.class, null,
+    };
 
-    public ListBox(ListModel elements, Lob template, Model key) {
+    public ListBox(ListModel elements, Object[] keys) {
 
-	Map params = new HashMap();
+	Map params = parseParams(keys, PARAMS_SPEC);
 	params.put(ELEMENTS, elements);
-	params.put(TEMPLATE, template);
-	params.put(KEY, key);
 
-	if(!elements.isEmpty())
-	    params.put(SELECTED, new ObjectModel(elements.get(0)));
-	else
-	    params.put(SELECTED, new ObjectModel(null));
+	Model selectionModel = (Model)params.get(SELECTED);
+	if(!elements.isEmpty() && selectionModel.get() == null)
+	    selectionModel.set(elements.get(0));
 
 	Theme t = Theme.getDefaultTheme();
 

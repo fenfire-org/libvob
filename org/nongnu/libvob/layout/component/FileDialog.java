@@ -155,7 +155,7 @@ public class FileDialog extends LobLob {
 
 	dirModel.set(new java.io.File("/tmp").getAbsoluteFile());
 
-	ListBox listBox = new ListBox(filesModel, new FileLob(Parameter.model(ListModel.PARAM)));
+	ListBox listBox = new ListBox(filesModel, "template", new FileLob(Parameter.model(ListModel.PARAM)));
 
 	selectionModel = listBox.getSelectionModel();
 	if(selectionModel == null) throw new NullPointerException();

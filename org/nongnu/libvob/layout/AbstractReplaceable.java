@@ -31,6 +31,79 @@ import java.util.*;
 
 public abstract class AbstractReplaceable implements Replaceable {
 
+    /** params: (key1, value1, key2, value2...)
+     *  spec: (key1, uri1, value1, key2, uri2, value2, ...)
+     */
+    public static Map parseParams(Object[] params, Object[] spec) {
+	if(spec.length % 4 > 0)
+	    throw new IllegalArgumentException("number of elements "+
+					       "in parameters spec "+
+					       "not divisible by four");
+
+	Map result=new HashMap(), classes=new HashMap(), uris=new HashMap();
+	
+	for(int i=0; i<spec.length; i+=4) {
+	    String key = (String)spec[i];
+	    String uri = (String)spec[i+1];
+	    Class klass = (Class)spec[i+2];
+	    Object value = spec[i+3];
+
+	    if(klass != Object.class && klass != Model.class)
+		throw new IllegalArgumentException("unknown class in "+
+						   "parameters spec: "+klass);
+
+	    value = convertValue(value, klass);
+
+	    uris.put(key, uri);
+	    classes.put(key, klass);
+	    result.put(uri, value);
+	}
+
+
+	if(params.length % 2 > 0)
+	    throw new IllegalArgumentException("uneven number of elements "+
+					       "in named parameters array");
+
+	for(int i=0; i<params.length; i+=2) {
+	    String key = (String)params[i];
+	    Object value = params[i+1];
+	    if(!uris.containsKey(key)) {
+		throw new IllegalArgumentException("unknown parameter name: "+
+						   key);
+	    }
+
+	    value = convertValue(value, (Class)classes.get(key));
+
+	    result.put(uris.get(key), value);
+	}
+	
+	return result;
+    }
+
+    private static Object convertValue(Object value, Class klass) {
+	if(klass == Model.class && !(value instanceof Model))
+	    return new ObjectModel(value);
+	else
+	    return value;
+    }
+    
+    public static Object[] params() {
+	return new Object[] {};
+    }
+    public static Object[] params(String k1, Object v1) {
+	return new Object[] { k1, v1 };
+    }
+    public static Object[] params(String k1, Object v1, String k2, Object v2) {
+	return new Object[] { k1, v1, k2, v2 };
+    }
+    public static Object[] params(String k1, Object v1, String k2, Object v2, 
+			     String k3, Object v3) {
+	return new Object[] { k1, v1, k2, v2, k3, v3 };
+    }
+
+
+
+
     /** The code in this class is DUPLICATED in 
      *  CollectionModel.AbstractCollectionModel, 
      *  because Java doesn't support multiple 
