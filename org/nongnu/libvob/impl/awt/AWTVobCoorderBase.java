@@ -108,7 +108,11 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	Trans t = getTrans(cs);
 	try {
 	    t.transformRect(into, useInterp);
-	    wh[0] = t.w(); wh[1] = t.h();
+	    if(useInterp) {
+		t.getInterpolatedWH(wh);
+	    } else {
+		wh[0] = t.w(); wh[1] = t.h();
+	    }
 	    //scale[0] = t.sx(); scale[1] = t.sy();
 	} finally {
 	    t.pop();
@@ -217,6 +221,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    float sy() { return height; }
 	    float w() { return 1; }
 	    float h() { return 1; }
+	    void getInterpolatedWH(float[] wh) { wh[0] = wh[1] = 1; }
 	};
 
     
@@ -579,6 +584,38 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	}
 	float w() { return 1; }
 	float h() { return 1; }
+
+	void getInterpolatedWH(float[] wh) { // get interpolated w/h
+	    int ocs;
+
+	    if(cs() < interpList.length)
+		ocs = interpList[cs()];
+	    else
+		ocs = VobMatcher.SHOW_IN_INTERP;
+
+	    if(ocs >= 0) {
+		Trans o = otherCoorder.getTrans(ocs);
+		try {
+		    float w1 = w(), h1 = h(), w2 = o.w(), h2 = o.h();
+		    wh[0] = i(w1, w2, fract);
+		    wh[1] = i(h1, h2, fract);
+
+		    // don't let w/h grow too small: it doesn't look good
+		    // when a box goes to almost zero size during the "bounce"
+		    // when fract > 1 at the end of the animation
+		    if(wh[0] < Math.min(w1, w2)) wh[0] = Math.min(w1, w2);
+		    if(wh[1] < Math.min(h1, h2)) wh[1] = Math.min(h1, h2);
+		} finally {
+		    o.pop();
+		}
+	    } else if(ocs == VobMatcher.DONT_INTERP) {
+		wh[0] = 1; wh[1] = 1;
+	    } else if(ocs == VobMatcher.SHOW_IN_INTERP) {
+		Trans p = getParentTrans();
+		p.getInterpolatedWH(wh);
+		p.pop();
+	    }		
+	}
     }
 
 
