@@ -120,6 +120,10 @@ public abstract class LobMain extends Main implements Obs {
 		    windowAnim.animate();
 	    }
 	}
+
+	public void windowClosed() {
+	    System.exit(0);
+	}
     }
 
     public void chg() {
