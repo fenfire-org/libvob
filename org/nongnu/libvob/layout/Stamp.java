@@ -42,7 +42,10 @@ public class Stamp extends AbstractLob {
 
     public Stamp(Lob content) {
 	this.content = content;
+	content.setSize(content.getNatSize(X), Float.NaN);
 	content.setSize(content.getNatSize(X), content.getNatSize(Y));
+
+	content.addObs(this);
     }
 
     protected Replaceable[] getParams() {
@@ -61,6 +64,13 @@ public class Stamp extends AbstractLob {
     }
     public float getMaxSize(Axis axis) {
 	return content.getNatSize(axis);
+    }
+
+
+    public void chg() {
+	content.setSize(content.getNatSize(X), Float.NaN);
+	content.setSize(content.getNatSize(X), content.getNatSize(Y));
+	super.chg();
     }
 
 
