@@ -18,6 +18,7 @@ java:
 	python metacode/rj2java.py org/nongnu/libvob/lob/Lobs.rj org/nongnu/libvob/lob/Lobs.java
 	python metacode/rj2java.py org/nongnu/libvob/lob/Components.rj org/nongnu/libvob/lob/Components.java
 	python metacode/rj2java.py org/nongnu/libvob/demo/Notebook.rj org/nongnu/libvob/demo/Notebook.java
+	python metacode/rj2java.py org/nongnu/libvob/demo/Puzzle.rj org/nongnu/libvob/demo/Puzzle.java
 	mkdir -p CLASSES
 	$(JAVAC) $(DEBUG) -d $(CLASSDIR) $(RAWSRC) 
 
@@ -68,6 +69,9 @@ lobsample:
 
 run_notebook:
 	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.Notebook
+run_puzzle:
+	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.Puzzle
+
 run_java:
 	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) `echo $(CLASS) | sed 's/\//./g;'` $(ARGS)
 

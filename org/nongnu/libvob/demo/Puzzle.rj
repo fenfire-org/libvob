@@ -1,0 +1,142 @@
+/* -*-java-*-
+Puzzle.rj
+ *    
+ *    Copyright (c) 2005, Benja Fallenstein.
+ *
+ *    This file is part of Libvob.
+ *    
+ *    Libvob is free software; you can redistribute it and/or modify it under
+ *    the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *    
+ *    Libvob is distributed in the hope that it will be useful, but WITHOUT
+ *    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ *    Public License for more details.
+ *    
+ *    You should have received a copy of the GNU General
+ *    Public License along with Libvob; if not, write to the Free
+ *    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *    
+ *
+ */
+/*
+ * Written by Benja Fallenstein
+ */
+package org.nongnu.libvob.demo;
+import org.nongnu.libvob.*;
+import org.nongnu.libvob.fn.*;
+import org.nongnu.libvob.lob.*;
+import org.nongnu.libvob.lob.lobs.TableLob;
+import org.nongnu.libvob.impl.NewLobMain;
+import javolution.realtime.*;
+import java.awt.Color;
+import java.util.*;
+
+public class Puzzle extends NewLobMain {
+
+    public Puzzle(Color bg) {
+	super(bg);
+    }
+
+    public Lob createLob() {
+	return lob(Maps.map());
+    }
+
+    public static Lob piece(int i) {
+	if(i < 0)
+	    return Lobs.nullLob();
+
+	Lob l;
+
+	RoleContext.enter(new Integer(i));
+	try {
+	    l = Lobs.hbox(Lobs.text(""+i));
+	    l = Lobs.align(l, .5f, .5f);
+	    l = Lobs.request(l, 30, 30, 30, 30, 30, 30);
+	    l = Components.frame(l);
+	    l = Lobs.margin(l, 10);
+	    l = RoleContext.lob(l);
+	} finally {
+	    RoleContext.exit();
+	}
+	
+	return l;
+    }
+
+    public static Action moveAction(Model model, Axis axis, int dir) {
+	return new @realtime-i Action(Model model, Axis axis, int dir) {
+	    public void run() {
+		int[][] pieces = (int[][])model.get();
+
+		if(pieces == null) return;
+
+		int r=0, c=0;
+
+		LOOP:
+		for(r=0; r<4; r++)
+		    for(c=0; c<4; c++)
+			if(pieces[r][c] < 0)
+			    break LOOP;
+
+		if(r >= 4 || c >= 4)
+		    throw new Error("no gap found");
+
+		if(axis == Axis.X) {
+		    if(c-dir < 0 || c-dir > 3) return; // cannot move there
+		    pieces[r][c] = pieces[r][c-dir];
+		    pieces[r][c-dir] = -1;
+		} else {
+		    if(r-dir < 0 || r-dir > 3) return; // cannot move there
+		    pieces[r][c] = pieces[r-dir][c];
+		    pieces[r-dir][c] = -1;
+		}
+
+		Lobs.getWindowAnimation().animate();
+	    }
+	};
+    }
+
+    public static Lob lob(Map params) {
+	Model model = Components.getModel(params, "pieces", null);
+	int[][] pieces = (int[][])model.get();
+	
+	if(pieces == null) {
+	    pieces = new int[4][4];
+
+	    for(int row=0; row<4; row++)
+		for(int col=0; col<4; col++)
+		    pieces[row][col] = 4*row + col + 1;
+
+	    pieces[3][3] = -1;
+
+	    model.set(pieces);
+	}
+
+	TableLob.Table table = new @realtime-i TableLob.Table(int[][] pieces) {
+	    public int getRowCount() { return 4; }
+	    public int getColumnCount() { return 4; }
+
+	    public Lob getLob(int row, int column) {
+		return piece(pieces[row][column]);
+	    }
+	};
+
+	Lob l = Lobs.align(TableLob.newInstance(table), .5f, .5f);
+
+	Model m = model;
+	l = Lobs.keyController(l, Maps.map("Up", moveAction(m, Axis.Y, -1),
+					   "Down", moveAction(m, Axis.Y, 1),
+					   "Left", moveAction(m, Axis.X, -1),
+					   "Right", moveAction(m, Axis.X, 1)));
+
+	return l;
+    }
+
+    public static void main(String[] argv) {
+	Puzzle demo = new Puzzle(new Color(1, 1, .8f));
+	demo.start();
+    }
+}
