@@ -67,6 +67,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	fract = 0;
 
 	coordinates.maxcs = 0;
+
+	sorter.invalidate();
     }
 
 
@@ -255,6 +257,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	}
     }
     protected final void addInds(int n) { 
+	// coordinate system added:
+
 	if(ncs+1 > cses.length) {
 	    int[] ncses = new int[cses.length*2];
 	    System.arraycopy(cses, 0, ncses, 0, cses.length);
@@ -262,6 +266,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	}
 	cses[ncs] = ninds;
 	ncs++;
+
+	sorter.invalidate();
 
 	ninds += n; 
 	if(ninds > inds.length) {
@@ -275,6 +281,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     
     protected final void updateCoords(int cs) {
 	coordinates.maxcs = 0; //cs-1;
+	sorter.invalidate();
     }
 
 

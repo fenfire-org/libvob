@@ -34,7 +34,9 @@ final class DepthSorter {
     AWTVobCoorderBase sys;
 
     int[] sorted = new int[256];
-    int nsorted = 0;
+    int nsorted;
+
+    boolean allSorted;
 
     /** Helper array for the quicksort implementation */
     private int[] helper = new int[256];
@@ -45,9 +47,8 @@ final class DepthSorter {
         this.sys = sys;
     }
 
-    void clear() {
-        nsorted = 0;
-	lastSorted = -1;
+    void invalidate() {
+	allSorted = false;
     }
 
     int getN(int i) {
@@ -86,8 +87,9 @@ final class DepthSorter {
 	}
 	throw new Error("ARgh - no indexed cs "+(sys.inds[i] & (~GL.CSFLAGS)));
     }
-    private int lastSorted = -1;
     void sort() {
+	if(allSorted) return;
+
 	long m1 = System.currentTimeMillis();
 	int n = 0;
 	for (int i=sys.numberOfParameterCS; i<sys.ninds; n++) {
@@ -113,51 +115,13 @@ final class DepthSorter {
 	    
 	long m2 = System.currentTimeMillis();
 	nqscalls = 0; cmpcalls = 0;
-	quicksort(0, nsorted-1);
+	quicksort(0, nsorted);
 	long m3 = System.currentTimeMillis();
 
-	//System.out.println("SORT with n="+n+": "+(m2-m1)+"+"+(m3-m2)+" ms, "+
-	//		   nqscalls+" quicksort calls, "+cmpcalls+" cmps");
-
-	/*
-	if (lastSorted == nsorted) return;
-        if(nsorted < sys.nsys) {
-	    if(sorted.length < sys.nsys) {
-	    }
-
-	    for(int i=nsorted; i<sys.nsys; i++)
-	        sorted[i] = i;
-
-	    lastSorted = nsorted = sys.nsys;
-	    //javasort();
-            quicksort(1, nsorted-1);
-	}
-	*/
+	allSorted = true;
     }
 
     private int nqscalls, cmpcalls;
-
-    /** Sort the array, using java.util.Arrays' sort.
-     *  NOTE: This creates an Integer object for every item in the array
-     *  and therefore gives the garbage collector lots of work.
-     */
-    void javasort() {
-	/*
-	Integer[] is = new Integer[nsorted];
-	for(int i=0; i<nsorted; i++)
-	    is[i] = new Integer(sorted[i]);
-	java.util.Arrays.sort(is, new java.util.Comparator() {
-	    public boolean equals(Object a, Object b) { return a.equals(b); }
-	    public int compare(Object a, Object b) {
-		int i = ((Integer)a).intValue();
-		int j = ((Integer)b).intValue();
-		return cmp(i, j);
-	    }
-	});
-	for(int i=0; i<nsorted; i++)
-	    sorted[i] = is[i].intValue();
-	*/
-    }
 
     float [] d = new float[5];
     float getDepth(int cs) {
