@@ -63,7 +63,7 @@ public class ArrayVobMatcher implements VobMatcher {
 	if(hash < 0) hash = -hash;
 	return hash % hashtable.length;
     }
-    
+
     protected void addToHashtable(int cs) {
 	int i = hashIndex(csHash(cs));
 	for(int cs2=hashtable[i]; cs2>0; cs2=csNextInHashtable[cs2])
@@ -123,6 +123,7 @@ public class ArrayVobMatcher implements VobMatcher {
 	ncs = 0;
 	maxCS = -1;
 	java.util.Arrays.fill(hashtable, 0);
+	java.util.Arrays.fill(csKey, null);
     }
 
     protected int getOtherCS(VobMatcher other, int oparent, int mycs) {
@@ -135,14 +136,22 @@ public class ArrayVobMatcher implements VobMatcher {
 	int[] list = new int[maxCS+1];
 	list[0] = 0; // interpolate 0 cs to 0 cs by default
 	for(int i=1; i<maxCS+1; i++)
-	    list[i] = -1;
+	    list[i] = SHOW_IN_INTERP;
 
 	for(int i=0; i<ncs; i++) {
 	    int cs = csList[i];
+	    if(list[csParent[cs]] == SHOW_IN_INTERP) {
+		System.out.println("parent showininterp");
+		list[cs] = SHOW_IN_INTERP;
+		continue;
+	    }
+
 	    // XXX assumes that parent is set already
 	    int oparent = list[csParent[cs]];
-	    if(oparent < 0) continue;
-	    list[cs] = getOtherCS(other, oparent, cs);
+	    if(oparent < 0) 
+		list[cs] = DONT_INTERP;
+	    else
+		list[cs] = getOtherCS(other, oparent, cs);
 	}
 
 	long end = System.currentTimeMillis();

@@ -66,9 +66,9 @@ public class Frame extends LobMonoLob {
 	l = new Margin(l, lineWidth+margin);
 	if(clip) l = new ClipLob(l);
 	Lob bgLob = (bg != null) ? 
-	    (Lob)new VobLob(new FilledRectVob(bg), "BG") : NullLob.instance;
+	    (Lob)new VobLob(new FilledRectVob(bg)) : NullLob.instance;
 	Lob borderLob = (fg != null) && (lineWidth > 0) ? 
-	    (Lob)new VobLob(new RectVob(fg, lineWidth, is3d, raised), "FG") 
+	    (Lob)new VobLob(new RectVob(fg, lineWidth, is3d, raised)) 
 	    : NullLob.instance;
 	
 	setDelegate(new Between(bgLob, l, borderLob));

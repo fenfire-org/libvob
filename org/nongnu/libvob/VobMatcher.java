@@ -32,6 +32,9 @@ import java.awt.*;
  */
 
 public interface VobMatcher {
+    int DONT_INTERP = -1;
+    int SHOW_IN_INTERP = -1000;
+
     /** Add key to a cs, and return the cs.
      * Used in idiom like
      * <pre>cs = vs.matcher.add(vs.coords.affineCoordsys(...), "Foo")
@@ -73,8 +76,10 @@ public interface VobMatcher {
 
     /** Return, for each coordinate system of this matcher, an integer
      * giving the coordinate system of the other matcher that system should move
-     * to. A number smaller than zero means that the the coordsys
-     * should not be interpolated.
+     * to. DONT_INTERP meand means that the the coordsys should 
+     * not be interpolated; SHOW_IN_INTERP means that during interpolation,
+     * the coordsys should be rendered with the same coordinates as
+     * outside interpolation.
      * @param other The other vobmatcher; the interp list is constructed
      * 		between this and the other matcher.
      * @param towardsOther Whether we are interpolating towards or away from the

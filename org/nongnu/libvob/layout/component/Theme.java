@@ -84,7 +84,7 @@ public class Theme {
 
 	Lob l = Parameter.lob(LobMonoLob.CONTENT);
 
-	l = new Frame(l, lightColor, darkColor, 1, 3, false, false, true);
+	l = new Frame(l, lightColor, darkColor, 1, 3, false, false, /*true*/false);
 
 	map.put(ThemeFrame.URI, l);
 
@@ -117,7 +117,7 @@ public class Theme {
 	vbox.add(l);
 
 	l = new Frame(vbox, lightColor, darkColor, 1, 0, true, true, false);
-	l = new KeyLob(l, "innerFrame");
+	//l = new KeyLob(l, "innerFrame");
 	l = new Frame(l, null, darkColor, 1, 0, false, false, false);
 
 	map.put(Window.URI, l);

@@ -85,33 +85,56 @@ public class AWTRenderer {
 		int other = -1;
 		if(osc != null) {
 		    if(dbg) p("...interpTo != null");
+
+		    /*
                     if(my == 0) {
                         if(dbg) p("...my == 0.");
-			((AWTVobCoorderBase)sc.coords).setInterpInfo(
-			    my, ((AWTVobCoorderBase)osc.coords), 0, 
-			    fract, (OrthoRenderInfo)info);
+			try {
+			    ((AWTVobCoorderBase)sc.coords).setInterpInfo(
+			        my, ((AWTVobCoorderBase)osc.coords), 
+				interpList, fract, (OrthoRenderInfo)info);
+			} catch(AWTVobCoorderBase.DoNotInterpolateException e){
+			    // should not be possible
+			    throw new Error(e);
+			}
                         return true;
                     }
                     
 		    try {
 		        other = interpList[my];
-		        if(other < 0) {
+		        if(other == VobMatcher.DONT_INTERP) {
 			    return false;
-			    /* // render anyway:
+			} else if(other == VobMatcher.SHOW_IN_INTERP) {
 			    ((AWTVobCoorderBase)sc.coords).setInfo(
 			        my, (OrthoRenderInfo)info);
 			    return true;
-			    */
+			} else if(other < 0) {
+			    throw new Error("interpList contains negative "+
+					    "value "+other);
 			}
 		    } catch(ArrayIndexOutOfBoundsException _) {
-		        // XXX Not all coordsys must be in the matcher.
+		        // Not all coordsys must be in the matcher.
 			// Therefore, it is legal for the matcher
 			// to return an array that is too short.
+			// In this case, assume SHOW_IN_INTERP.
+
+			((AWTVobCoorderBase)sc.coords).setInfo(
+			    my, (OrthoRenderInfo)info);
+
+			return true;
+		    }
+		    */
+
+		    try {
+			((AWTVobCoorderBase)sc.coords).setInterpInfo(
+			    my, ((AWTVobCoorderBase)osc.coords), interpList, 
+			    fract, (OrthoRenderInfo)info);
+			//System.out.println("interplist = "+interpList);
+			return true;
+		    } catch(AWTVobCoorderBase.DoNotInterpolateException e) {
+			//System.out.println("do-not-interp-exception");
 			return false;
 		    }
-		    ((AWTVobCoorderBase)sc.coords).setInterpInfo(
-			my, ((AWTVobCoorderBase)osc.coords), other, fract,
-			(OrthoRenderInfo)info);
 		} else {
 		    if(dbg) p("...interpTo == null");
 		    ((AWTVobCoorderBase)sc.coords).setInfo(

@@ -36,11 +36,12 @@ import java.util.*;
 public class VobLob extends AbstractLob {
 
     protected Vob vob;
-    protected Object key;
 
-    public VobLob(Vob vob, Object key) {
+    public VobLob(Vob vob, Object key) { // XXX deprecated -- remove!
 	this.vob = vob;
-	this.key = key;
+    }
+    public VobLob(Vob vob) {
+	this.vob = vob;
     }
 
     protected Replaceable[] getParams() { return NO_PARAMS; }
@@ -84,7 +85,7 @@ public class VobLob extends AbstractLob {
 	    return this;
 	}
 
-	Lob newThis = new VobLob(newVob, key);
+	Lob newThis = new VobLob(newVob);
 	map.put(this, newThis);
 	return newThis;
     }
@@ -93,8 +94,9 @@ public class VobLob extends AbstractLob {
 		       float w, float h, float d,
 		       boolean visible) {
 	// XXX create a coordsys? which key?
-	int cs = scene.coords.box(into, w, h);
-	scene.matcher.add(matchingParent, cs, key);
+	int cs = into;
+	//int cs = scene.coords.box(into, w, h);
+	//scene.matcher.add(matchingParent, cs, this);
 	if(visible)
 	    scene.put(vob, cs);
     }

@@ -172,7 +172,7 @@ public class DefaultVobMatcher implements VobMatcher {
 	}
 	for(int i=1; i<maxcs+1; i++) {
 	    if(keyByCs[i] == null)
-	        interpList[i] = -1;
+	        interpList[i] = DONT_INTERP;
 	    else {
 	        Key k = keyByCs[i];
 		if(towardsOther) {
