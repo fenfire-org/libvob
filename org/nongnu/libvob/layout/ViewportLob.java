@@ -100,7 +100,7 @@ public class ViewportLob extends AbstractMonoLob {
 
 	} else {
 	    int cs = scene.coords.translate(into, 0, getScroll());
-	    super.render(scene, into, matchingParent,
+	    super.render(scene, cs, matchingParent,
 			 w, content.getNatSize(Y), d, visible);
 	}
     }
