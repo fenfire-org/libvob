@@ -70,6 +70,7 @@ public class Scrollbar extends LobLob {
     public Scrollbar(Axis axis, Model positionModel, Model maximumModel) {
 	this(axis, positionModel, maximumModel, 
 	     new FloatModel(0.0f)); // constantly minimum size knob
+	setMinKnobSize(new IntModel(15));
     }
 
     /**
@@ -151,7 +152,7 @@ public class Scrollbar extends LobLob {
     }
 
     private Lob middle() {
-	Model min = Parameter.model(MIN_KNOB_SIZE_MODEL, new FloatModel(15));
+	Model min = Parameter.model(MIN_KNOB_SIZE_MODEL, new FloatModel(10));
 	Lob buttonRect = buttonRect(Float.NaN, Float.NaN, Float.NaN);
 	return new RequestChangeLob(axis, buttonRect, min, min, 
 				    knobFract.times(LARGE));
