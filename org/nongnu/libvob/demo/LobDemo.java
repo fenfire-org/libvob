@@ -38,12 +38,20 @@ import java.util.*;
 
 public class LobDemo extends NewLobMain {
 
+    static Color[][] colors;
+    static {
+	colors = new Color[10][10];
+	for(int row=0; row<10; row++)
+	    for(int col=0; col<10; col++)
+		colors[row][col] = new Color(50 + row*10, 0, 50 + col*10);
+    }
+
     private class Table extends RealtimeObject implements TableLob.Table {
 	public int getRowCount() { return 10; }
 	public int getColumnCount() { return 10; }
 	
 	public Lob getLob(int row, int col) {
-	    return Lobs.filledRect(new Color(50 + row*10, 0, 50 + col*10));
+	    return Lobs.filledRect(colors[row][col]);
 	}
     }
 

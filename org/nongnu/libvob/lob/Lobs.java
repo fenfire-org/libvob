@@ -152,7 +152,12 @@ public class Lobs {
     }
 
     public static Lob key(Lob content, Object key, int intKey) {
-	return KeyLob.newInstance(content, key, intKey);
+	return key(content, true, key, intKey);
+    }
+
+    public static Lob key(Lob content, boolean createCS, 
+			  Object key, int intKey) {
+	return KeyLob.newInstance(content, createCS, key, intKey);
     }
 
     public static List keyList(List lobs, Object key) {
@@ -312,7 +317,7 @@ the_new_AbstractPositionLob_1.parentY = parentY;
 	    public int size() { return lobs.size(); }
 	    public Object get(int i) {
 		Lob lob = (Lob)lobs.get(i);
-		return key(lob, key, i);
+		return key(lob, false, key, i);
 	    }
 	
 

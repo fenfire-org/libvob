@@ -75,7 +75,7 @@ public class RoleContext {
 	if(key == null)
 	    throw new IllegalStateException("RoleContext.lob() cannot be called outside a RoleContext");
 
-	return KeyLob.newInstance(lob, key, -1);
+	return KeyLob.newInstance(lob, true, key, -1);
     }
 
     public static void exit() {

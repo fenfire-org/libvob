@@ -36,15 +36,18 @@ import javolution.realtime.*;
 public class KeyLob extends AbstractDelegateLob {
 
     protected Object key;
+    protected boolean createCS;
     protected int intKey;
     protected float width, height;
 
     private KeyLob() {}
 
-    public static KeyLob newInstance(Lob content, Object key, int intKey) {
+    public static KeyLob newInstance(Lob content, boolean createCS,
+				     Object key, int intKey) {
 	KeyLob m = (KeyLob)FACTORY.object();
 	m.delegate = content;
 
+	m.createCS = createCS;
 	m.key = key;
 	m.intKey = intKey;
 
@@ -54,14 +57,14 @@ public class KeyLob extends AbstractDelegateLob {
     }
 
     protected Lob wrap(Lob l) {
-	return newInstance(l, key, intKey);
+	return newInstance(l, createCS, key, intKey);
     }
 
     public Lob layout(float w, float h) {
 	if(w < 0 || h < 0)
 	    throw new IllegalArgumentException("Negative size: "+w+" "+h);
 
-	KeyLob l = newInstance(delegate.layout(w, h), key, intKey);
+	KeyLob l = newInstance(delegate.layout(w, h), createCS, key, intKey);
 	l.width = w; l.height = h;
 	return l;
     }
@@ -72,9 +75,13 @@ public class KeyLob extends AbstractDelegateLob {
 	if(width < 0 || height < 0)
 	    throw new UnsupportedOperationException("not layouted yet");
 
-	// the cs must be a box, so someone putting additional decorations
-	// in the vobscene can know how large it is
-	int cs = scene.coords.box(into, width, height);
+	int cs = into;
+
+	if(createCS) {
+	    // the cs must be a box, so someone putting additional decorations
+	    // in the vobscene can know how large it is
+	    cs = scene.coords.box(into, width, height);
+	}
 
 	if(scene.matcher instanceof IndexedVobMatcher) {
 	    IndexedVobMatcher m = (IndexedVobMatcher)scene.matcher;

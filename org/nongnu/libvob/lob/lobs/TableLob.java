@@ -291,7 +291,7 @@ public class TableLob extends AbstractLob {
 		    float x = posX[c],     y = posY[r];
 		    float w = posX[c+1]-x, h = posY[r+1]-y;
 
-		    int cs = scene.coords.translate(into, x, y);
+		    int cs = scene.coords.box(into, x, y, w, h);
 
 		    float lobW;
 
@@ -307,7 +307,7 @@ public class TableLob extends AbstractLob {
 		    }
 
 	
-		    if(w == lobW) {
+		    if((int)w == (int)lobW) {
 			if(lastCS >= 0 && scene.map instanceof DefaultVobMap)
 			    ((DefaultVobMap)scene.map).chain(lastCS, cs);
 		
