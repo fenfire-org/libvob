@@ -31,6 +31,13 @@ import java.util.*;
 
 public abstract class AbstractLob extends RealtimeObject implements Lob {
 
+    public Lob getInterface(Class clazz) {
+	if(clazz.isInstance(this))
+	    return this;
+	else
+	    return null;
+    }
+
     public Axis getLayoutableAxis() {
 	return null;
     }

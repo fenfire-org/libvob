@@ -33,6 +33,8 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
     protected Axis axis;
     protected float quality;
     protected Lob pre, in, post;
+
+    protected Breakable subBreakable;
     
     private BreakPoint() {}
 
@@ -45,6 +47,7 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
 	b.pre = pre;
 	b.in = in;
 	b.post = post;
+	b.subBreakable = (Breakable)content.getInterface(Breakable.class);
 	return b;
     }
 
@@ -59,8 +62,8 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
     public float getBreakQuality(Axis axis) {
 	if(axis==this.axis)
 	    return quality;
-	else if(delegate instanceof Breakable)
-	    return ((Breakable)delegate).getBreakQuality(axis);
+	else if(subBreakable != null)
+	    return subBreakable.getBreakQuality(axis);
 	else
 	    return -INF;
     }
@@ -68,8 +71,8 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
     public Lob getPreBreakLob(Axis axis) {
 	if(axis==this.axis)
 	    return pre;
-	else if(delegate instanceof Breakable)
-	    return ((Breakable)delegate).getPreBreakLob(axis);
+	else if(subBreakable != null)
+	    return subBreakable.getPreBreakLob(axis);
 	else
 	    return null;
     }
@@ -77,8 +80,8 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
     public Lob getInBreakLob(Axis axis) {
 	if(axis==this.axis)
 	    return in;
-	else if(delegate instanceof Breakable)
-	    return ((Breakable)delegate).getInBreakLob(axis);
+	else if(subBreakable != null)
+	    return subBreakable.getInBreakLob(axis);
 	else
 	    return null;
     }
@@ -86,8 +89,8 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
     public Lob getPostBreakLob(Axis axis) {
 	if(axis==this.axis)
 	    return post;
-	else if(delegate instanceof Breakable)
-	    return ((Breakable)delegate).getPostBreakLob(axis);
+	else if(subBreakable != null)
+	    return subBreakable.getPostBreakLob(axis);
 	else
 	    return null;
     }

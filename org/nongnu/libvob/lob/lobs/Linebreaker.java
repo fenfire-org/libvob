@@ -1,22 +1,22 @@
 /*
-TableLob.java
+Linebreaker.java
  *    
  *    Copyright (c) 2003-2005, Benja Fallenstein
  *
- *    This file is part of libvob.
+ *    This file is part of Libvob.
  *    
- *    libvob is free software; you can redistribute it and/or modify it under
+ *    Libvob is free software; you can redistribute it and/or modify it under
  *    the terms of the GNU General Public License as published by
  *    the Free Software Foundation; either version 2 of the License, or
  *    (at your option) any later version.
  *    
- *    libvob is distributed in the hope that it will be useful, but WITHOUT
+ *    Libvob is distributed in the hope that it will be useful, but WITHOUT
  *    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  *    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  *    Public License for more details.
  *    
  *    You should have received a copy of the GNU General
- *    Public License along with libvob; if not, write to the Free
+ *    Public License along with Libvob; if not, write to the Free
  *    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  *    MA  02111-1307  USA
  *    
@@ -32,7 +32,7 @@ import javolution.realtime.*;
 import java.util.*;
 
 public class Linebreaker extends RealtimeObject implements LobList {
-    private static void p(String s) { System.out.println("LobList:: "+s); }
+    private static void p(String s) { System.out.println("Linebreaker:: "+s); }
 
     private static final float INF = Breakable.INF;
 
@@ -81,8 +81,9 @@ public class Linebreaker extends RealtimeObject implements LobList {
 
 		    nextBreakQuality = -INF;
 		    
-		    if(l instanceof Breakable)
-			nextBreakQuality = ((Breakable)l).getBreakQuality(lineAxis);
+		    Breakable br = (Breakable)l.getInterface(Breakable.class);
+		    if(br != null)
+			nextBreakQuality = br.getBreakQuality(lineAxis);
 
 		    if(nextBreakQuality < 0) {
 			wid += r.nat(lineAxis);
@@ -126,7 +127,9 @@ public class Linebreaker extends RealtimeObject implements LobList {
 	LobList lobs = SubLobList.newInstance(items, start, end);
 
 	if(breaks[line] >= 0) {
-	    Breakable br = (Breakable)items.getLob(breaks[line]);
+	    Lob brLob = items.getLob(breaks[line]);
+	    Breakable br = (Breakable)brLob.getInterface(Breakable.class);
+
 	    Lob before = br.getPostBreakLob(lineAxis);
 	    if(before != null) {
 		LobList singleton = SingletonLobList.newInstance(before);
@@ -135,7 +138,9 @@ public class Linebreaker extends RealtimeObject implements LobList {
 	}
 
 	if(breaks[line+1] < items.getLobCount()) {
-	    Breakable br = (Breakable)items.getLob(breaks[line+1]);
+	    Lob brLob = items.getLob(breaks[line+1]);
+	    Breakable br = (Breakable)brLob.getInterface(Breakable.class);
+
 	    Lob after = br.getPreBreakLob(lineAxis);
 	    if(after != null) {
 		LobList singleton = SingletonLobList.newInstance(after);

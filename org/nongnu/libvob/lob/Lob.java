@@ -36,6 +36,25 @@ import java.util.*;
  */
 public interface Lob extends Realtime {
 
+    /** Go through the hierarchy of delegate lobs to see whether
+     *  we can find one that implements the given interface.
+     *  The intent is that we can extend the Lob interface (see,
+     *  for example, the Breakable interface), and still wrap
+     *  an arbitrary delegating lob around an implementation
+     *  of the extended interface; e.g., if you wrap a KeyLob,
+     *  which doesn't implement Breakable, around a BreakPoint, which does,
+     *  keyLob.getInterface(Breakable.class) will return the BreakPoint.
+     *  <p>
+     *  The search stops at lobs with multiple children; we only
+     *  go through the "wrapper" lobs that have only a single child.
+     *  (An exception is Between, which has three children, but treats
+     *  the 'middle' child as the special one that is being wrapped.)
+     *  <p>
+     *  If no implementation of the interface is found, return null.
+     */
+    Lob getInterface(Class iface);
+
+
     SizeRequest getSizeRequest();
 
     /** Returns a renderable lob with fixed size.
