@@ -39,13 +39,13 @@ $(SUBDIRS):
 tags::
 	ctags -R
 
-VOB_DEPENDS = ../depends
+DEPENDS = ../depends
 
-CLASSPATH =$(JAVAHOME)/jre/lib/rt.jar:$(CLASSDIR):../navidoc/CLASSES:$(VOB_DEPENDS)/jython.jar:$(VOB_DEPENDS)/png.jar:$(VOB_DEPENDS)/collections-kaffe.jar:$(shell echo $$CLASSPATH)
+CLASSPATH := $(CLASSDIR):../navidoc/CLASSES:$(DEPENDS)/jython.jar:$(DEPENDS)/png.jar:$CLASSPATH
 export CLASSPATH
 
 ifeq (,$(JYTHONPATH))
- JYTHONPATH=.:$(VOB_DEPENDS)/jythonlib.jar:$(VOB_DEPENDS)/pythonlib.jar
+ JYTHONPATH=.:$(DEPENDS)/jythonlib.jar:$(DEPENDS)/pythonlib.jar
 endif
 
 JAVA ?= java -Xincgc -Xnoclassgc
