@@ -341,10 +341,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    public String toString() { return "root"; }
 	    void doTransformRect(float[] rect, boolean useInterp) { 
 	    }
-	    float sx() { return width; }
-	    float sy() { return height; }
-	    float w() { return 1; }
-	    float h() { return 1; }
+	    float sx() { return 1; }
+	    float sy() { return 1; }
+	    float w() { return width; }
+	    float h() { return height; }
 	    void getWH(float[] wh, boolean useInterp) { wh[0] = wh[1] = 1; }
 
 	    void put(Coordinates into) {
@@ -411,8 +411,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    void put(Coordinates into) {
 		int f = inds[cs()+2];
 		into.copy(getParent(), cs());
-		into.setX(cs(), into.x(cs()) + floats[f+0]);
-		into.setY(cs(), into.y(cs()) + floats[f+1]);
+		into.setX(cs(), into.x(cs()) + floats[f+0]*into.sx(cs()));
+		into.setY(cs(), into.y(cs()) + floats[f+1]*into.sy(cs()));
 		into.setD(cs(), into.d(cs()) + floats[f+2]);
 		//p("put transl "+getParent()+" "+floats[f+0]+" "+floats[f+1]+" "+floats[f+2]);
 	    }
@@ -432,11 +432,11 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    void put(Coordinates into) {
 		int f = inds[cs()+2];
 		into.copy(getParent(), cs());
-		into.setX(cs(), into.x(cs()) * floats[f+0]);
-		into.setY(cs(), into.y(cs()) * floats[f+1]);
 		into.setSX(cs(), into.sx(cs()) * floats[f+0]);
 		into.setSY(cs(), into.sy(cs()) * floats[f+1]);
-		into.setD(cs(), into.d(cs()) * floats[f+2]);
+
+		if(floats[f+2] != 1) throw new Error("not implemented");
+		//into.setD(cs(), into.d(cs()) * floats[f+2]);
 	    }
 	    float sx() {
 		int f = inds[cs()+2];
@@ -487,11 +487,13 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    }
 	    void put(Coordinates into) {
 		int f = inds[cs()+2];
-		into.setX(cs(), floats[f+1]*into.sx(cs()) + into.x(cs()));
-		into.setY(cs(), floats[f+2]*into.sy(cs()) + into.y(cs()));
-		into.setSX(cs(), floats[f+3]*into.sx(cs()));
-		into.setSY(cs(), floats[f+4]*into.sy(cs()));
-		into.setD(cs(), floats[f+0] + into.d(cs()));
+		into.setX(cs(), floats[f+1]*into.sx(getParent()) + 
+			        into.x(getParent()));
+		into.setY(cs(), floats[f+2]*into.sy(getParent()) + 
+			        into.y(getParent()));
+		into.setSX(cs(), floats[f+3]*into.sx(getParent()));
+		into.setSY(cs(), floats[f+4]*into.sy(getParent()));
+		into.setD(cs(), floats[f+0] + into.d(getParent()));
 	    }
 	    float sx() {
 		int f = inds[cs()+2];
@@ -788,8 +790,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		float sin = (float)Math.sin(angle * Math.PI / 180);
 		float cos = (float)Math.cos(angle * Math.PI / 180);
 
-		into.setX(cs(), into.x(cs()) + dist*cos);
-		into.setY(cs(), into.y(cs()) + dist*sin);
+		into.setX(cs(), into.x(cs()) + dist*cos*into.sx(cs()));
+		into.setY(cs(), into.y(cs()) + dist*sin*into.sy(cs()));
 	    }
 	},
     };
