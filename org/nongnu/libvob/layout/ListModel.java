@@ -95,6 +95,10 @@ public interface ListModel extends CollectionModel, List {
 	    }
 	}
 
+	public Model containsModel(Model m) {
+	    return new ContainsModel(this, m);
+	}
+
 	public void add(int index, Object o) {
 	    getListDelegate().add(index, o);
 	    changeMethodCalled();
@@ -220,6 +224,10 @@ public interface ListModel extends CollectionModel, List {
 	    this.identity = new IdentityWrapper(this); 
 	}
 	
+
+	public Model containsModel(Model m) {
+	    return new ContainsModel(this, m);
+	}
 
 	public void addObs(Obs o) {
 	    obses.addObs(o);

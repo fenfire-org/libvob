@@ -27,6 +27,8 @@ import java.util.*;
 
 public interface CollectionModel extends Collection, Observable, Replaceable {
 
+    Model containsModel(Model value);
+
 
     class Simple extends CloneableDelegate {
 
@@ -56,6 +58,10 @@ public interface CollectionModel extends Collection, Observable, Replaceable {
 	public Delegate() { this.identity = new IdentityWrapper(this); }
 
 	protected void changeMethodCalled() {
+	}
+
+	public Model containsModel(Model m) {
+	    return new ContainsModel(this, m);
 	}
 
 	public Model sizeModel() {
@@ -224,6 +230,10 @@ public interface CollectionModel extends Collection, Observable, Replaceable {
 	}
 	
 
+	public Model containsModel(Model m) {
+	    return new ContainsModel(this, m);
+	}
+
 	public void addObs(Obs o) {
 	    obses.addObs(o);
 	}
@@ -340,6 +350,29 @@ public interface CollectionModel extends Collection, Observable, Replaceable {
 	}
 	public String toString() {
 	    return "IdentityWrapper("+o+")";
+	}
+    }
+
+
+    final class ContainsModel extends AbstractModel.AbstractBoolModel {
+	private CollectionModel c;
+	private Model m;
+
+	public ContainsModel(CollectionModel c, Model m) {
+	    this.c = c; this.m = m;
+	    c.addObs(this); m.addObs(this);
+	}
+
+	protected Replaceable[] getParams() {
+	    return new Replaceable[] { c, m };
+	}
+	protected Object clone(Object[] params) {
+	    return new ContainsModel((CollectionModel)params[0], 
+				     (Model)params[1]);
+	}
+
+	public boolean getBool() {
+	    return c.contains(m.get());
 	}
     }
 }
