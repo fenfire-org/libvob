@@ -73,7 +73,7 @@ public class DragController extends AbstractMonoLob {
 
     public boolean mouse(VobMouseEvent e, float x, float y, 
 			 float origX, float origY) {
-	if (dbg) p("got event! "+e); 
+	if (dbg) p("got event! "+e+" ("+System.identityHashCode(this)+")"); 
 	if (dbg) p("x: "+x+", y: "+y+", w: "+w+", h: "+h+", b: "+button);
 	if(x >= 0 && y >= 0 && x < w && y < h &&
 	   e.getType() == e.MOUSE_PRESSED && 
@@ -84,6 +84,7 @@ public class DragController extends AbstractMonoLob {
 	    isDragging = true;
 	    return true;
 	} else if(isDragging && e.getType() == e.MOUSE_DRAGGED) {
+	    if (dbg) p("dragging");
 	    listener.drag((int)x, (int)y);
 	    return true;
 	} else if(isDragging && e.getType() == e.MOUSE_RELEASED && 
@@ -93,6 +94,7 @@ public class DragController extends AbstractMonoLob {
 	    isDragging = false;
 	    return true;
 	} else {
+	    if (dbg) p("I don't care about this: "+e);
 	    return super.mouse(e, x, y, origX, origY);
 	}
     }
