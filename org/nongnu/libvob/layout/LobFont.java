@@ -186,9 +186,11 @@ public class LobFont extends AbstractHashtable {
 			   boolean visible) {
 
 	    if(scene.map instanceof DefaultVobMap) {
+		float h = style.getHeight(1);
+
 		if(visible)
 		    ((DefaultVobMap)scene.map).putChar(style, character, color,
-						       into);
+						       h, into);
 	    } else {
 		if(textvob == null)
 		    textvob = new TextVob(style, ""+character, false, KEY, 

@@ -88,6 +88,7 @@ public class DefaultVobMap implements VobMap {
     int currange = -1;
     TextStyle[] textRangeStyle = new TextStyle[64];
     Color[] textRangeColor = new Color[64];
+    float[] textRangeHeight = new float[64];
 
     int[] nextInChain = new int[64];
     int[] prevInChain = new int[64];
@@ -201,7 +202,8 @@ public class DefaultVobMap implements VobMap {
      *  character-by-character (i.e., each character can potentially
      *  be interpolated to a different place).
      */
-    public void putChar(TextStyle style, char c, Color color, int cs) {
+    public void putChar(TextStyle style, char c, Color color, float height,
+			int cs) {
 
 	if(style == null || color == null)
 	    throw new NullPointerException();
@@ -221,7 +223,8 @@ public class DefaultVobMap implements VobMap {
 	}
 
 	if(currange < 0 || !textRangeStyle[currange].equals(style) ||
-	   !textRangeColor[currange].equals(color)) {
+	   !textRangeColor[currange].equals(color) ||
+	   textRangeHeight[currange] != height) {
 
 	    int olen = textRangeStyle.length;
 
@@ -231,15 +234,19 @@ public class DefaultVobMap implements VobMap {
 
 		TextStyle[] nstyle = new TextStyle[nlen];
 		Color[] ncolor = new Color[nlen];
+		float[] nheight = new float[nlen];
 
 		System.arraycopy(textRangeStyle, 0, nstyle, 0, olen);
 		System.arraycopy(textRangeColor, 0, ncolor, 0, olen);
+		System.arraycopy(textRangeHeight, 0, nheight, 0, olen);
 
 		textRangeStyle = nstyle; textRangeColor = ncolor;
+		textRangeHeight = nheight;
 	    }
 
 	    textRangeStyle[currange] = style;
 	    textRangeColor[currange] = color;
+	    textRangeHeight[currange] = height;
 	}
 
 	textChar[cs] = c;
@@ -438,7 +445,10 @@ public class DefaultVobMap implements VobMap {
 	}
 
         float x = info.x, y = info.y;
-        float w = info.width, h = info.height;
+        //float w = info.width, h = info.height;
+	//float w = info.scaleX, h = info.scaleY;
+
+	float h = info.scaleY * textRangeHeight[range];
 
 	float scale = style.getScaleByHeight(h);
 	float fasc = style.getAscent(scale);
