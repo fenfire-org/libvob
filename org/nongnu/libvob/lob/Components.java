@@ -131,6 +131,8 @@ public class Components {
         cursor_lob = Lobs.key(cursor_lob, "cursor");
         lob = Lobs.decorate(lob, cursor_lob, selected.get(), -1);
 
+	lob = Lobs.viewport(axis, lob, selected.get(), -1);
+
 	lob = frame(lob);
 	return lob;
     }

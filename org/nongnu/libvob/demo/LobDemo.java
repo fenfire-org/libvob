@@ -80,11 +80,13 @@ public class LobDemo extends NewLobMain {
         lob = Lobs.key(lob, "hello world");
         tray.add(lob);
 
-	List elements = Lists.list("Alpha", "Beta", "Gamma");
+	List elements = Lists.fromArray(new Object[] {
+	    "Alpha", "Beta", "Gamma", "Eene", "Meene",
+	    "Miste", "Es", "Rappelt", "In", "Der", 
+	    "Kiste", "...Eene", "...Meene", "Muh..."});
 	lob = Components.listBox(elements, Maps.map());
-        lob = Lobs.align(lob, .5f, .5f);
         lob = Lobs.request(lob, 400, 400, 400, 100, 100, 100);
-	lob = Lobs.translate(lob, 100, 400);
+	lob = Lobs.translate(lob, 100, 450);
 	lob = Lobs.key(lob, "listbox");
 	tray.add(lob);
 

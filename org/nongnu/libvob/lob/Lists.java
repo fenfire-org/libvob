@@ -39,6 +39,12 @@ import java.util.*;
 
 public class Lists {
 
+    public static List fromArray(Object[] o) {
+	List l = FastList.newInstance();
+	for(int i=0; i<o.length; i++) l.add(o[i]);
+	return l;
+    }
+
     public static List list() {
 	List l = FastList.newInstance();
 	return l;
