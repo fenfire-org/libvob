@@ -553,10 +553,14 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    }
 	    void releaseArrays(int n) { usedArrays -= n; }
 
-	    /** copied from include/vob/trans/LinearPrimitives.hxx 
+	    void doTransformRect(float[] rect, boolean useInterp) {
+		throw new Error("not impl");
+	    }
+
+	    /** copied/modified from include/vob/trans/LinearPrimitives.hxx 
 	     *  coded by Tuomas J. Lukka
 	     */
-	    void doTransformRect(float[] rect, boolean useInterp) {
+	    void put(Coordinates into) {
 		int vectorCount = Vect.currentVectorCount();
 
 		try {
@@ -564,9 +568,11 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		    int anchorCS = inds[cs()+2];
 
 		    // get absolute area
+		    /*
 		    float[] areaF = getarr();
 		    float[] areaScale = getarr();
 		    getAbsoluteRect(areaCS, areaF, areaScale, useInterp);
+		    */
 
 
 		    // get anchor, compute sq of the area
@@ -576,13 +582,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		    anchorCoords[0] *= .5f; anchorCoords[1] *= .5f;
 
-		    Trans t = getTrans(anchorCS);
-		    t.transformRect(anchorCoords, useInterp);
-		    t.pop();
-
-		    t = getTrans(areaCS);
-		    t.inverseTransformRect(anchorCoords, useInterp);
-		    t.pop();
+		    into.transform(anchorCS, anchorCoords);
+		    into.inverseTransform(areaCS, anchorCoords);
 
 		    if(Float.isNaN(anchorCoords[0])) {
 			for(int i=0; i<anchorCoords.length; i++)
@@ -621,18 +622,29 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		    
 		    float scale = 1 - (anchor.neg(ctr)).abs() / .5f;
 		    if(scale < shift) scale = shift;
+
+		    into.setX(cs(), buoy.x() * sqF[0] * into.sx(areaCS) + into.x(areaCS));
+		    into.setY(cs(), buoy.y() * sqF[1] * into.sy(areaCS) + into.y(areaCS));
+		    into.setSX(cs(), scale * into.sx(areaCS));
+		    into.setSY(cs(), scale * into.sy(areaCS));
+		    into.setD(cs(), into.d(areaCS) - scale);
+
+		    /*
 		    rect[4] -= scale; // depth
-		    rect[0] = (buoy.x() * sqF[0] + scale*rect[0])*areaScale[0] + areaF[0];
+		    rect[0] = (buoy.x() * sqF[0])*areaScale[0] + areaF[0];
 		    rect[1] = (buoy.y() * sqF[1] + scale*rect[1])*areaScale[1] + areaF[1];
 		    rect[2] *= scale * areaScale[0];
 		    rect[3] *= scale * areaScale[1];
+		    */
 
-		    releaseArrays(4);
+		    //releaseArrays(4);
+		    releaseArrays(2);
 		} finally {
 		    Vect.releaseVectors(vectorCount);
 		}
 	    }
 
+	    /*
 	    void put(Coordinates into) {
 		float[] f = getarr();
 		f[2] = f[3] = 1;
@@ -644,6 +656,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		into.setD(cs(), f[4]);
 		releaseArrays(1);
 	    }
+	    */
 
 	    float w() { return 1; }
 	    float h() { return 1; }

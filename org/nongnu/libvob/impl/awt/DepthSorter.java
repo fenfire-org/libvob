@@ -161,15 +161,21 @@ final class DepthSorter {
 
     float [] d = new float[5];
     float getDepth(int cs) {
+	/*
 	for (int i=0; i<5; i++) d[i] = 0;
 
 	AWTVobCoorderBase.Trans t = sys.getTrans(cs);
 	t.transformRect(d);
 	float depth = d[4];
 	t.pop();
+
 	//sys.check();
 
 	return depth;
+	*/
+
+	sys.coordinates.check();
+	return sys.coordinates.d(cs);
     }
 
     int cmp(int cs1, int cs2) {
