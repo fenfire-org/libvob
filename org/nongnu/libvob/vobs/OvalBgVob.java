@@ -174,7 +174,9 @@ public class OvalBgVob extends AbstractColorableVob {
 	}
 	
 	if(drawBorder) {
-	    g.setColor(info1.fade(borderColor));
+	    if(borderColor != null) 
+		g.setColor(info1.fade(borderColor));
+
 	    g.drawOval(mx, my, mw, mh);
 	    if(mh >= 14) {
 		/** Heavier border for greter Vobs */

@@ -67,7 +67,12 @@ public class SimpleConnection extends AbstractVob {
 				Vob.RenderInfo info1,
 				Vob.RenderInfo info2) {
 	if(fast) return;
-	if(color != null) g.setColor(info1.fade(color));
+	if(color != null) {
+	    if(info1.depth > info2.depth)
+		g.setColor(info1.fade(color));
+	    else
+		g.setColor(info2.fade(color));
+	}
 	g.drawLine(info1.box_x(x0), info1.box_y(y0), 
 		   info2.box_x(x1), info2.box_y(y1));
     }
