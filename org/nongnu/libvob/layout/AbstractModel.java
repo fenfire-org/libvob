@@ -185,6 +185,10 @@ public abstract class AbstractModel
 	public void set(Object value) {
 	    setBool(((Boolean)value).booleanValue());
 	}
+
+	public void setBool(boolean value) {
+	    throw new UnsupportedOperationException("Read-only model: "+this);
+	}
     }
 
 

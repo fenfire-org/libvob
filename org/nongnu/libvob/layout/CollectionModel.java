@@ -382,5 +382,15 @@ public interface CollectionModel extends Collection, Observable, Replaceable {
 	public boolean getBool() {
 	    return value;
 	}
+
+	public void setBool(boolean value) {
+	    Object elem = m.get();
+
+	    if(value) {
+		if(!c.contains(elem)) c.add(elem);
+	    } else {
+		c.remove(elem);
+	    }
+	}
     }
 }
