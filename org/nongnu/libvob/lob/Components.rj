@@ -62,8 +62,17 @@ public class Components {
 
 
     public static Lob frame(Lob lob) {
-	return Lobs.frame(lob, null, Color.black, 1, 5, false);
+	return Lobs.frame(lob, lightColor, darkColor, 1, 3, true);
+    }
 
+    public static Lob button(Lob content, Action action) {
+	Lob lob = content;
+	lob = Lobs.align(content, .5f, .5f);
+	lob = Lobs.request(lob, 50, -1, SizeRequest.INF,
+			   15, -1, SizeRequest.INF);
+	lob = frame(lob);
+	lob = Lobs.clickController(lob, 1, action);
+	return lob;
     }
 
     public static Lob listBox(List elements, Map params) {

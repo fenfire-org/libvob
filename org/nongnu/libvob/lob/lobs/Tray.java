@@ -100,15 +100,16 @@ public class Tray extends AbstractLob {
     public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
 			 float x, float y) {
 	
+	if(width < 0 || height < 0)
+	    throw new UnsupportedOperationException("not layouted");
+
 	if(sendEventsOnlyToFrontLob) {
-	    return ((Lob)lobs.get(0)).mouse(e, scene, cs, x, y);
+	    Lob layout = ((Lob)lobs.get(0)).layout(width, height);
+	    return layout.mouse(e, scene, cs, x, y);
 	} else {
 	    for(int i=0; i<lobs.size(); i++) {
 		PoolContext.enter();
 		try {
-		    if(width < 0 || height < 0)
-			throw new UnsupportedOperationException("not layouted");
-
 		    Lob layout = ((Lob)lobs.get(i)).layout(width, height);
 
 		    if(layout.mouse(e, scene, cs, x, y))

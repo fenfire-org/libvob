@@ -312,7 +312,10 @@ public class TableLob extends AbstractLob {
 	    x -= posX[col];
 	    y -= posY[row];
 
-	    return table.getLob(row, col).mouse(e, scene, cs, x, y);
+	    Lob lob = table.getLob(row, col);
+	    lob = lob.layout(posX[col+1]-posX[col], posY[row+1]-posY[row]);
+
+	    return lob.mouse(e, scene, cs, x, y);
 	}
     }
 

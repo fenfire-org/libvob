@@ -34,6 +34,7 @@ import org.nongnu.libvob.*;
 public class TranslateLob extends AbstractDelegateLob {
 
     protected float x, y, z;
+    protected float width, height;
 
     private TranslateLob() {}
 
@@ -43,19 +44,26 @@ public class TranslateLob extends AbstractDelegateLob {
 	m.delegate = content;
 
 	m.x = x; m.y = y; m.z = z;
+	m.width = m.height = -1;
 
 	return m;
     }
 
     public SizeRequest getSizeRequest() {
-	return SizeRequest.newInstance(0, 0, SizeRequest.INF,
-				       0, 0, SizeRequest.INF);
+	if(width < 0)
+	    return SizeRequest.newInstance(0, 0, SizeRequest.INF,
+					   0, 0, SizeRequest.INF);
+	else
+	    return SizeRequest.newInstance(width, width, width,
+					   height, height, height);
     }
 
     public Lob layout(float w, float h) {
 	SizeRequest r = delegate.getSizeRequest();
 	Lob l = delegate.layout(r.natW, r.natH);
-	return newInstance(l, x, y, z);
+	TranslateLob t = newInstance(l, x, y, z);
+	t.width = w; t.height = h;
+	return t;
     }
 
     public Axis getLayoutableAxis() {
@@ -74,6 +82,9 @@ public class TranslateLob extends AbstractDelegateLob {
 
     public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
 			 float x, float y) {
+
+	if(width < 0 || height < 0)
+	    throw new UnsupportedOperationException("not layouted");
 
 	SizeRequest r = delegate.getSizeRequest();
 	if(x < this.x || x > this.x + r.width())  return false;

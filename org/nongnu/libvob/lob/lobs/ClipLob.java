@@ -41,7 +41,7 @@ public class ClipLob extends AbstractDelegateLob {
     private ClipLob() {};
 
     public static ClipLob newInstance(Lob content) {
-	return newInstance(content, null);
+	return newInstance(content, "clip-cs");
     }
 
     public static ClipLob newInstance(Lob content, Object key) {
@@ -62,8 +62,10 @@ public class ClipLob extends AbstractDelegateLob {
     public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
 			 float x, float y) {
 	
+	/*
 	if(key != null)
 	    cs = scene.matcher.getCS(cs, key);
+	*/
 
 	return delegate.mouse(e, scene, cs, x, y);
     }
@@ -80,6 +82,7 @@ public class ClipLob extends AbstractDelegateLob {
 
 	if(key != null) {
 	    this.cs = scene.coords.box(into, w, h);
+	    this.matchingParent = cs;
 	    scene.matcher.add(matchingParent, cs, key);
 	} else {
 	    this.cs = into;

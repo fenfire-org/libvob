@@ -72,7 +72,7 @@ public class LobDemo extends NewLobMain {
         lob = Lobs.key(lob, "hello world");
         lobs.add(lob);
 
-	List elements = Arrays.asList(new Object[] {"Alpha", "Beta", "Gamma"});
+	List elements = Lists.list("Alpha", "Beta", "Gamma");
 	lob = Components.listBox(elements, Maps.map());
         lob = Lobs.align(lob, .5f, .5f);
         lob = Lobs.request(lob, 400, 400, 400, 100, 100, 100);

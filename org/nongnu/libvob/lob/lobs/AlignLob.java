@@ -65,7 +65,7 @@ public class AlignLob extends AbstractDelegateLob {
 
 	Lob l = delegate.layout(s.natW, s.natH);
 
-	return TranslateLob.newInstance(l, x, y, 0);
+	return TranslateLob.newInstance(l, x, y, 0).layout(width, height);
     }
 
     public Axis getLayoutableAxis() {

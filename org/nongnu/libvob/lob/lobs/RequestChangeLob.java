@@ -87,8 +87,18 @@ public class RequestChangeLob extends AbstractDelegateLob {
 	return newInstance(l, minW, natW, maxW, minH, natH, maxH);
     }
 
+    public Lob layout(float w, float h) {
+	return delegate.layout(w, h);
+    }
+
     public SizeRequest getSizeRequest() {
-	return SizeRequest.newInstance(minW, natW, maxW, minH, natH, maxH);
+	SizeRequest r = delegate.getSizeRequest();
+	return SizeRequest.newInstance(minW < 0 ? r.minW : minW, 
+				       natW < 0 ? r.natW : natW, 
+				       maxW < 0 ? r.maxW : maxW, 
+				       minH < 0 ? r.minH : minH, 
+				       natH < 0 ? r.natH : natH, 
+				       maxH < 0 ? r.maxH : maxH);
     }
 
     private static Factory FACTORY = new Factory() {
