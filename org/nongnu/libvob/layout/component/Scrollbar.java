@@ -63,6 +63,12 @@ public class Scrollbar extends LobLob {
 	     new FloatModel(0.0f)); // minimum size knob
     }
 
+    /**
+     * @param axis
+     * @param positionModel 0...max - otherwise outside of positions
+     * @param maximumModel 0...
+     * @param knobFractionModel 0... - limited below 1
+     */
     public Scrollbar(Axis axis, Model positionModel, Model maximumModel, 
 		     Model knobFractionModel) {
 	float nan = Float.NaN, inf = Float.POSITIVE_INFINITY;
@@ -73,17 +79,20 @@ public class Scrollbar extends LobLob {
 	    Parameter.model(KNOBFRACTION_MODEL, knobFractionModel);
 
 	positionModel = Models.max(positionModel, new IntModel(0));
+	knobFractionModel = Models.min(knobFractionModel, new IntModel(1));
 
 	this.axis = axis;
 	this.positionModel = positionModel;
 	this.maximumModel = maximumModel;
 	this.knobFractionModel = knobFractionModel;
 
+	// knob and glue together fill the whole bar
 	Model glueSizeModel = (new FloatModel(1)).minus(knobFractionModel);
 
 	this.fract1 = positionModel.divide(maximumModel, 0);
 	this.fract2 = (new FloatModel(1)).minus(fract1);
 
+	// glueSize is divided between fract1 and fract2
 	this.fract1 = this.fract1.times(glueSizeModel);
 	this.fract2 = this.fract2.times(glueSizeModel);
 
