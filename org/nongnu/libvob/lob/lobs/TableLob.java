@@ -195,8 +195,13 @@ public class TableLob extends AbstractLob {
 
 	    cur += nat[i] + diff;
 
-	    if(cur > totalSize)
-		throw new Error("XXX cannot fit in total size");
+	    if(cur > totalSize) {
+		if(cur > totalSize + 0.0005)
+		    throw new Error("XXX cannot fit in total size: "+cur+" > "+totalSize);
+		else
+		    // seems to be round-off error
+		    cur = totalSize;
+	    }
 	}
 
 	pos[nitems] = totalSize;
