@@ -220,7 +220,7 @@ public class TableLob extends AbstractLob {
 		for(int c=0; c<cols; c++) {
 
 		    float x = posX[c],     y = posY[r];
-		    float w = posX[c+1]-x, h = posY[r]-y;
+		    float w = posX[c+1]-x, h = posY[r+1]-y;
 
 		    Layout layout;
 		    float lobW;

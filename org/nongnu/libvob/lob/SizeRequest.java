@@ -38,7 +38,7 @@ public final class SizeRequest extends RealtimeObject {
      *  to one component and one third to another, we can use 2*INF
      *  as the size request of one and 1*INF as the size request of the other.
      */
-    public static final float INF = (float)Math.pow(2, 1024);
+    public static final float INF = (float)Math.pow(2, 30);
 
 
     public SizeRequest() {}

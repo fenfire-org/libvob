@@ -25,6 +25,14 @@ from java.awt import Color
 
 import vob, java
 
+class Table(TableLob.Table):
+    def getRowCount(self): return 10
+    def getColumnCount(self): return 10
+
+    def getLob(self, row, col):
+        #return Lobs.filledRect(Color(row*10, 0, col*10))
+        return Lobs.rect(Color.red, 2)
+
 class Scene:
     def key(self, k):
         vob.AbstractUpdateManager.chg()
@@ -34,8 +42,8 @@ class Scene:
     def scene(self, scene):
         scene.put(background((1,1,.8)))
 
-        lob = Lobs.rect(Color.red, 4)
-        layout = lob.layout(200, 100)
+        lob = TableLob.newInstance(Table())
+        layout = lob.layout(400, 300)
 
         cs = scene.coords.translate(0, 100, 100)
         layout.render(scene, cs, 0, 1, 1)
