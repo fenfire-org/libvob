@@ -117,6 +117,7 @@ public class Theme {
 	vbox.add(l);
 
 	l = new Frame(vbox, lightColor, darkColor, 1, 0, true, true, false);
+	l = new KeyLob(l, "innerFrame");
 	l = new Frame(l, null, darkColor, 1, 0, false, false, false);
 
 	map.put(Window.URI, l);

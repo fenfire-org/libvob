@@ -73,22 +73,21 @@ public class Scrollbar extends LobLob {
 	this.fract2 = (new FloatModel(1)).minus(fract1);
 
 
+	Box box = new Box(axis);
 	Frame frame = new Frame(Theme.darkColor, Theme.darkColor, 1, 0, 
 				true, false, false);
 
-	Box box = new Box(axis);
-	frame.setContent(box);
+	Box outerBox = new Box(axis);
+	outerBox.add(button(-1), "UP-BUTTON");
+	outerBox.add(new Between(frame, box, NullLob.instance));
+	outerBox.add(button(+1), "DOWN-BUTTON");
 
-	box.add(button(-1), "UP-BUTTON");
 	box.add(glue(-1));
-
 	box.add(middle(), "KNOB");
-
 	box.add(glue(+1));
-	box.add(button(+1), "DOWN-BUTTON");
 
 
-	Lob delegate = frame;
+	Lob delegate = outerBox;
 	delegate = new RequestChangeLob(delegate, 15, 15, 15, nan, nan, inf);
 	delegate = new ClipLob(delegate);
 	
@@ -96,8 +95,16 @@ public class Scrollbar extends LobLob {
     }
 
     private Lob button(int dir) {
-	Lob button = rect(15, 15, 15);
+	Lob button = buttonRect(15, 15, 15);
 	return clickListener(button, dir);
+    }
+
+    private Lob buttonRect(float min, float nat, float max) {
+	Lob rect = rect(min, nat, max);
+	rect = new KeyLob(rect, "inner");
+	rect = new Frame(rect, null, Theme.darkColor, 1, 0, 
+			 false, false, false);
+	return rect;
     }
 
     private Lob glue(int dir) {
@@ -110,7 +117,7 @@ public class Scrollbar extends LobLob {
     }
 
     private Lob middle() {
-	return rect(10, 10, 10);
+	return buttonRect(10, 10, 10);
     }
 	
     private Lob rect(float min, float nat, float max) {
