@@ -62,6 +62,8 @@ public class Scrollbar extends LobLob {
 	positionModel = Parameter.model(POSITION_MODEL, positionModel);
 	maximumModel = Parameter.model(MAXIMUM_MODEL, maximumModel);
 
+	positionModel = Models.max(positionModel, new IntModel(0));
+
 	this.axis = axis;
 	this.positionModel = positionModel;
 	this.maximumModel = maximumModel;
@@ -79,7 +81,9 @@ public class Scrollbar extends LobLob {
 
 	Box outerBox = new Box(axis);
 	outerBox.add(button(-1), "UP-BUTTON");
-	outerBox.add(new Between(frame, box, NullLob.instance));
+	outerBox.add(new Between(frame, 
+				 new ClipLob(box), 
+				 NullLob.instance));
 	outerBox.add(button(+1), "DOWN-BUTTON");
 
 	box.add(glue(-1));
@@ -89,7 +93,6 @@ public class Scrollbar extends LobLob {
 
 	Lob delegate = outerBox;
 	delegate = new RequestChangeLob(delegate, 15, 15, 15, nan, nan, inf);
-	delegate = new ClipLob(delegate);
 	
 	setDelegate(delegate);
     }

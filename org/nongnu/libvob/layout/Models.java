@@ -51,6 +51,48 @@ public class Models {
     }
 
 
+    public static Model min(final Model m1, final Model m2) {
+	return new AbstractModel.AbstractFloatModel() {
+		{ m1.addObs(this); m2.addObs(this); }
+		protected Replaceable[] getParams() {
+		    return new Replaceable[] { m1, m2 };
+		}
+		protected Object clone(Object[] params) {
+		    return min((Model)params[0], (Model)params[1]);
+		}
+
+		public float getFloat() {
+		    float f1 = m1.getFloat(), f2 = m2.getFloat();
+		    return (f1<f2) ? f1 : f2;
+		}
+		public void setFloat(float value) {
+		    m1.setFloat(value);
+		}
+	    };
+    }
+
+    public static Model max(final Model m1, final Model m2) {
+	return new AbstractModel.AbstractFloatModel() {
+		{ m1.addObs(this); m2.addObs(this); }
+		protected Replaceable[] getParams() {
+		    return new Replaceable[] { m1, m2 };
+		}
+		protected Object clone(Object[] params) {
+		    return max((Model)params[0], (Model)params[1]);
+		}
+
+		public float getFloat() {
+		    float f1 = m1.getFloat(), f2 = m2.getFloat();
+		    return (f1>f2) ? f1 : f2;
+		}
+		public void setFloat(float value) {
+		    m1.setFloat(value);
+		}
+	    };
+		
+    }
+
+
     // adaption of an object's methods as a model
     // so from an object foo, you can create a model whose get() method
     // calls foo.getBlah() and whose set method calls foo.setBlah(...).
