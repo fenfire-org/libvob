@@ -122,13 +122,10 @@ class Scene:
         if cs < 0:
             print 'argh, cs < 0'
         else:
-            upper = scene.coords.translate(cs, 0, 0)
-            lower = scene.coords.translate(cs, 0, 20) # xxx y-size
+            cs = scene.coords.translate(cs, 0, 0)
+            scene.matcher.add(0, cs, "textcursor")
 
-            scene.matcher.add(0, upper, "cursor.upper")
-            scene.matcher.add(0, lower, "cursor.lower")
-
-            scene.put(org.nongnu.libvob.vobs.SimpleConnection(0,0,0,0,java.awt.Color.black), upper, lower)
+            scene.put(org.nongnu.libvob.vobs.SimpleConnection(0,0,0,1,java.awt.Color.black), cs, cs)
         
         
 

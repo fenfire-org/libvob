@@ -37,6 +37,7 @@ public class KeyLob extends AbstractDelegateLob {
 
     protected Object key;
     protected int intKey;
+    protected float width, height;
 
     private KeyLob() {}
 
@@ -47,25 +48,25 @@ public class KeyLob extends AbstractDelegateLob {
 	m.key = key;
 	m.intKey = intKey;
 
+	m.width = m.height = -1;
+
 	return m;
     }
 
     public Lob layout(float w, float h) {
-	return newInstance(delegate.layout(w, h), key, intKey);
+	KeyLob l = newInstance(delegate.layout(w, h), key, intKey);
+	l.width = w; l.height = h;
+	return l;
     }
 
     public void render(VobScene scene, int into, int matchingParent,
 		       float d, boolean visible) {
 
-	int cs = scene.coords.translate(into, 0, 0, 0);
+	if(width < 0 || height < 0)
+	    throw new UnsupportedOperationException("not layouted yet");
 
-	if(scene.matcher instanceof IndexedVobMatcher) {
-	    IndexedVobMatcher m = (IndexedVobMatcher)scene.matcher;
-	    m.add(matchingParent, cs, key, intKey);
-	} else {
-	    scene.matcher.add(matchingParent, cs, key);
-	}
-
+	// the cs must be a box, so someone putting additional decorations
+	// in the vobscene can know how large it is
 	delegate.render(scene, cs, cs, d, visible);
     }
 
