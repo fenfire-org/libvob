@@ -379,6 +379,9 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    float sy() { return height; }
 	    float w() { return 1; }
 	    float h() { return 1; }
+	    boolean has_own_wh() {
+		return true;
+	    }
 	    void getWH(float[] wh, boolean useInterp) { wh[0] = wh[1] = 1; }
 
 	    void put(Coordinates into) {
@@ -470,6 +473,9 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    float h() {
 		int f = inds[cs()+2];
 		return floats[f+1];
+	    }
+	    boolean has_own_wh() {
+		return true;
 	    }
 	},
 	noOp, // 13 rotateXYZ
@@ -625,6 +631,9 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 	    float w() { return 1; }
 	    float h() { return 1; }
+	    boolean has_own_wh() {
+		return true;
+	    }
 	    int nparents() { return 2; }
 	},
 	new Trans() {   // 19 orthoBox
@@ -655,6 +664,9 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		int f = inds[cs()+2];
 		return floats[f+6];
 	    }
+	    boolean has_own_wh() {
+		return true;
+	    }
 	}, 
 	new Trans() {   // 20 unitSq
 	    void put(Coordinates into) {
@@ -683,6 +695,9 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    }
 	    float h() {
 		return 1;
+	    }
+	    boolean has_own_wh() {
+		return true;
 	    }
 	},
 	new Trans() {   // 21 between
@@ -814,16 +829,14 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    return y; 
 	}
 	float w() {
-	    Trans p = getParentTrans();
-	    float w = p.w();
-	    p.pop();
-	    return w; 
+	    throw new UnsupportedOperationException("w()");
 	}
 	float h() { 
-	    Trans p = getParentTrans();
-	    float h = p.h();
-	    p.pop();
-	    return h; 
+	    throw new UnsupportedOperationException("h()");
+	}
+
+	boolean has_own_wh() {
+	    return false;
 	}
 
 	void getWH(float[] wh, boolean useInterp) {
@@ -856,7 +869,13 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    } else if(ocs == VobMatcher.DONT_INTERP) {
 		wh[0] = 1; wh[1] = 1;
 	    } else if(ocs == VobMatcher.SHOW_IN_INTERP) {
-		wh[0] = w(); wh[1] = h();
+		if(has_own_wh()) {
+		    wh[0] = w(); wh[1] = h();
+		} else {
+		    Trans t = getParentTrans();
+		    t.getWH(wh, useInterp);
+		    t.pop();
+		}
 	    }		
 	}
     }
@@ -864,8 +883,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
     public void getSqSize(int cs, float[] into) {
 	Trans t = getTrans(cs);
-	into[0] = t.w();
-	into[1] = t.h();
+	t.getWH(into, false);
 	t.pop();
     }
 
