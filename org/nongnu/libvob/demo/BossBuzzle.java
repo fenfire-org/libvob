@@ -75,8 +75,10 @@ public class BossBuzzle extends NewLobMain {
 		final Block block = (Block) blocks.get(i);
 		if (!(block.is(col, row))) continue;
 		
-		Lob lob = Lobs.hbox(Lobs.text(Lobs.font(Color.blue), 
-					      block.id));
+		Lob lob = Lobs.hbox(Lobs.text(
+					SimpleLobFont.newInstance("serif", 
+						0, 36, Color.blue), 
+					block.id));
 		
 		lob = Lobs.align(lob, .5f, .5f);
 		lob = Lobs.clickController(lob, 1, new Action() {
@@ -91,6 +93,7 @@ public class BossBuzzle extends NewLobMain {
 		lob = Lobs.frame3d(lob, null, Color.red, 3, 5, false, true);
 		lob = Lobs.request(lob, 100, 100, 100, 100, 100, 100);
 		lob = Lobs.key(lob, block.id);
+		lob = Lobs.align(lob, .5f, .5f);
 		return lob;
 	    }
 	 
@@ -109,9 +112,8 @@ public class BossBuzzle extends NewLobMain {
     public Lob createLob() {
 
         Lob lob = TableLob.newInstance(table);
-        lob = Lobs.request(lob, 400, 400, 400, 400, 400, 400);
+        //lob = Lobs.request(lob, 500, 500, 500, 400, 500, 500);
         lob = Lobs.align(lob, .5f, .5f);
-        //lob = Lobs.translate(lob, 100, 100);
         lob = Lobs.key(lob, "table");
 	return lob;
 
