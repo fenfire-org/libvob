@@ -66,8 +66,13 @@ public class SimpleLobFont extends RealtimeObject implements LobFont {
 	return f;
     }
 
+    protected static char[] charArray = new char[1];
+
     public Lob getLob(char ch) {
 	Glyph g = (Glyph)GLYPH_FACTORY.object();
+
+	charArray[0] = ch;
+	g.setSize(style.getWidth(charArray, 0, 1, 1), style.getHeight(1));
 
 	g.character = ch;
 	g.style = style;
@@ -78,21 +83,15 @@ public class SimpleLobFont extends RealtimeObject implements LobFont {
     }
 
 
-    protected static char[] charArray = new char[1];
-
     protected static class Glyph extends AbstractLayout {
 	protected char character;
 	protected TextStyle style;
 	protected Color color;
 
 	private Glyph() {}
-	
-	public Size getSize() {
-	    charArray[0] = character;
-	    return Size.newInstance(style.getWidth(charArray, 0, 1, 1),
-				    style.getHeight(1));
-	}
 
+	protected void setSize(float w, float h) { super.setSize(w, h); }
+	
 	protected TextVob textvob;
 
 	public void render(VobScene scene, int into, int matchingParent,

@@ -50,11 +50,38 @@ public final class SizeRequest extends RealtimeObject {
     public float nat(Axis axis) { return axis.coord(natW, natH); }
     public float max(Axis axis) { return axis.coord(maxW, maxH); }
 
+    /** Check that minW == natW == maxW and return that value.
+     *  The check makes this fail if the lob with this size request
+     *  hasn't been layouted yet.
+     */
+    public float width() {
+	if(minW != natW || natW != maxW) 
+	    throw new UnsupportedOperationException("not layouted yet");
+	return natW;
+    }
+
+    public float height() {
+	if(minH != natH || natH != maxH) 
+	    throw new UnsupportedOperationException("not layouted yet");
+	return natH;
+    }
+
+    public void setSize(float w, float h) {
+	minW = natW = maxW = w;
+	minH = natH = maxH = h;
+    }
+
     public static SizeRequest newInstance(float minW, float natW, float maxW,
 					  float minH, float natH, float maxH) {
 	SizeRequest r = (SizeRequest)FACTORY.object();
 	r.minW = minW; r.natW = natW; r.maxW = maxW;
 	r.minH = minH; r.natH = natH; r.maxH = maxH;
+	return r;
+    }
+
+    public static SizeRequest newInstance(float width, float height) {
+	SizeRequest r = (SizeRequest)FACTORY.object();
+	r.setSize(width, height);
 	return r;
     }
 

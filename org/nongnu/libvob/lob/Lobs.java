@@ -97,7 +97,7 @@ public class Lobs {
 	Lob _bg     = bg==null     ? null : filledRect(bg);
 	Lob _border = border==null ? null : rect(border, lineWidth);
 
-	content = margin(content, margin);
+	content = margin(content, lineWidth+margin);
 	if(clip) content = clip(content);
 
 	return between(_bg, content, _border);
@@ -109,7 +109,7 @@ public class Lobs {
 	Lob _bg     = bg==null     ? null : filledRect(bg);
 	Lob _border = border==null ? null : rect3d(border, lineWidth, raised);
 
-	content = margin(content, margin);
+	content = margin(content, lineWidth+margin);
 	if(clip) content = clip(content);
 
 	return Between.newInstance(_bg, content, _border);

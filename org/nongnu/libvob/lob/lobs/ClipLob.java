@@ -51,12 +51,16 @@ public class ClipLob extends AbstractDelegateLob {
 	return l;
     }
 
-    public void render(Layout delegateLayout,
-		       VobScene scene, int into, int matchingParent,
-		       float w, float h, float d,
-		       boolean visible) {
+    public Lob layout(float w, float h) {
+	return newInstance(delegate.layout(w, h), key);
+    }
 
-	this.delegateLayout = delegateLayout;
+    public void render(VobScene scene, int into, int matchingParent,
+		       float d, boolean visible) {
+
+	SizeRequest s = delegate.getSizeRequest();
+	float w = s.width(), h = s.height();
+	
 	this.scene=scene; this.d=d;
 	this.visible = visible;
 	this.matchingParent = matchingParent;
@@ -90,7 +94,6 @@ public class ClipLob extends AbstractDelegateLob {
 
     }
 
-    protected Layout delegateLayout;
     protected VobScene scene;
     protected int cs, matchingParent;
     protected float d;
@@ -101,7 +104,7 @@ public class ClipLob extends AbstractDelegateLob {
     }};
 
     private Runnable run_render = new Runnable() { public void run() {
-	delegateLayout.render(scene, cs, matchingParent, d, visible);
+	delegate.render(scene, cs, matchingParent, d, visible);
     }};
 
     private static final Factory FACTORY = new Factory() {

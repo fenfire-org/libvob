@@ -57,23 +57,56 @@ public class AlignLob extends AbstractDelegateLob {
 	return l;
     }
 
-    protected void render(Layout child, 
-			  VobScene scene, int into, int matchingParent,
-			  float w, float h, float d, boolean visible) {
+    public Lob layout(float w, float h) {
+	SizeRequest s = delegate.getSizeRequest();
 
-	Size s = child.getSize();
+	AlignLayout l = (AlignLayout)LAYOUT_FACTORY.object();
+	l.setSize(w, h);
+	l.child = delegate.layout(s.natW, s.natH);
 
-	float x = parentX*w - childX*s.width;
-	float y = parentY*h - childY*s.height;
+	l.childX = childX; l.childY = childY;
+	l.parentX = parentX; l.parentY = parentY;
 
-	int cs = scene.coords.translate(into, x, y);
+	return l;
+    }
+ 
+    public void render(VobScene scene, int into, int matchingParent, 
+		       float d, boolean visible) {
+	throw new UnsupportedOperationException();
+    }
 
-	child.render(scene, cs, matchingParent, d, visible);
+    private static class AlignLayout extends AbstractLayout {
+	private Lob child;
+
+	protected float childX, childY;
+	protected float parentX, parentY;
+
+	protected void setSize(float w, float h) { super.setSize(w, h); }
+
+	public void render(VobScene scene, int into, int matchingParent,
+			   float d, boolean visible) {
+	    
+	    SizeRequest s = child.getSizeRequest();
+	    float w = s.width(), h = s.height();
+	    
+	    float x = parentX*w - childX*s.width();
+	    float y = parentY*h - childY*s.height();
+	    
+	    int cs = scene.coords.translate(into, x, y);
+	    
+	    child.render(scene, cs, matchingParent, d, visible);
+	}
     }
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
 		return new AlignLob();
+	    }
+	};
+
+    private static final Factory LAYOUT_FACTORY = new Factory() {
+	    public Object create() {
+		return new AlignLayout();
 	    }
 	};
 }

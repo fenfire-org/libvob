@@ -131,21 +131,20 @@ public class TableLob extends AbstractLob {
 	return size;
     }
 
-    public Layout layout(float width, float height) {
+    public Lob layout(float width, float height) {
 	TableLayout tl = (TableLayout)LAYOUT_FACTORY.object();
 	tl.init(table);
 
 	int rows = table.getRowCount();
 	int cols = table.getColumnCount();
 
-	// positions of the rows and columns
-	float[] posX = tl.posX, posY = tl.posY;
-
-	doLayout(posY, rowMinH, rowNatH, rowMaxH, 
+	doLayout(tl.posY, rowMinH, rowNatH, rowMaxH, 
 		 size.minH, size.natH, size.maxH, height, rows);
 
-	doLayout(posX, colMinW, colNatW, colMaxW, 
+	doLayout(tl.posX, colMinW, colNatW, colMaxW, 
 		 size.minW, size.natW, size.maxW, width, cols);
+
+	tl.setSize(tl.posX[cols], tl.posY[rows]);
 	       
 	return tl;
     }
@@ -193,6 +192,11 @@ public class TableLob extends AbstractLob {
 	return false;
     }
 
+    public void render(VobScene scene, int into, int matchingParent,
+		       float d, boolean visible) {
+	throw new UnsupportedOperationException("not layouted yet");
+    }
+
     private static final class TableLayout extends AbstractLayout {
 	private Table table;
 	private float[] posX = new float[MAXSIZE], posY = new float[MAXSIZE];
@@ -203,10 +207,7 @@ public class TableLob extends AbstractLob {
 	    this.table = table;
 	}
 
-	public Size getSize() {
-	    int rows = table.getRowCount(), cols = table.getColumnCount();
-	    return Size.newInstance(posX[rows], posY[cols]);
-	}
+	protected void setSize(float w, float h) { super.setSize(w, h); }
 
 	public void render(VobScene scene, int into, int matchingParent,
 			   float d, boolean visible) {
@@ -230,7 +231,7 @@ public class TableLob extends AbstractLob {
 		    PoolContext.enter();
 		    try {
 			Lob lob = table.getLob(r, c);
-			Layout layout = lob.layout(w, h);
+			Lob layout = lob.layout(w, h);
 			lobW = lob.getSizeRequest().natW;
 
 			layout.render(scene, cs, matchingParent, d, visible);

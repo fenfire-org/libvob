@@ -57,6 +57,7 @@ class Scene:
         render(scene, layout, 100, 100)
 
         lob = Lobs.text("Hello world!")
+        lob = Lobs.frame3d(lob, None, Color.red, 1, 5, 0, 1)
         size = lob.getSizeRequest()
         renderLob(scene, lob.layout(size.natW, size.natH), 300-size.natW/2, 50)
 

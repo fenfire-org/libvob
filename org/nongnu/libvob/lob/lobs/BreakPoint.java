@@ -48,6 +48,14 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
 	return b;
     }
 
+    /*
+    public Lob layout(float w, float h) {
+	return newInstance(axis, delegate.layout(w, h), quality,
+			   pre.layout(w, h), in.layout(w, h), 
+			   post.layout(w, h));
+    }
+    */
+
     public float getBreakQuality(Axis axis) {
 	if(axis==this.axis)
 	    return quality;

@@ -53,12 +53,9 @@ public class Between extends AbstractLob {
 	return middle.getSizeRequest();
     }
 
-    public Layout layout(float w, float h) {
-	BetweenLayout l = (BetweenLayout)LAYOUT_FACTORY.object();
-	l.back   = back.layout(w, h);
-	l.middle = middle.layout(w, h);
-	l.front  = front.layout(w, h);
-	return l;
+    public Lob layout(float w, float h) {
+	return newInstance(back.layout(w, h), middle.layout(w, h),
+			   front.layout(w, h));
     }
 
     public boolean move(ObjectSpace os) {
@@ -69,38 +66,16 @@ public class Between extends AbstractLob {
 	return false;
     }
 
-    protected static class BetweenLayout extends AbstractLayout {
-	private Layout back, middle, front;
-
-	public Size getSize() {
-	    return middle.getSize();
-	}
-
-	public void render(VobScene scene, int into, int matchingParent,
-			   float d, boolean visible) {
-	    int _cs = into;
-	    int cs = scene.coords.translate(_cs, 0, 0, 2*d/4);
-	    back.render(scene, cs, matchingParent, d/4, visible);
-	    cs = scene.coords.translate(_cs, 0, 0, d/4);
-	    middle.render(scene, cs, matchingParent, d/4, visible);
-	    cs = _cs;
-	    front.render(scene, cs, matchingParent, d/4, visible);
-	}
-
-	public boolean move(ObjectSpace os) {
-	    if(super.move(os)) {
-		back.move(os); middle.move(os); front.move(os);
-		return true;
-	    }
-	    return false;
-	}
+    public void render(VobScene scene, int into, int matchingParent,
+		       float d, boolean visible) {
+	int _cs = into;
+	int cs = scene.coords.translate(_cs, 0, 0, 2*d/4);
+	back.render(scene, cs, matchingParent, d/4, visible);
+	cs = scene.coords.translate(_cs, 0, 0, d/4);
+	middle.render(scene, cs, matchingParent, d/4, visible);
+	cs = _cs;
+	front.render(scene, cs, matchingParent, d/4, visible);
     }
-
-    private static final Factory LAYOUT_FACTORY = new Factory() {
-	    public Object create() {
-		return new BetweenLayout();
-	    }
-	};
 
     private static final Factory LOB_FACTORY = new Factory() {
 	    public Object create() {

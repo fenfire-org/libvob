@@ -65,18 +65,20 @@ public class Margin extends AbstractDelegateLob {
 				       r.minH+dy, r.natH+dy, r.maxH+dy);
     }
 
-    public Layout layout(float w, float h) {
-	return super.layout(w-left-right, h-top-bottom);
+    public Lob layout(float w, float h) {
+	Lob l = delegate.layout(w-left-right, h-top-bottom);
+	return newInstance(l, left, right, top, bottom);
     }
 
-    public void render(Layout delegateLayout,
-		       VobScene scene, int into, int matchingParent,
-		       float w, float h, float d,
-		       boolean visible) {
+    public void render(VobScene scene, int into, int matchingParent,
+		       float d, boolean visible) {
+	SizeRequest s = delegate.getSizeRequest();
+	float w = s.width(), h = s.height();
+	
 	int cs = scene.coords.box(into, left, top, 
 				  w - left - right, h - top - bottom);
 
-	delegateLayout.render(scene, cs, matchingParent, d, visible);
+	delegate.render(scene, cs, matchingParent, d, visible);
     }
 
     private static final Factory FACTORY = new Factory() {

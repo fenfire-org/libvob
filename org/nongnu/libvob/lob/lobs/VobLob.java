@@ -51,11 +51,10 @@ public class VobLob extends AbstractLob {
 				       0, 0, SizeRequest.INF);
     }
 
-    public Layout layout(float w, float h) {
+    public Lob layout(float w, float h) {
 	VobLayout vl = (VobLayout)LAYOUT_FACTORY.object();
 	vl.vob = vob;
-	vl.size.width = w;
-	vl.size.height = h;
+	vl.setSize(w, h);
 	return vl;
     }
 
@@ -68,28 +67,29 @@ public class VobLob extends AbstractLob {
 	return false;
     }
 
+    public void render(VobScene scene, int into, int matchingParent,
+			   float d, boolean visible) {
+
+	throw new UnsupportedOperationException("not layouted yet");
+    }
+
     private static final class VobLayout extends AbstractLayout {
 	private Vob vob;
 
-	private Size size = new Size();
-
 	private VobLayout() {}
 
-	public Size getSize() {
-	    return size;
-	}
+	protected void setSize(float w, float h) { super.setSize(w, h); }
 
 	public void render(VobScene scene, int into, int matchingParent,
 			   float d, boolean visible) {
 
-	    int cs = scene.coords.box(into, size.width, size.height);
+	    int cs = scene.coords.box(into, width, height);
 	    if(visible) scene.put(vob, cs);
 	}
 
 	public boolean move(ObjectSpace os) {
 	    if(super.move(os)) {
-		if(vob instanceof Realtime)
-		    ((Realtime)vob).move(os);
+		vob.move(os);
 		return true;
 	    }
 	    return false;

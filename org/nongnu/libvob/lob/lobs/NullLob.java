@@ -41,20 +41,19 @@ public class NullLob extends AbstractLob {
 				       0, 0, SizeRequest.INF);
     }
 
-    public Layout layout(float w, float h) {
+    public Lob layout(float w, float h) {
 	NullLayout l = (NullLayout)FACTORY.object();
-	l.width = w; l.height = h;
+	l.setSize(w, h);
 	return l;
+    }
+ 
+    public void render(VobScene scene, int into, int matchingParent, 
+		       float d, boolean visible) {
+	throw new UnsupportedOperationException("not layouted");
     }
 
     private static class NullLayout extends AbstractLayout {
-	private float width, height;
-
-	private NullLayout() {}
-
-	public Size getSize() {
-	    return Size.newInstance(width, height);
-	}
+	protected void setSize(float w, float h) { super.setSize(w, h); }
 
 	public void render(VobScene scene, int into, int matchingParent, 
 			   float d, boolean visible) {

@@ -31,19 +31,24 @@ import org.nongnu.libvob.util.*;
 import org.nongnu.navidoc.util.Obs;
 import java.util.*;
 
-public abstract class AbstractLayout extends AbstractLob implements Layout {
+/** A Lob that has been fully layouted.
+ */
+public abstract class AbstractLayout extends AbstractLob {
 
-    public Layout layout(float width, float height) {
-	Size s = getSize();
-	if(width != s.width || height != s.height)
-	    throw new IllegalArgumentException();
+    protected float width, height;
 
-	return this;
+    protected void setSize(float width, float height) {
+	this.width = width; this.height = height;
     }
 
     public SizeRequest getSizeRequest() {
-	Size s = getSize();
-	return SizeRequest.newInstance(s.width, s.width, s.width,
-				       s.height, s.height, s.height);
+	return SizeRequest.newInstance(width, height);
+    }
+
+    public Lob layout(float width, float height) {
+	if(this.width != width || this.height != height)
+	    throw new IllegalArgumentException(this+" "+width+" "+height+" "+this.width+" "+this.height);
+
+	return this;
     }
 }

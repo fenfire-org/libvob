@@ -38,7 +38,11 @@ public interface Lob extends Realtime {
 
     SizeRequest getSizeRequest();
 
-    Layout layout(float width, float height);
+    /** Returns a renderable lob with fixed size.
+     *  The returned lob will have size request minW == natW == maxW == width
+     *  and the same for height.
+     */
+    Lob layout(float width, float height);
 
 
     /** If setting the size of this lob along one axis 
@@ -64,6 +68,21 @@ public interface Lob extends Realtime {
      *  @see #getLayoutableAxis()
      */
     Lob layoutOneAxis(float size) throws UnsupportedOperationException;
+
+
+
+    /**
+     *  @param visible Whether to put lobs into the coordinate systems.
+     *         If false, the tree of coordinate systems is created,
+     *         but no lobs are put into them.
+     *  @param d depth -- is to the z-axis like width is to the x-axis 
+     *           and like height is to the y-axis
+     *  @throws UnsupportedOperationException if this lob isn't fully
+     *          layouted yet, i.e., if the size hasn't been fixed yet.
+     *          Lobs returned by layout() never throw this.
+     */
+    void render(VobScene scene, int into, int matchingParent, 
+		float d, boolean visible) throws UnsupportedOperationException;
 
 
 

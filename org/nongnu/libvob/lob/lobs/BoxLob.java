@@ -75,8 +75,13 @@ public class BoxLob extends AbstractLob {
 	return TableLob.newInstance(table).getSizeRequest();
     }
 
-    public Layout layout(float width, float height) {
+    public Lob layout(float width, float height) {
 	return TableLob.newInstance(table).layout(width, height);
+    }
+
+    public void render(VobScene scene, int into, int matchingParent, 
+		       float d, boolean visible) {
+	throw new UnsupportedOperationException("not layouted");
     }
 
     public boolean move(ObjectSpace os) {
