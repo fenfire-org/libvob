@@ -35,6 +35,8 @@ import java.util.*;
 
 public class FilterLobFont extends RealtimeObject implements LobFont {
 
+    public static final Object TEXT_END = new Object();
+
     protected LobFont delegate;
     protected FastMap glyphs;
 
@@ -64,7 +66,12 @@ public class FilterLobFont extends RealtimeObject implements LobFont {
 
 	float w = r.natW, h = r.natH;
 
-	space = RequestChangeLob.newInstance(space, w, w, 2*w, 0, h, h);
+	// cannot use stretchability == 2*w until TableLob returns
+	// the correct size request when we *do* have to use lines
+	// stretched so much that a space needs to be stretched more than 2w
+	space = RequestChangeLob.newInstance(space, 
+					     w,w,SizeRequest.INF/1024 /*2*w*/,
+					     0,h,h);
 
 	Lob strut = Glue.newInstance(0, 0, 0, 0, h, h);
 
@@ -83,6 +90,8 @@ public class FilterLobFont extends RealtimeObject implements LobFont {
 	ch = FastInt.newInstance((int)'\n');
 	glyphs.put(ch, newline);
 
+	glyphs.put(TEXT_END, lineEnd);
+
 	return newInstance(delegate, glyphs);
     }
 
@@ -94,6 +103,15 @@ public class FilterLobFont extends RealtimeObject implements LobFont {
 	    return l;
 	else
 	    return delegate.getLob(c);
+    }
+
+    public Lob getTextEndLob() {
+	Lob l = (Lob)glyphs.get(TEXT_END);
+
+	if(l != null)
+	    return l;
+	else
+	    return delegate.getTextEndLob();
     }
 
     private static Factory FACTORY = new Factory() {

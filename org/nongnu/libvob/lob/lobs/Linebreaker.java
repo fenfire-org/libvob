@@ -34,6 +34,8 @@ import java.util.*;
 public class Linebreaker extends RealtimeObject implements LobList {
     private static void p(String s) { System.out.println("LobList:: "+s); }
 
+    private static final float INF = Breakable.INF;
+
     public static int MAXSIZE = (1 << 14);
 
     protected Axis lineAxis;
@@ -59,7 +61,55 @@ public class Linebreaker extends RealtimeObject implements LobList {
 
 	int nitems = items.getLobCount();
 
-	// XXX do the layout :-)
+	breaks[0] = -1;
+
+	float pos = 0;
+	lineCount = 1;
+	int i = -1;
+	float breakQuality = -INF;
+
+	do {
+	    int next;
+	    float wid = 0, nextwid = 0;
+	    float nextBreakQuality = INF;
+
+	    for(next=i+1; next<items.getLobCount(); next++) {
+		PoolContext.enter();
+		try {
+		    Lob l = items.getLob(next);
+		    SizeRequest r = l.getSizeRequest();
+
+		    nextBreakQuality = -INF;
+		    
+		    if(l instanceof Breakable)
+			nextBreakQuality = ((Breakable)l).getBreakQuality(lineAxis);
+
+		    if(nextBreakQuality < 0) {
+			wid += r.nat(lineAxis);
+		    } else {
+			nextwid = r.nat(lineAxis);
+			break;
+		    }
+		} finally {
+		    PoolContext.exit();
+		}
+	    }
+
+	    if(i>=0 && (pos+wid>lineSize || breakQuality >= INF)) {
+		breaks[lineCount] = i;
+		lineCount++;
+
+		pos = 0;
+	    }
+
+	    pos += wid + nextwid;
+
+	    breakQuality = nextBreakQuality;
+	    i = next;
+
+	} while(i < items.getLobCount());
+
+	breaks[lineCount] = items.getLobCount();
     }
 
     public int getLobCount() {
@@ -70,10 +120,14 @@ public class Linebreaker extends RealtimeObject implements LobList {
 	if(line >= lineCount)
 	    throw new IndexOutOfBoundsException(line+" >= "+lineCount);
 
-	LobList lobs = SubLobList.newInstance(items, 
-					      breaks[line], breaks[line+1]);
+	int start = breaks[line]+1, end = breaks[line+1]+1;
+	if(end > items.getLobCount()) end = items.getLobCount();
 
-	return BoxLob.newInstance(lineAxis, lobs);
+	LobList lobs = SubLobList.newInstance(items, start, end);
+
+	Lob l = BoxLob.newInstance(lineAxis, lobs);
+	//l = Lobs.frame(l, null, java.awt.Color.red, 1, 0, false); // debug
+	return l;
     }
 
     public boolean move(ObjectSpace os) {

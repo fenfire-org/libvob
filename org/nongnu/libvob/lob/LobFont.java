@@ -40,4 +40,6 @@ public interface LobFont extends Realtime {
      *  'unicode characters glyphs'.)
      */
     Lob getLob(char c);
+
+    Lob getTextEndLob();
 }

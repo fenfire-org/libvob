@@ -38,6 +38,11 @@ public class SubLobList extends RealtimeObject implements LobList {
     private SubLobList() {}
 
     public static SubLobList newInstance(LobList list, int start, int end) {
+	if(end < start)
+	    throw new IllegalArgumentException("end == "+end+" < "+start+" == start");
+	if(end > list.getLobCount())
+	    throw new IllegalArgumentException("end == "+end+" > "+list.getLobCount()+" == list.getLobCount()");
+
 	SubLobList l = (SubLobList)FACTORY.object();
 	l.list = list; l.start = start; l.end = end;
 	return l;

@@ -47,11 +47,16 @@ public class TextLobList extends RealtimeObject implements LobList {
     }
 
     public int getLobCount() {
-	return text.length();
+	return text.length() + 1;
     }
 
     public Lob getLob(int index) {
-	return font.getLob(text.charAt(index));
+	if(index < text.length())
+	    return font.getLob(text.charAt(index));
+	else if(index == text.length())
+	    return font.getTextEndLob();
+	else
+	    throw new IndexOutOfBoundsException(""+index);
     }
 
     public boolean move(ObjectSpace os) {

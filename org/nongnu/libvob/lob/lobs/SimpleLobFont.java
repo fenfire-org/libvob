@@ -82,6 +82,11 @@ public class SimpleLobFont extends RealtimeObject implements LobFont {
 	return g;
     }
 
+    public Lob getTextEndLob() {
+	float h = style.getHeight(1);
+	return Glue.newInstance(0, 0, 0, h, h, h);
+    }
+
 
     protected static class Glyph extends AbstractLayout {
 	protected char character;
@@ -93,6 +98,19 @@ public class SimpleLobFont extends RealtimeObject implements LobFont {
 	protected void setSize(float w, float h) { super.setSize(w, h); }
 	
 	protected TextVob textvob;
+
+	public Lob layout(float w, float h) { // plaaah...
+	    Glyph g = (Glyph)GLYPH_FACTORY.object();
+
+	    g.setSize(w, h);
+
+	    g.character = character;
+	    g.style = style;
+	    g.color = color;
+	    g.textvob = textvob;
+
+	    return g;
+	}
 
 	public void render(VobScene scene, int into, int matchingParent,
 			   float d, boolean visible) {

@@ -39,9 +39,6 @@ import java.util.*;
  */
 public class Lobs {
 
-    public static final LobFont defaultFont =
-	SimpleLobFont.newInstance("serif", 0, 16, Color.black);
-
     public static Lob rect(Color color, float lineWidth) {
 	return VobLob.newInstance(RectVob.newInstance(color, lineWidth));
     }
@@ -115,8 +112,17 @@ public class Lobs {
 	return Between.newInstance(_bg, content, _border);
     }
 
+    public static LobFont font(Color color) {
+	LobFont sf = SimpleLobFont.newInstance("serif", 0, 16, color);
+	return FilterLobFont.newInstance(sf);
+    }
+
+    public static LobFont font() {
+	return font(Color.black);
+    }
+
     public static Lob text(String s) {
-	return text(defaultFont, s);
+	return text(font(), s);
     }
 
     public static Lob text(LobFont font, String s) {
@@ -124,7 +130,7 @@ public class Lobs {
     }
 
     public static Lob text(Text text) {
-	return text(defaultFont, text);
+	return text(font(), text);
     }
 
     public static Lob text(LobFont font, Text text) {
