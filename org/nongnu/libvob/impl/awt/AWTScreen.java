@@ -383,6 +383,11 @@ public abstract class AWTScreen
             if (cache == null) {
                 gr.setColor(Color.white);
                 gr.fillRect(0, 0, d.width, d.height);
+
+		/* "a splash screen" for the impatient user */
+		gr.setColor(Color.black);
+		renderMessage(gr, d, "Loading...", 36);
+
                 return;
             }
             if(useGlobalCache)
