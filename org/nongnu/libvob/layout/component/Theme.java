@@ -93,9 +93,20 @@ public class Theme {
 
 	Model title = Parameter.model(Window.TITLE, new ObjectModel(""));
 
+	Lob rect = new Frame(null, darkColor, 1, 0, true, false, false);
+	rect = new RequestChangeLob(rect, 3, 3, 3, 3, 3, 3);
+	Lob stipple = new Margin(new RepeatLob(new Margin(rect, 1)), 0);
+
+	Box titleBox = new Box(Lob.X);
+	titleBox.addRequest(new KeyLob(stipple, "left stipple"), 20, 20, 20);
+	titleBox.glue(5, 5, 5);
+	titleBox.add(new NoGrowLob(new Label(title, whiteFont)));
+	titleBox.glue(5, 5, 5);
+	titleBox.addRequest(new KeyLob(stipple, "right stipple"), 0, 0, inf);
+
 	MonoLob titleLob = new Frame(darkColor, null, 0, 1, 
 				     false, false, false);
-	titleLob.setContent(new Label(title, whiteFont));
+	titleLob.setContent(titleBox);
 
 	l = Parameter.lob(LobMonoLob.CONTENT);
 	

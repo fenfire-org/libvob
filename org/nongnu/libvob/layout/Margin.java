@@ -32,51 +32,67 @@ import org.nongnu.libvob.*;
  */
 public class Margin extends AbstractMonoLob {
 
-    protected float margin;
+    protected float left, right, top, bottom;
 
     public Margin(Lob content, float margin) {
-	super(content);
-	this.margin = margin;
+	this(content, margin, margin, margin, margin);
     }
 
-    public void setMargin(float margin) {
-	this.margin = margin;
-	chg();
+    public Margin(Lob content, float x, float y) {
+	this(content, x, x, y, y);
+    }
+
+    public Margin(Lob content, float left, float right, 
+		  float top, float bottom) {
+	super(content);
+	this.left = left;
+	this.right = right;
+	this.top = top;
+	this.bottom = bottom;
     }
 
     protected Object clone(Object[] params) {
-	return new Margin((Lob)params[0], margin);
+	return new Margin((Lob)params[0], left, right, top, bottom);
     }
 
     public float getMinSize(Axis axis) {
-	return content.getMinSize(axis) + 2*margin;
+	if(axis == X) 
+	    return content.getMinSize(axis) + left + right;
+	else
+	    return content.getMinSize(axis) + top + bottom;
     }
 
     public float getNatSize(Axis axis) {
-	return content.getNatSize(axis) + 2*margin;
+	if(axis == X) 
+	    return content.getNatSize(axis) + left + right;
+	else
+	    return content.getNatSize(axis) + top + bottom;
     }
 
     public float getMaxSize(Axis axis) {
-	return content.getMaxSize(axis) + 2*margin;
+	if(axis == X) 
+	    return content.getMaxSize(axis) + left + right;
+	else
+	    return content.getMaxSize(axis) + top + bottom;
     }
 
     public boolean mouse(VobMouseEvent e, float x, float y) {
-	return content.mouse(e, x - margin, y - margin);
+	return content.mouse(e, x - left, y - top);
     }
 
     public void setSize(float requestedWidth, float requestedHeight) {
-	content.setSize(requestedWidth - 2*margin,
-			requestedHeight - 2*margin);
+	content.setSize(requestedWidth - left - right,
+			requestedHeight - top - bottom);
     }
 
     public void render(VobScene scene, int into, int matchingParent,
 		       float w, float h, float d,
 		       boolean visible) {
-	int cs = scene.coords.box(into, margin, margin, 
-				  w - 2*margin, h - 2*margin);
+	int cs = scene.coords.box(into, left, top, 
+				  w - left - right, h - top - bottom);
 
 	content.render(scene, cs, matchingParent,
-		       w - 2*margin, h - 2*margin, d,
+		       w - left - right, h - top - bottom, d,
 		       visible);
     }
 }
