@@ -32,10 +32,6 @@ import java.util.*;
 
 public class TransformLobList extends RealtimeObject implements LobList { 
 
-    public interface Transform extends Realtime {
-	public Object transform(Object o);
-    }
-
     private List elements;
     private Transform transform;
 

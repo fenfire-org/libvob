@@ -113,6 +113,8 @@ for match in new_realtime.finditer(src):
     parameters = params_spec.split(',')
     body = src[match.end() : end-1]
 
+    if parameters == ['']: parameters = []
+
     fields = ';'.join(parameters) + ';'
     params = [variable.match(p).group(2) for p in parameters]
 
@@ -133,9 +135,10 @@ for match in new_realtime.finditer(src):
                 %(body)s
         }
 
-        private static final Factory %(impl)s_FACTORY = new Factory() {
-            protected Object object() { return new %(impl)s(); }
-        };
+        private static final RealtimeObject.Factory %(impl)s_FACTORY =
+            new RealtimeObject.Factory() {
+                protected Object create() { return new %(impl)s(); }
+            };
 
         private static %(impl)s new%(impl)s(%(params_spec)s) {
             %(impl)s o = (%(impl)s)%(impl)s_FACTORY.object();
