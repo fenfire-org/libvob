@@ -104,6 +104,13 @@ public abstract class VobCoorder {
 	return ortho(into, 0, 0, 0, tmp[0], tmp[1]);
     }
 
+    /** Return a coordinate system whose origin is at the center
+     *  of the parent.
+     */
+    public int center(int box) {
+	return translate(unitSq(box), .5f, .5f, 0);
+    }
+
     abstract public int orthoBox(int into, float z, float x, float y, float sx, float sy, float w, float h) ;
     abstract public void setOrthoBoxParams(int cs, float z, float x, float y, float sx, float sy, float w, float h) ;
 
@@ -156,6 +163,9 @@ public abstract class VobCoorder {
     public int invert(int f) {
 	throw new Error("Not implemented in this coorder\n\n");
     }
+
+    abstract public int between(int a, int b);
+    abstract public int translatePolar(int parent, float distance, float angle);
 
     /** Get the size of the "unit square" of the given coordinate
      * system. This is the size that the unit square of unitSqCS() 

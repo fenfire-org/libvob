@@ -131,7 +131,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 			      int[] interpList, float fract,
 			      OrthoRenderInfo info
 			) throws DoNotInterpolateException {
-
+	//p("cs: "+cs1);
 	if(interpList != null) {
 	    this.interpList = interpList;
 	    this.otherCoorder = other;
@@ -518,10 +518,46 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	}, 
 	new Trans() {   // 20 unitSq
 	    void doTransformRect(float[] rect, boolean useInterp) { 
-		throw new Error("unitSq unimplemented");
+		//System.out.println(rect[0]+" "+rect[1]+" "+rect[2]+" "+rect[3]);
+		rect[0] *= sx();
+		rect[1] *= sy();
+		rect[2] *= sx();
+		rect[3] *= sy();
+
+		//System.out.println(rect[0]+" "+rect[1]+" "+rect[2]+" "+rect[3]);
+		transformRect(getParent(), rect, useInterp);
+
+		//System.out.println(rect[0]+" "+rect[1]+" "+rect[2]+" "+rect[3]);
 	    }
 	    void doInverseTransformRect(float[] rect, boolean useInterp) { 
-		throw new Error("unitSq unimplemented");
+		inverseTransformRect(getParent(), rect, useInterp);
+
+		rect[0] /= sx();
+		rect[1] /= sy();
+		rect[2] /= sx();
+		rect[3] /= sy();
+	    }
+	    float sx() {
+		Trans t = getParentTrans();
+		try {
+		    return t.w();
+		} finally {
+		    t.pop();
+		}
+	    }
+	    float sy() {
+		Trans t = getParentTrans();
+		try {
+		    return t.h();
+		} finally {
+		    t.pop();
+		}
+	    }
+	    float w() {
+		return 1;
+	    }
+	    float h() {
+		return 1;
 	    }
 	},
 	new Trans() {   // 21 between
@@ -730,8 +766,18 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    p.pop();
 	    return y; 
 	}
-	float w() { return 1; }
-	float h() { return 1; }
+	float w() {
+	    Trans p = getParentTrans();
+	    float w = p.w();
+	    p.pop();
+	    return w; 
+	}
+	float h() { 
+	    Trans p = getParentTrans();
+	    float h = p.h();
+	    p.pop();
+	    return h; 
+	}
 
 	void getWH(float[] wh, boolean useInterp) {
 	    int ocs;
@@ -763,13 +809,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    } else if(ocs == VobMatcher.DONT_INTERP) {
 		wh[0] = 1; wh[1] = 1;
 	    } else if(ocs == VobMatcher.SHOW_IN_INTERP) {
-		if(w() == 1 && h() == 1) {
-		    Trans p = getParentTrans();
-		    p.getWH(wh, useInterp);
-		    p.pop();
-		} else {
-		    wh[0] = w(); wh[1] = h();
-		}
+		wh[0] = w(); wh[1] = h();
 	    }		
 	}
     }
