@@ -67,11 +67,13 @@ class Scene:
             textcursor -= 1
         elif k.lower() == 'right':
             textcursor += 1
-            
-        vob.AbstractUpdateManager.chg()
+
+        print self.anim
+        #self.anim.animate()
         
     def mouse(self, m): pass
 
+    foo = 0
     def scene(self, scene):
         _ = scene
         matcher = org.nongnu.libvob.layout.IndexedVobMatcher()
@@ -80,6 +82,20 @@ class Scene:
                                            _.gfxapi, _.window, _.size)
             
         scene.put(background((1,1,.8)))
+
+        if self.foo:
+            cs1 = scene.coords.box(0, 50, 50, 1, 1)
+            cs2 = scene.coords.box(0, 80, 80, 1, 1)
+        else:
+            cs1 = scene.coords.box(0, 80, 50, 1, 1)
+            cs2 = scene.coords.box(0, 50, 80, 1, 1)
+
+        self.foo = not self.foo
+
+        scene.matcher.add(0, cs1, "foo")
+        scene.matcher.add(0, cs2, "bar")
+
+        scene.put(org.nongnu.libvob.vobs.SimpleConnection(0,0,0,0,java.awt.Color.black), cs1, cs2)
 
         lob = TableLob.newInstance(Table())
         layout = lob.layout(400, 300)

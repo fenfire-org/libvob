@@ -119,6 +119,7 @@ def loadScenes():
 	    exec open(scenefile) in globals(), globals()
 	    if currentScene == None:
 		currentScene = Scene()
+                currentScene.anim = anim
 	else:
 	    print "No file found, trying module.",scenefile
 	    exec """
@@ -135,7 +136,9 @@ theModule = %(scenefile)s
 	    globalScenes = []
 	    for mod in mods:
 		if getattr(mod, "Scene", None):
-		    globalScenes.append(mod.Scene())
+                    sc = mod.Scene()
+                    sc.anim = anim
+		    globalScenes.append(sc)
 	    print globalScenes
 
             scenes = [ (firstDocLine(scene),scene) for scene in globalScenes ]
@@ -299,7 +302,7 @@ class Show(vob.AbstractShower):
 class Main(Runnable):
     def run(self):
 	b,s = (Bindings(), Show())
-	global w
+	global w, anim
 	w = gfxapi.createWindow()
 
 	geometry = java.lang.System.getProperty("vob.windowsize", "1024x768")
