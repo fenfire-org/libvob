@@ -20,6 +20,8 @@
 # 
 
 from org.nongnu.libvob.lob import *
+from org.nongnu.libvob.lob.lobs import *
+from javolution.lang import *
 
 from java.awt import Color
 
@@ -33,6 +35,10 @@ class Table(TableLob.Table):
         return Lobs.filledRect(Color(50 + row*10, 0, 50 + col*10))
         #return Lobs.rect(Color.red, 2)
 
+def render(scene, layout, x, y):
+        cs = scene.coords.translate(0, x, y)
+        layout.render(scene, cs, 0, 1, 1)
+
 class Scene:
     def key(self, k):
         vob.AbstractUpdateManager.chg()
@@ -44,9 +50,15 @@ class Scene:
 
         lob = TableLob.newInstance(Table())
         layout = lob.layout(400, 300)
+        render(scene, layout, 100, 100)
 
-        cs = scene.coords.translate(0, 100, 100)
-        layout.render(scene, cs, 0, 1, 1)
+        font = SimpleLobFont.newInstance("serif", 0, 16, Color.blue)
+        text = Text.valueOf("Hello, World!")
+        lob = BoxLob.newInstance(Axis.X, TextLobList.newInstance(font, text))
+
+        size = lob.getSizeRequest()
+        layout = lob.layout(size.natW, size.natH)
+        render(scene, layout, 300-size.natW/2, 50)
 
         print 'scene rendered'
         
