@@ -27,6 +27,7 @@ Lobs.java
  */
 package org.nongnu.libvob.lob;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.lob.lobs.*;
 import org.nongnu.libvob.vobs.*;
 import org.nongnu.libvob.util.*;
 import javolution.realtime.*;

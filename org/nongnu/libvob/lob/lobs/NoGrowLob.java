@@ -1,7 +1,7 @@
 /*
-SubLobList.java
+NoGrowLob.java
  *    
- *    Copyright (c) 2003-2005, Benja Fallenstein
+ *    Copyright (c) 2004, Benja Fallenstein
  *
  *    This file is part of libvob.
  *    
@@ -25,45 +25,46 @@ SubLobList.java
 /*
  * Written by Benja Fallenstein
  */
-package org.nongnu.libvob.lob;
-import javolution.realtime.*;
-import java.util.*;
+package org.nongnu.libvob.lob.lobs;
+import org.nongnu.libvob.lob.*;
+import org.nongnu.libvob.*;
+import org.nongnu.libvob.util.*;
 
-public class SubLobList extends RealtimeObject implements LobList { 
+public class NoGrowLob extends AbstractDelegateLob {
 
-    private LobList list;
-    private int start, end;
+    protected Axis axis;
 
-    private SubLobList() {}
+    private NoGrowLob() {}
 
-    public static SubLobList newInstance(LobList list, int start, int end) {
-	SubLobList l = (SubLobList)FACTORY.object();
-	l.list = list; l.start = start; l.end = end;
+    public NoGrowLob newInstance(Lob content) {
+	return newInstance(null, content); // don't grow on either axis
+    }
+
+    public NoGrowLob newInstance(Axis axis, Lob content) {
+	NoGrowLob l = (NoGrowLob)FACTORY.object();
+	l.axis = axis;
+	l.delegate = content;
 	return l;
     }
 
-    public int getLobCount() {
-	return end-start;
-    }
+    public SizeRequest getSizeRequest() {
+	SizeRequest r = delegate.getSizeRequest();
+	SizeRequest s = SizeRequest.newInstance(r.minW, r.natW, r.maxW, 
+						r.minH, r.natH, r.maxH);
 
-    public Lob getLob(int index) {
-	if(start+index >= end)
-	    throw new IndexOutOfBoundsException(index+" >= "+(end-start));
-	
-	return list.getLob(start+index);
-    }
-
-    public boolean move(ObjectSpace os) {
-	if(super.move(os)) {
-	    list.move(os);
-	    return true;
+	if(axis == Axis.X || axis == null) {
+	    s.minW = r.natW; s.maxW = r.natW;
 	}
-	return false;
+	if(axis == Axis.Y || axis == null) {
+	    s.minH = r.natH; s.maxH = r.natH;
+	}
+
+	return s;
     }
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
-		return new SubLobList();
+		return new NoGrowLob();
 	    }
 	};
 }

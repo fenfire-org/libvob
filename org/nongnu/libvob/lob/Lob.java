@@ -29,11 +29,12 @@ package org.nongnu.libvob.lob;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.util.*;
 import org.nongnu.navidoc.util.Obs;
+import javolution.realtime.*;
 import java.util.*;
 
 /** A <em>layoutable</em> object.
  */
-public interface Lob {
+public interface Lob extends Realtime {
 
     SizeRequest getSizeRequest();
 

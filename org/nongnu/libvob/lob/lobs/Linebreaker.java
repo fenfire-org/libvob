@@ -25,10 +25,9 @@ TableLob.java
 /*
  * Written by Benja Fallenstein
  */
-package org.nongnu.libvob.lob;
+package org.nongnu.libvob.lob.lobs;
+import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.*;
-import org.nongnu.libvob.impl.DefaultVobMap; // for chaining coordinate systems
-import org.nongnu.navidoc.util.Obs;
 import javolution.realtime.*;
 import java.util.*;
 

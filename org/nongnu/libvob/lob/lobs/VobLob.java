@@ -25,7 +25,8 @@ VobLob.java
 /*
  * Written by Benja Fallenstein
  */
-package org.nongnu.libvob.lob;
+package org.nongnu.libvob.lob.lobs;
+import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.util.*;
 import javolution.realtime.*;
