@@ -38,7 +38,7 @@ public class Button extends LobMonoLob implements Component {
     public static final Object[] PARAMS = { CONTENT, ACTION, KEY };
 
     public Button(String text, Action action) {
-	this(new Label(text), action, new ObjectModel(URI));
+	this(new Label(text), action, new ObjectModel(null));
     }
 
     public Button(String text, Action action, Model key) {
@@ -46,7 +46,7 @@ public class Button extends LobMonoLob implements Component {
     }
 
     public Button(Lob content, Action action) {
-	this(content, action, new ObjectModel(URI));
+	this(content, action, new ObjectModel(null));
     }
 
     public Button(Lob content, Action action, Model key) {

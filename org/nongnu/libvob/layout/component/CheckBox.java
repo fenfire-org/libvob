@@ -52,7 +52,7 @@ public class CheckBox extends LobMonoLob implements Component {
     }
 
     public CheckBox(Lob content, Model checked) {
-	this(content, checked, new ObjectModel(URI));
+	this(content, checked, new ObjectModel(null));
     }
 
     public CheckBox(Lob content, Model checked, Model key) {

@@ -46,7 +46,7 @@ public class ListBox extends LobLob implements Component {
     }
 
     public ListBox(ListModel elements, Lob template) {
-	this(elements, template, new ObjectModel(URI));
+	this(elements, template, new ObjectModel(null));
     }
 
     public ListBox(ListModel elements, Lob template, Model key) {

@@ -29,20 +29,29 @@ package org.nongnu.libvob.layout.component;
 import org.nongnu.libvob.layout.*;
 import java.util.*;
 
-public class Window extends LobMonoLob {
+public class Window extends LobMonoLob implements Component {
 
     public static final String 
 	URI = "http://fenfire.org/2004/07/layout/Window",
 	TITLE = "http://fenfire.org/2004/07/layout/windowTitle";
 
+    public static final Object[] PARAMS = { CONTENT, TITLE, KEY };
+
     public Window(Lob content, String title) {
-	this(content, new ObjectModel(title));
+	this(content, title, new ObjectModel(null));
+    }
+    public Window(Lob content, String title, Model key) {
+	this(content, new ObjectModel(title), key);
     }
 
     public Window(Lob content, Model title) {
+	this(content, title, new ObjectModel(null));
+    }
+    public Window(Lob content, Model title, Model key) {
 	Map params = new HashMap();
 	params.put(CONTENT, content);
 	params.put(TITLE, title);
+	params.put(KEY, key);
 
 	Theme t = Theme.getDefaultTheme();
 

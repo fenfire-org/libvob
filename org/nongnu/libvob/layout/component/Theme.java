@@ -79,6 +79,8 @@ public class Theme {
 
 	getFont(); getWhiteFont(); // ensure they're initialized
 
+	Model key = Parameter.model(Component.KEY);
+
 
 	// ThemeFrame template
 
@@ -86,7 +88,7 @@ public class Theme {
 
 	l = new Frame(l, lightColor, darkColor, 1, 3, false, false, /*true*/false);
 
-	map.put(ThemeFrame.URI, l);
+	map.put(ThemeFrame.URI, new KeyLob(l, key));
 
 
 	// Window template
@@ -119,12 +121,10 @@ public class Theme {
 	l = new Frame(vbox, lightColor, darkColor, 1, 0, true, true, false);
 	l = new Frame(l, null, darkColor, 1, 0, false, false, false);
 
-	map.put(Window.URI, l);
+	map.put(Window.URI, new KeyLob(l, key));
 
 
 	// Button template
-
-	Model key = Parameter.model(Component.KEY);
 
 	Action action = Parameter.action(Button.ACTION, null);
 	l = Parameter.lob(LobMonoLob.CONTENT);
@@ -135,9 +135,8 @@ public class Theme {
 		      true, true, false);
 	
 	l = new ClickController(l, 1, action);
-	l = new KeyLob(l, key);
 
-	map.put(Button.URI, l);
+	map.put(Button.URI, new KeyLob(l, key));
 
 
 	// CheckBox template

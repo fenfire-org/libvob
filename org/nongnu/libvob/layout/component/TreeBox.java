@@ -42,7 +42,7 @@ public class TreeBox extends LobLob implements Component {
 	SELECTED = ListBox.SELECTED;
 
     public TreeBox(Model root, ListModel children, Lob template) {
-	this(root, children, template, new ObjectModel(URI));
+	this(root, children, template, new ObjectModel(null));
     }
 
     public TreeBox(Model root, ListModel children, Lob template, Model key) {

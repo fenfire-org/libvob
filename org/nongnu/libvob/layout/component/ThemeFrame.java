@@ -33,16 +33,21 @@ import java.util.*;
 /** A frame whose appearance is determined by the theme; usually
  *  it will be similar to the frame rendered around components.
  */
-public class ThemeFrame extends LobMonoLob {
+public class ThemeFrame extends LobMonoLob implements Component {
 
     public static final String 
 	URI = "http://fenfire.org/2004/07/layout/ThemeFrame";
 
-    public static final Object[] PARAMS = { CONTENT };
+    public static final Object[] PARAMS = { CONTENT, KEY };
 
     public ThemeFrame(Lob content) {
+	this(content, new ObjectModel(null));
+    }
+
+    public ThemeFrame(Lob content, Model key) {
 	Map params = new HashMap();
 	params.put(CONTENT, content);
+	params.put(KEY, key);
 
 	Theme t = Theme.getDefaultTheme();
 
