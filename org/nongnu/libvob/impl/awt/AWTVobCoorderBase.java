@@ -96,11 +96,9 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
     protected void getAbsoluteRect(int cs, float[] into, float[] scale,
 				   boolean useInterp) {
-	for(int i=0; i<5; i++) 
-	    into[i] = 0;
-
-	getSqSize(cs, wh);
-	into[2] = wh[0]; into[3] = wh[1];
+	into[0] = 0; into[1] = 0;
+	into[2] = 1; into[3] = 1;
+	into[4] = 0;
 
 	if (dbg) {
 	    for (int i=0; i<4; i++)
@@ -110,10 +108,17 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	Trans t = getTrans(cs);
 	try {
 	    t.transformRect(into, useInterp);
-	    scale[0] = t.sx(); scale[1] = t.sy();
+	    wh[0] = t.w(); wh[1] = t.h();
+	    //scale[0] = t.sx(); scale[1] = t.sy();
 	} finally {
 	    t.pop();
 	}
+
+	scale[0] = into[2];
+	scale[1] = into[3];
+
+	into[2] = wh[0]*scale[0];
+	into[3] = wh[1]*scale[1];
     }
 
 

@@ -65,9 +65,9 @@ public class Between extends AbstractMonoLob {
 		       float w, float h, float d,
 		       boolean visible) {
 	int _cs = scene.coords.box(into, w, h);
-	int cs = scene.coords.translate(_cs, 0, 0, 2*d/3);
+	int cs = scene.coords.box(_cs, 2*d/3, 0, 0, w, h);
 	back.render(scene, cs, matchingParent, w, h, d/3, visible);
-	cs = scene.coords.translate(_cs, 0, 0, d/3);
+	cs = scene.coords.box(_cs, d/3, 0, 0, w, h);
 	content.render(scene, cs, matchingParent, w, h, d/3, visible);
 	cs = _cs;
 	front.render(scene, cs, matchingParent, w, h, d/3, visible);
