@@ -62,6 +62,9 @@ public class Parameter extends AbstractModel.AbstractObjectModel {
     public static ListModel listModel(Object key) {
 	return listModel(key, new ListModel.Simple());
     }
+    public static SetModel setModel(Object key) {
+	return setModel(key, new SetModel.Simple());
+    }
     public static MapModel mapModel(Object key) {
 	return mapModel(key, new MapModel.Simple());
     }
@@ -77,6 +80,9 @@ public class Parameter extends AbstractModel.AbstractObjectModel {
     }
     public static ListModel listModel(Object key, ListModel value) {
 	return new ListModel.ModelListModel(new Parameter(key, value));
+    }
+    public static SetModel setModel(Object key, SetModel value) {
+	return new SetModel.ModelSetModel(new Parameter(key, value));
     }
     public static SequenceModel sequenceModel(Object key, SequenceModel value){
 	return new SequenceModel.ModelSequenceModel(new Parameter(key, value));

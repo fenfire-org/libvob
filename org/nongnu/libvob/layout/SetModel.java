@@ -124,4 +124,52 @@ public interface SetModel extends CollectionModel, Set {
 	    cache.removeAll(remove);
 	}
     }
+
+
+    class ModelSetModel extends Delegate {
+
+	protected Model modelModel;
+	protected SetModel currentModel;
+
+	public ModelSetModel(Model modelModel) {
+	    this.modelModel = modelModel;
+	    currentModel = (SetModel)modelModel.get();
+	    if(currentModel != null) currentModel.addObs(this);
+
+	    modelModel.addObs(new Obs() { public void chg() {
+		//currentModel.removeObs(this);
+		currentModel = (SetModel)ModelSetModel.this.modelModel.get();
+		if(currentModel != null) currentModel.addObs(this);
+		obses.trigger();
+	    }});
+	}
+
+	protected Replaceable[] getParams() {
+	    return new Replaceable[] { modelModel };
+	}
+	protected Object clone(Object[] params) {
+	    return new ModelSetModel((Model)params[0]);
+	}
+
+	protected Collection getDelegate() {
+	    return currentModel;
+	}
+
+	protected CollectionModel clone(Collection newContents) {
+	    throw new UnsupportedOperationException();
+	}
+    }
+
+    class NoClone extends Delegate {
+	SetModel set;
+	public NoClone(SetModel set) { 
+	    this.set = set; 
+	    set.addObs(this);
+	}
+
+	public Replaceable[] getParams() { return NO_PARAMS; }
+	public Object clone(Object[] params) { return new NoClone(set); }
+
+	public Collection getDelegate() { return set; }
+    }
 }
