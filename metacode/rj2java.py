@@ -18,7 +18,44 @@
 # Public License along with Libvob; if not, write to the Free
 # Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
 # MA  02111-1307  USA
-# 
+#
+
+'''
+A code preprocessor to make Javolution programming a bit easier.
+
+With Javolution, a simple inner class like
+
+    new LobList() {
+        public int getLobCount() { list.getLobCount(); }
+        public Lob getLob(int index) {
+            return KeyLob.newInstance(list.getLob(index));
+        }
+    }
+
+becomes a really long and complex thing, see KeyLobList for how the above
+then looks.
+
+I found this too hard in practice, so with this new preprocessor, this becomes
+
+    new @realtime LobList(LobList list) {
+        public int getLobCount() { list.getLobCount(); }
+        public Lob getLob(int index) {
+            return KeyLob.newInstance(list.getLob(index));
+        }
+    }
+
+The preprocessor will create an inner class and create a Javolution FACTORY
+for that class etc.
+
+The thing after @realtime must be an interface, not a class (for now).
+
+We can not access final members of the enclosing method from the inner class,
+though, that was too hard to program, that's why we explicitly have to say
+
+    (LobList list)
+
+in the 'new @realtime' clause.
+'''
 
 import sys, re
 
