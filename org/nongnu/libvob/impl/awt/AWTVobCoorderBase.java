@@ -156,25 +156,26 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		    ocs = VobMatcher.SHOW_IN_INTERP;
 
 		if(ocs >= 0) {
-		    Trans t = getTrans(cs);
-		    interpolated[cs] = !t.isDontInterpSet();
-		    t.pop();
+		    interpolated[cs] = true;
 
-		    if(interpolated[cs]) {
-			for(int j=0; j<5; j++) {
-			    coords[5*cs+j] = 
-				i(coordinates.coords[5*cs+j],
-				  otherCoorder.coordinates.coords[5*ocs+j],
-				  fract);
-			}
+		    for(int j=0; j<5; j++) {
+			coords[5*cs+j] = 
+			    i(coordinates.coords[5*cs+j],
+			      otherCoorder.coordinates.coords[5*ocs+j],
+			      fract);
 		    }
 		} else if(ocs == VobMatcher.DONT_INTERP) {
 		    interpolated[cs] = false;
 		} else if(ocs == VobMatcher.SHOW_IN_INTERP) {
-		    Trans t = getTrans(cses[i]);
-		    interpolated[cs] = !t.isDontInterpSet();
-		    if(interpolated[cs])
-			t.put(this);
+		    Trans t = getTrans(cs);
+
+		    interpolated[cs] = true;
+		    for(int k=0; k<t.nparents(); k++)
+			if(!interpolated[inds[cs+k+1]])
+			    interpolated[cs] = false;
+
+		    if(interpolated[cs]) t.put(this);
+
 		    t.pop();
 		} else {
 		    throw new UnsupportedOperationException("Interpolation type: "+ocs);
@@ -857,19 +858,6 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    } else if(ocs == VobMatcher.SHOW_IN_INTERP) {
 		wh[0] = w(); wh[1] = h();
 	    }		
-	}
-
-	boolean isDontInterpSet() {
-	    if(cs() < interpList.length && 
-	       interpList[cs()] == VobMatcher.DONT_INTERP) return true;
-	    
-	    for(int i=0; i<nparents(); i++) {
-		Trans p = getTrans(inds[cs()+i+1]);
-		if(p.isDontInterpSet()) { p.pop(); return true; }
-		p.pop();
-	    }
-
-	    return false;
 	}
     }
 
