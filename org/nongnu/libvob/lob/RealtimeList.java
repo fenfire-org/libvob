@@ -239,8 +239,7 @@ public abstract class RealtimeList extends RealtimeCollection implements List {
                 protected Object create() { return new _ListIterator_1(); }
             };
 
-        private static _ListIterator_1 new_ListIterator_1(RealtimeList list, int index, 
-					    int lastIndex, int lastModCount) {
+        private static _ListIterator_1 new_ListIterator_1(RealtimeList list, int index, int lastIndex, int lastModCount) {
             _ListIterator_1 the_new_ListIterator_1 = (_ListIterator_1)_ListIterator_1_FACTORY.object();
             the_new_ListIterator_1.list = list;
 the_new_ListIterator_1.index = index;
@@ -309,8 +308,7 @@ the_new_ListIterator_1.lastModCount = lastModCount;
                 protected Object create() { return new _RealtimeList_2(); }
             };
 
-        private static _RealtimeList_2 new_RealtimeList_2(RealtimeList list, 
-					  int from, int to) {
+        private static _RealtimeList_2 new_RealtimeList_2(RealtimeList list, int from, int to) {
             _RealtimeList_2 the_new_RealtimeList_2 = (_RealtimeList_2)_RealtimeList_2_FACTORY.object();
             the_new_RealtimeList_2.list = list;
 the_new_RealtimeList_2.from = from;

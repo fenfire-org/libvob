@@ -139,7 +139,7 @@ public class TableLob extends AbstractLob {
 	    // we have not been given enough space to layout ourselves;
 	    // work around it
 
-	    Lob l = Lobs.translate(this, 0, 0);
+	    Lob l = Lobs.translate(layout(size.minW, size.minH), 0, 0);
 	    l = l.layout(width, height);
 	    return l;
 	}

@@ -247,13 +247,16 @@ public class Lobs {
     }
 
     public static LobFont font(Color color) {
-	if(defaultFont == null)
-	    defaultFont = SimpleLobFont.newInstance("serif", 0, 16, color);
-	return FilterLobFont.newInstance(defaultFont);
+	LobFont font = SimpleLobFont.newInstance("serif", 0, 16, color);
+	return FilterLobFont.newInstance(font);
     }
 
     public static LobFont font() {
-	return font(Color.black);
+	if(defaultFont == null) {
+	    defaultFont = font(Color.black);
+	    defaultFont.move(Realtime.ObjectSpace.HEAP);
+	}
+	return defaultFont;
     }
 
     public static List text(String s) {

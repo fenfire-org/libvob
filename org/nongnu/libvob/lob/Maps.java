@@ -51,4 +51,23 @@ public class Maps {
 	m.put(k2, v2);
 	return m;
     }
+
+    public static Map map(Object k1, Object v1, Object k2, Object v2,
+			  Object k3, Object v3) {
+	Map m = FastMap.newInstance();
+	m.put(k1, v1);
+	m.put(k2, v2);
+	m.put(k3, v3);
+	return m;
+    }
+
+    public static Map map(Object k1, Object v1, Object k2, Object v2,
+			  Object k3, Object v3, Object k4, Object v4) {
+	Map m = FastMap.newInstance();
+	m.put(k1, v1);
+	m.put(k2, v2);
+	m.put(k3, v3);
+	m.put(k4, v4);
+	return m;
+    }
 }

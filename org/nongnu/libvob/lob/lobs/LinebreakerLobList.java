@@ -42,7 +42,7 @@ public class LinebreakerLobList extends RealtimeList {
 
     private static final float INF = Breakable.INF;
 
-    public static int MAXSIZE = (1 << 14);
+    public static int MAXSIZE = (1 << 10);
 
     protected Axis lineAxis;
     protected List items;
@@ -68,16 +68,20 @@ public class LinebreakerLobList extends RealtimeList {
 	int nitems = items.size();
 
 	breaks[0] = -1;
-
 	float pos = 0;
 	lineCount = 1;
 	int i = -1;
 	float breakQuality = -INF;
+	float preBreakWid = 0, postBreakWid = 0;
+
+	float lastwid = 0;
 
 	do {
 	    int next;
 	    float wid = 0, nextwid = 0;
 	    float nextBreakQuality = INF;
+
+	    float nextPreBreakWid = 0, nextPostBreakWid = 0;
 
 	    for(next=i+1; next<items.size(); next++) {
 		PoolContext.enter();
@@ -88,8 +92,19 @@ public class LinebreakerLobList extends RealtimeList {
 		    nextBreakQuality = -INF;
 		    
 		    Breakable br = (Breakable)l.getImplementation(Breakable.class);
-		    if(br != null)
+		    if(br != null) {
 			nextBreakQuality = br.getBreakQuality(lineAxis);
+			
+			Lob preBreak = br.getPreBreakLob(lineAxis);
+			if(preBreak != null)
+			    nextPreBreakWid = 
+				preBreak.getSizeRequest().nat(lineAxis);
+
+			Lob postBreak = br.getPostBreakLob(lineAxis);
+			if(postBreak != null)
+			    nextPostBreakWid = 
+				postBreak.getSizeRequest().nat(lineAxis);
+		    }
 
 		    if(nextBreakQuality < 0) {
 			wid += r.nat(lineAxis);
@@ -105,14 +120,18 @@ public class LinebreakerLobList extends RealtimeList {
 	    if(i>=0 && (pos+wid>lineSize || breakQuality >= INF)) {
 		breaks[lineCount] = i;
 		lineCount++;
-
-		pos = 0;
+		
+		pos = postBreakWid;
 	    }
 
 	    pos += wid + nextwid;
 
 	    breakQuality = nextBreakQuality;
+	    preBreakWid = nextPreBreakWid;
+	    postBreakWid = nextPostBreakWid;
 	    i = next;
+
+	    lastwid = nextwid;
 
 	} while(i < items.size());
 
@@ -131,7 +150,7 @@ public class LinebreakerLobList extends RealtimeList {
 	    return Lobs.glue(lineAxis.other(), 0, 0, SizeRequest.INF);
 
 	int start = breaks[line]+1, end = breaks[line+1];
-	if(end > items.size()) end = items.size();
+	//if(end > items.size()) end = items.size(); // XXX huh?
 
 	List lobs = items.subList(start, end);
 
@@ -139,9 +158,11 @@ public class LinebreakerLobList extends RealtimeList {
 	    Lob brLob = (Lob)items.get(breaks[line]);
 	    Breakable br = (Breakable)brLob.getImplementation(Breakable.class);
 
-	    Lob before = br.getPostBreakLob(lineAxis);
-	    if(before != null) {
-		lobs = Lists.concat(Lists.list(before), lobs);
+	    if(br != null) {
+		Lob before = br.getPostBreakLob(lineAxis);
+		if(before != null) {
+		    lobs = Lists.concat(Lists.list(before), lobs);
+		}
 	    }
 	}
 

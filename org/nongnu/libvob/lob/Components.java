@@ -56,7 +56,7 @@ public class Components {
     }
 
 
-
+    
     public static Color 
 	lightColor = new java.awt.Color(1, 1, .9f),
 	darkColor = new java.awt.Color(.7f, .5f, .5f);
@@ -330,8 +330,7 @@ the_new_Transform_1.selected = selected;
                 protected Object create() { return new _Action_4(); }
             };
 
-        private static _Action_4 new_Action_4(Model selected,
-						       Object o) {
+        private static _Action_4 new_Action_4(Model selected, Object o) {
             _Action_4 the_new_Action_4 = (_Action_4)_Action_4_FACTORY.object();
             the_new_Action_4.selected = selected;
 the_new_Action_4.o = o;

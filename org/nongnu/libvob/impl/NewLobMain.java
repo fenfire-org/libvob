@@ -124,7 +124,7 @@ public abstract class NewLobMain extends Main {
 		if(!key.equals("Tab")) {
 		    Lob l = (Lob)focusModel.get();
 		    if(l != null && l.key(key)) {
-			if(!windowAnim.hasSceneReplacementPending())
+			if(!windowAnim.hasAnimModeSet())
 			    windowAnim.animate();
 		    }
 		} else {

@@ -29,6 +29,7 @@ package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.*;
+import javolution.realtime.*;
 import java.util.*;
 
 public class KeyController extends AbstractDelegateLob {
@@ -60,6 +61,15 @@ public class KeyController extends AbstractDelegateLob {
 
     public List getFocusableLobs() {
 	return Lists.list(this);
+    }
+
+    public boolean move(ObjectSpace os) {
+	if(super.move(os)) {
+	    if(actions instanceof Realtime)
+		((Realtime)actions).move(os);
+	    return true;
+	}
+	return false;
     }
 
     private static final Factory FACTORY = new Factory() {
