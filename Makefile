@@ -105,7 +105,7 @@ TEST=.
 test:: test-awt test-gl
 
 test-awt::  # Use: make test TEST=test/gzz/vob/vobmatcher.test, to run a single test.
-	$(GLLIB) $(JYTHON) test.py -f GL $(DBG) $(TEST)
+	$(GLLIB) $(JYTHON) test.py -Dvob.api=awt -f GL $(DBG) $(TEST)
 test-gl::
 	$(GLLIB) $(JYTHON) test.py -Dvob.api=gl -f AWT $(DBG) jni $(TEST)
 

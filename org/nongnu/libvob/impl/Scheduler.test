@@ -1,0 +1,40 @@
+# (c): Matti J. Katila
+
+import java
+import org.nongnu.libvob.impl as ooo
+
+
+def testScheduler():
+    sced = ooo.Scheduler.getInstance()
+    global done
+    done = []
+    ok = [ 'A', 'B', 'C']
+
+    sced.setPriority('A', 0)
+    sced.setPriority('B', 4)
+    sced.setPriority('C', 5)
+
+    class Task(java.lang.Thread):
+        def __init__(self, k):
+            java.lang.Thread.__init__(self)
+            self.t0 = java.lang.System.currentTimeMillis()
+            self.k = k
+            self.start()
+        def run(self):
+            for i in range(8):
+                print self.k,
+                self.sleep(200)
+            global done
+            done.append(self.k)
+
+    sced.schedule(Task('A'), 'A')
+    sced.schedule(Task('B'), 'B')
+    sced.schedule(Task('C'), 'C')
+            
+    import time
+    while len(done) < len(ok):
+        time.sleep(1)
+
+
+    for i in range(len(ok)):
+        if done[i] != ok[i]: raise ok[i]+" error"
