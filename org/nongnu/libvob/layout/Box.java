@@ -35,6 +35,8 @@ import java.util.*;
  *  to fill the requested size.
  */
 public class Box extends AbstractSequence {
+    private static void p(String s) { System.out.println("Box:: "+s); }
+
     static public final Object 
 	URI = "http://fenfire.org/2004/07/layout/Box",
 	AXIS = "http://fenfire.org/2004/07/layout/boxAxis";

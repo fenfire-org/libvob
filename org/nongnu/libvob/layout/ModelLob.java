@@ -31,6 +31,8 @@ public class ModelLob extends AbstractDelegateLob {
 
     protected Model lobModel;
 
+    Lob last;
+
     public ModelLob(Model lobModel) {
 	this.lobModel = lobModel;
 	lobModel.addObs(this);
@@ -43,7 +45,17 @@ public class ModelLob extends AbstractDelegateLob {
 	return new ModelLob((Model)params[0]);
     }
 
+    public void chg() {
+	if(last != null) last.removeObs(this);
+	last = null;
+	super.chg();
+    }
+
     protected Lob getDelegate() {
-	return (Lob)lobModel.get();
+	if(last == null) {
+	    last = (Lob)lobModel.get();
+	    last.addObs(this);
+	}
+	return last;
     }
 }
