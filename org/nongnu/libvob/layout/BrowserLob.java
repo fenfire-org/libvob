@@ -39,29 +39,34 @@ public class BrowserLob extends AbstractDelegateLob {
 
     public interface View {
 	Set getTypes();
-	Lob getViewLob(Model state);
+	Lob getViewLob(Model state, Model viewState);
     }
 
-    public Type ALL = new Type() {
+    public static Type ALL = new Type() {
 	    public boolean contains(Object state) {
 		return true;
 	    }
 	};
 
     protected Model state;
+    protected Model viewState;
+
     protected Set views;
 
     protected List types; // the current *order* of types
     protected Map viewByType;
+    protected Map viewListByType;
 
     protected Lob delegate;
 
-    public BrowserLob(Model state, Set views) {
+    public BrowserLob(Model state, Model viewState, Set views) {
 	this.state = state;
+	this.viewState = viewState;
 	this.views = views;
 
 	this.types = new ArrayList();
 	this.viewByType = new HashMap();
+	this.viewListByType = new HashMap();
 
 	for(Iterator i=views.iterator(); i.hasNext();) {
 	    View v = (View)i.next();
@@ -69,6 +74,14 @@ public class BrowserLob extends AbstractDelegateLob {
 
 	    for(Iterator j=typeSet.iterator(); j.hasNext();) {
 		Type t = (Type)j.next();
+		
+		List l = (List)viewListByType.get(t);
+		if(l == null) {
+		    l = new ArrayList();
+		    viewListByType.put(t, l);
+		}
+
+		l.add(v);
 
 		if(!types.contains(t)) 
 		    types.add(t);
@@ -86,30 +99,92 @@ public class BrowserLob extends AbstractDelegateLob {
     }
 
     protected Replaceable[] getParams() {
-	return new Replaceable[] { state };
+	return new Replaceable[] { state, viewState };
     }
     protected Object clone(Object[] params) {
-	return new BrowserLob((Model)params[0], views);
+	return new BrowserLob((Model)params[0], (Model)params[1], views);
+    }
+
+    protected View getView() {
+	Object s = state.get();
+	
+	for(Iterator i=types.iterator(); i.hasNext();) {
+	    Type type = (Type)i.next();
+	    if(type.contains(s))
+		return (View)viewByType.get(type);
+	}
+
+	return null;
     }
 
     protected Lob getDelegate() {
 	if(delegate == null) {
-	    Object s = state.get();
 
-	    for(Iterator i=types.iterator(); i.hasNext();) {
-		Type type = (Type)i.next();
-		if(type.contains(s)) {
-		    View view = (View)viewByType.get(type);
-		    delegate = view.getViewLob(state);
-		    break;
-		}
-	    }
-
-	    if(delegate == null) delegate = new AlignLob(new org.nongnu.libvob.layout.component.Label("No matching view found!"), .5f, .5f, .5f, .5f);
+	    View view = getView();
+	    if(view != null)
+		delegate = view.getViewLob(state, viewState);
+	    else
+		delegate = new AlignLob(new org.nongnu.libvob.layout.component.Label("No matching view found!"), .5f, .5f, .5f, .5f);
 
 	    delegate.addObs(this);
 	}
 
 	return delegate;
+    }
+
+    public boolean key(String key) {
+	if(key.equals("Ctrl-J"))
+	    changeView(1);
+	else if(key.equals("Ctrl-K"))
+	    changeView(-1);
+	else
+	    return super.key(key);
+
+	return true;
+    }
+
+    public void changeView(int steps) {
+	List list = new ArrayList();
+	System.out.println("views: "+list);
+
+	for(Iterator i=views.iterator(); i.hasNext();) {
+	    View v = (View)i.next();
+
+	    for(Iterator j=v.getTypes().iterator(); j.hasNext();) {
+		Type t = (Type)j.next();
+		if(t.contains(state.get())) {
+		    list.add(v);
+		    break;
+		}
+	    }
+	}
+
+	int index = list.indexOf(getView());
+	index = (index + steps) % list.size();
+	if(index < 0) index += list.size();
+	System.out.println("move to index "+index);
+	changeView((View)list.get(index));
+    }
+
+    public void changeView(View v) {
+	// find first matching type
+
+	Type t = null;
+	for(Iterator i=types.iterator(); i.hasNext();) {
+	    t = (Type)i.next();
+	    if(v.getTypes().contains(t) && t.contains(state.get()))
+		break;
+	}
+
+	if(t == null)
+	    // no matching type
+	    return;
+
+	types.remove(t);
+	types.add(0, t);
+	viewByType.put(t, v);
+
+	delegate = null;
+	chg();
     }
 }
