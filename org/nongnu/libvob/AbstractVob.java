@@ -2,7 +2,8 @@
 AbstractVob.java
  *    
  *    Copyright (c) 2000-2001, Ted Nelson and Tuomas Lukka
- *    Copyright (c) 2003 Tuomas Lukka
+ *    Copyright (c) 2003, Tuomas Lukka
+ *    Copyright (c) 2005, Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -31,6 +32,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Color;
+import javolution.realtime.*;
 
 /** A two-dimensional renderable, interpolatable object.
  * A Vob is simply an object able to render itself.
@@ -45,8 +47,7 @@ import java.awt.Color;
  * @see VobScene
  * @see VobCoorder
  */
-
-public abstract class AbstractVob implements Vob {
+public abstract class AbstractVob extends RealtimeObject implements Vob {
     public static boolean dbg = false;
     private static void pa(String s) { System.err.println(s); }
 

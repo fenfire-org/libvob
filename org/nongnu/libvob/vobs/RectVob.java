@@ -2,7 +2,7 @@
 RectVob.java
  *    
  *    Copyright (c) 2002-2003, Tuomas Lukka
- *    Copyright (c) 2004, Benja Fallenstein
+ *    Copyright (c) 2004-2005, Benja Fallenstein 
  *
  *    This file is part of Libvob.
  *    
@@ -42,10 +42,10 @@ public class RectVob extends AbstractVob implements Obs, Replaceable {
     public static boolean dbg = false;
     private static void pa(String s) { System.err.println(s); }
 
-    protected final Model colorModel;
-    protected final float lineWidth;
+    protected Model colorModel;
+    protected float lineWidth;
 
-    protected final boolean is3d, raised;
+    protected boolean is3d, raised;
 
     public RectVob(Color color, float lineWidth, boolean is3d,
 		   boolean raised) {
@@ -70,6 +70,24 @@ public class RectVob extends AbstractVob implements Obs, Replaceable {
 	colorModel.addObs(this);
     }
 
+    public static RectVob newInstance(Color color, float lineWidth) {
+	return newInstance(color, lineWidth, false, false);
+    }
+
+    public static RectVob newInstance(Color color, float lineWidth, 
+				      boolean raised) {
+	return newInstance(color, lineWidth, true, raised);
+    }
+
+    public static RectVob newInstance(Color color, float lineWidth,
+				      boolean is3d, boolean raised) {
+	RectVob vob = (RectVob)FACTORY.object();
+	vob.colorModel.set(color);
+	vob.lineWidth = lineWidth;
+	vob.is3d = is3d;
+	vob.raised = raised;
+	return vob;
+    }
 
     public Object instantiateTemplate(java.util.Map map) {
 	if(map.get(this) != null) return map.get(this);
@@ -157,5 +175,11 @@ public class RectVob extends AbstractVob implements Obs, Replaceable {
         vs.map.put(vob, coordsys1);
 	return 0;
     }
+
+    private static final Factory FACTORY = new Factory() {
+	    public Object create() { 
+		return new RectVob(new ObjectModel(), 0);
+	    }
+	};
 }
 

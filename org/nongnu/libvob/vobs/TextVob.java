@@ -240,9 +240,11 @@ public class TextVob extends HBox.VobHBox {
     public void setPrev(HBox b) { }
     public void setPosition(int depth, int x, int y, int w, int h) { }
 
+    /*
     public String toString() {
 	return super.toString() + " '"+text+"' ";
     }
+    */
 
     //////////////////////////////
     // Lob implementation

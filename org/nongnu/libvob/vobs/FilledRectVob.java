@@ -53,6 +53,12 @@ public class FilledRectVob extends AbstractVob implements Obs, Replaceable {
 	color.addObs(this);
     }
 
+    public static FilledRectVob newInstance(Color color) {
+	FilledRectVob vob = (FilledRectVob)FACTORY.object();
+	vob.color.set(color);
+	return vob;
+    }
+
     public Object instantiateTemplate(java.util.Map map) {
 	if(map.get(this) != null) return map.get(this);
 
@@ -121,5 +127,11 @@ public class FilledRectVob extends AbstractVob implements Obs, Replaceable {
         vs.map.put(teardown);
 	return 0;
     }
+
+    private static final Factory FACTORY = new Factory() {
+	    public Object create() { 
+		return new FilledRectVob(new ObjectModel());
+	    }
+	};
 }
 
