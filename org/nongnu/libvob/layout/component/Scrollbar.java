@@ -137,8 +137,8 @@ public class Scrollbar extends LobLob {
     }
 
     private Lob middle() {
-	Model min = new FloatModel(10);
-	Lob buttonRect = buttonRect(10, 10, 10);
+	Model min = new FloatModel(15);
+	Lob buttonRect = buttonRect(15, 15, 15);
 	return new RequestChangeLob(axis, buttonRect, min, min, 
 				    knobFract.times(LARGE));
     }

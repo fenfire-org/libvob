@@ -45,4 +45,8 @@ public class FloatModel extends AbstractModel.AbstractFloatModel {
 	this.value = value;
 	obses.trigger();
     }
+
+    public String toString() {
+	return "FloatModel("+value+")";
+    }
 }
