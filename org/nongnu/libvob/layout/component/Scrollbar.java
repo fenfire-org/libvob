@@ -111,19 +111,6 @@ public class Scrollbar extends LobLob {
 	setDelegate(delegate);
     }
 
-    private Lob button(int dir) {
-	Lob button = buttonRect(15, 15, 15);
-	return clickListener(button, dir);
-    }
-
-    private Lob buttonRect(float min, float nat, float max) {
-	Lob rect = rect(min, nat, max);
-	rect = new KeyLob(rect, "inner");
-	rect = new Frame(rect, null, Theme.darkColor, 1, 0, 
-			 false, false, false);
-	return rect;
-    }
-
     private Lob glue(int dir) {
 	Model zero = new FloatModel(0);
 	Model fract = (dir<0) ? fract1 : fract2;
@@ -140,6 +127,19 @@ public class Scrollbar extends LobLob {
 				    knobFract.times(LARGE));
     }
 	
+    private Lob button(int dir) {
+	Lob button = buttonRect(15, 15, 15);
+	return clickListener(button, dir);
+    }
+
+    private Lob buttonRect(float min, float nat, float max) {
+	Lob rect = rect(min, nat, max);
+	rect = new KeyLob(rect, "inner");
+	rect = new Frame(rect, null, Theme.darkColor, 1, 0, 
+			 false, false, false);
+	return rect;
+    }
+
     private Lob rect(float min, float nat, float max) {
 	Lob rect = new Frame(NullLob.instance, Theme.lightColor, 
 			     Theme.darkColor, 1, 0, true, true, false);
