@@ -147,6 +147,37 @@ public class Components {
 
 	return frame(lob);
     }
+    
+    public static Lob menuitem(String s, Action action) {
+	return menuitem(Lobs.hbox(Lobs.text(s)), action);
+    }
+
+    public static Lob menuitem(Lob lob, Action action) {
+	Action _action = action; // XXX close menu if necessary!
+
+	lob = Lobs.margin(lob, 2);
+	return Lobs.clickController(lob, 1, _action);
+    }
+
+    public static Lob menubar() {
+	return menu(Axis.X, Lists.list());
+    }
+
+    public static Lob menu() {
+	return menu(Axis.Y, Lists.list());
+    }
+
+    public static Lob menu(Axis axis, List items) {
+        Lob glue = (axis == Axis.X) ? 
+	    Lobs.glue(Axis.X, 8, 8, 8) : Lobs.glue(Axis.Y, 3, 3, 3);
+
+	Lob l = Lobs.box(axis, items);
+	l = Lobs.align(l, 0, 0);
+	l = Lobs.frame3d(l, lightColor, darkColor, 1, 0, true, false);
+	l = Lobs.frame(l, null, darkColor, 1, 0, false);
+
+	return l;
+    }
 
 
     public static Transform toStringTransform() {

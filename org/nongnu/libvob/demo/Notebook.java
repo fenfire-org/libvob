@@ -69,10 +69,22 @@ public class Notebook extends NewLobMain {
 
 	Lob outerVBox = Lobs.vbox();
 
-	/*
-	Menu menubar = new Menu(X);
-	outerVBox.add(new KeyLob(menubar, "MENU"));
+	Lob menubar = Components.menubar();
 
+	RoleContext.enter("MENU"); 
+	try {
+	    menubar.add(Components.menuitem("Quit", quit));
+	    menubar.add(Lobs.glue(Axis.X, 8, 8, 8));
+	    menubar.add(Components.menuitem("New note", newNote));
+	    menubar.add(Lobs.glue(Axis.X, 8, 8, 8));
+	    menubar.add(Components.menuitem("Delete note", deleteNote));
+
+	    outerVBox.add(RoleContext.lob(menubar));
+	} finally {
+	    RoleContext.exit();
+	}
+
+	/*
 	Menu filemenu = menubar.addMenu("File");
 	filemenu.add("Quit", quit);
 
