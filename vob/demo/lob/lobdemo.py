@@ -115,6 +115,8 @@ class Scene:
         
 
         print 'scene rendered'
+
+        return scene
         
 
 textcursor = -1
