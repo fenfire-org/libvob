@@ -66,7 +66,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	interpList = null;
 	fract = 0;
 
-	coordinates.dirty = true;
+	coordinates.maxcs = 0;
     }
 
 
@@ -76,17 +76,17 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
      */
     protected class Coordinates {
 	float[] coords;
-	boolean dirty;
+	int maxcs; // number of cs that have been put into this Coordinates
 	boolean[] interpolated;
 
 	void init() {
-	    p("init!");
+	    //p("init!");
 
 	    if(coords == null || ninds*5 > coords.length)
 		coords = new float[ninds*5];
 
 	    Arrays.fill(coords, 0);
-	    dirty = false;
+	    maxcs = ncs;
 
 	    for(int i=0; i<ncs; i++) {
 		Trans t = getTrans(cses[i]);
@@ -154,7 +154,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	}
 
 	void check() {
-	    if(dirty || coords == null || ninds*5 > coords.length)
+	    if(maxcs < ncs || coords == null /*|| ninds*5 > coords.length*/)
 		init();
 	}
 
