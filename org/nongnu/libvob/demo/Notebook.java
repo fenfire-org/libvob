@@ -102,7 +102,7 @@ public class Notebook extends LobLob {
 	ListBox noteList = comps.listBox(notes, Note.class, "title",
 					 "NOTES");
 	
-	noteList.setSelectionModel(noteModel);
+	noteList.setSelection(noteModel);
 
 	hbox.addRequest(noteList, 100, 250, 250);
 	hbox.glue(5, 5, 5);

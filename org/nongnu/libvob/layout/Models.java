@@ -33,6 +33,28 @@ public class Models {
 	return new CacheModel(m);
     }
 
+
+    public static Model forall(CollectionModel collection, Model condition) {
+	ListModel list = new ListModel.ListCache(collection);
+	list = new ListModel.Transform(list, condition);
+	
+	return new FunctionModel(list) { public Object f(Object o, Obs obs) {
+	    for(Iterator i=((Collection)o).iterator(); i.hasNext();) {
+		Model m = (Model)i.next();
+		m.addObs(obs);
+		if(!m.getBool())
+		    return Boolean.FALSE;
+	    }
+
+	    return Boolean.TRUE;
+	}};
+    }
+
+
+    // adaption of an object's methods as a model
+    // so from an object foo, you can create a model whose get() method
+    // calls foo.getBlah() and whose set method calls foo.setBlah(...).
+
     public static Model adaptSlot(Object o, String slot) {
 	if(o instanceof Model)
 	    throw new IllegalArgumentException("plese use adaptMethod(Model, "+

@@ -42,35 +42,15 @@ public class ListBox extends LobLob implements Component {
 	TEMPLATE = "XXX/ListBox/template";
 
     public ListBox(ListModel elements) {
-	this(elements, new Object[0]);
-    }
-    public ListBox(ListModel elements, String k1, Object v1) {
-	this(elements, params(k1, v1));
-    }
-    public ListBox(ListModel elements, String k1, Object v1, 
-		   String k2, Object v2) {
-	this(elements, params(k1, v1, k2, v2));
-    }
-    public ListBox(ListModel elements, String k1, Object v1, 
-		   String k2, Object v2, String k3, Object v3) {
-	this(elements, params(k1, v1, k2, v2, k3, v3));
-    }
-
-    private Object[] PARAMS_SPEC = {
-	"template", TEMPLATE, Object.class,
-            new Label(Models.adaptMethod(Parameter.model(ListModel.PARAM, new ObjectModel("")), Object.class, "toString")),
-	"key", KEY, Model.class, null,
-	"selectionModel", SELECTED, Model.class, null,
-    };
-
-    public ListBox(ListModel elements, Object[] keys) {
-
-	Map params = parseParams(keys, PARAMS_SPEC);
+	Map params = new HashMap();
 	params.put(ELEMENTS, elements);
+	params.put(TEMPLATE, new Label(Models.adaptMethod(Parameter.model(ListModel.PARAM, new ObjectModel("")), Object.class, "toString")));
+	params.put(KEY, new ObjectModel(null));
 
-	Model selectionModel = (Model)params.get(SELECTED);
-	if(!elements.isEmpty() && selectionModel.get() == null)
-	    selectionModel.set(elements.get(0));
+	if(!elements.isEmpty())
+	    params.put(SELECTED, new ObjectModel(elements.get(0)));
+	else
+	    params.put(SELECTED, new ObjectModel(null));
 
 	Theme t = Theme.getDefaultTheme();
 
@@ -87,7 +67,20 @@ public class ListBox extends LobLob implements Component {
     public Model getSelectionModel() { 
 	return (Model)delegate.getTemplateParameter(SELECTED); 
     }
-    public void setSelectionModel(Model m) {
+    public void setSelection(Model m) {
 	delegate.setTemplateParameter(SELECTED, m);
+    }
+    public void setSelection(Object o) {
+	getSelectionModel().set(o);
+    }
+
+    public Model getKeyModel() { 
+	return (Model)delegate.getTemplateParameter(KEY); 
+    }
+    public void setKey(Model m) {
+	delegate.setTemplateParameter(KEY, m);
+    }
+    public void setKey(Object o) {
+	getKeyModel().set(o);
     }
 }
