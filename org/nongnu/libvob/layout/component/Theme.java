@@ -93,7 +93,7 @@ public class Theme {
 
 	Lob l = Parameter.lob(LobMonoLob.CONTENT);
 
-	l = new Frame(l, lightColor, darkColor, 1, 3, false, false, /*true*/false);
+	l = new Frame(l, lightColor, darkColor, 1, 3, false, false, true);
 
 	map.put(ThemeFrame.URI, new KeyLob(l, key));
 

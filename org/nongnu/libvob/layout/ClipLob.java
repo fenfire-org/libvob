@@ -56,11 +56,14 @@ public class ClipLob extends AbstractMonoLob {
 
 	this.scene=scene; this.w=w; this.h=h; this.d=d;
 	this.visible = visible;
-	this.cs = scene.coords.box(into, w, h);
 	this.matchingParent = matchingParent;
 
-	if(key != null) 
+	if(key != null) {
+	    this.cs = scene.coords.box(into, w, h);
 	    scene.matcher.add(matchingParent, cs, key);
+	} else {
+	    this.cs = into;
+	}
 
 	GraphicsAPI api = GraphicsAPI.getInstance();
 	if(api instanceof org.nongnu.libvob.impl.awt.AWTAPI) {

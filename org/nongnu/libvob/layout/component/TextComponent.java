@@ -94,7 +94,7 @@ public abstract class TextComponent extends LobLob {
  
     protected Lob frame(Lob content) {
 	return new Frame(content, new ObjectModel(Color.white), 
-			 Theme.darkColor, 1, 0, false, false, false);
+			 Theme.darkColor, 1, 0, false, false, true);
     }
 
     protected Lob text(Sequence s) {
@@ -109,7 +109,7 @@ public abstract class TextComponent extends LobLob {
 
 	Lob lob = new ViewportLob(scrollAxis, textCursorLob, positionModel);
 	lob = new Margin(lob, 5);
-	lob = new ClipLob(lob);
+	//lob = new ClipLob(lob);
 	
 	return lob;
     }
