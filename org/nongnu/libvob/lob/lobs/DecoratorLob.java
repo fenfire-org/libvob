@@ -29,6 +29,7 @@ package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.IndexedVobMatcher;
+import javolution.realtime.*;
 import java.awt.Color;
 import java.util.*;
 
@@ -58,6 +59,7 @@ public class DecoratorLob extends AbstractDelegateLob {
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
 	    decoration.move(os);
+	    if(key instanceof Realtime) ((Realtime)key).move(os);
 	    return true;
 	}
 	return false;

@@ -72,7 +72,7 @@ public class FilterLobFont extends RealtimeObject implements LobFont {
 	// the correct size request when we *do* have to use lines
 	// stretched so much that a space needs to be stretched more than 2w
 	space = RequestChangeLob.newInstance(space, 
-					     w,w,SizeRequest.INF/1024 /*2*w*/,
+					     w,w,16*1024 /*2*w*/,
 					     0,h,h);
 
 	Lob strut = Lobs.glue(0, 0, 0, 0, h, h);

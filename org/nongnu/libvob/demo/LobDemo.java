@@ -81,7 +81,7 @@ public class LobDemo extends NewLobMain {
 	tray.add(lob);
 
         lob = Components.textArea(text, Maps.map());
-        lob = lob.layoutOneAxis(300);
+        lob = Lobs.request(lob, 300, 300, 300, 200, 200, 200);
         lob = Lobs.translate(lob, 600, 100);
         lob = Lobs.key(lob, "textbox");
         tray.add(lob);

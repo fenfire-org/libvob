@@ -149,6 +149,11 @@ public class Lobs {
     public static Lob nextTo(Axis axis, Lob lob, Lob popup) {
 	return NextToLob.newInstance(axis, lob, popup);
     }
+    
+    public static Lob viewport(Axis scrollAxis, Lob lob,
+			       Object key, int intKey) {
+	return ViewportLob.newInstance(scrollAxis, lob, key, intKey);
+    }
 
     public static Lob key(Lob content, Object key) {
 	return key(content, key, -1);
