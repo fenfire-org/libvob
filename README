@@ -17,6 +17,14 @@ Before compiling, you should have:
    * include/kaffe/jni.h
    * include/jni.h
 
+* GL (e.g. package xlibmesa-gl-dev and possibly others)
+
+* Glut (Package libglut3-dev)
+
+* The GdkPixBuf library (Debian package libgdk-pixbuf-dev)
+
+* Freetype (Debian package libfreetype6-dev)
+
 * The http://himalia.it.jyu.fi/darcs/navidoc/ repository checked out
   as ../navidoc and compiled
 
