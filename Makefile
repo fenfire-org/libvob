@@ -19,6 +19,7 @@ java:
 	python metacode/rj2java.py org/nongnu/libvob/lob/Components.rj org/nongnu/libvob/lob/Components.java
 	python metacode/rj2java.py org/nongnu/libvob/demo/Notebook.rj org/nongnu/libvob/demo/Notebook.java
 	python metacode/rj2java.py org/nongnu/libvob/demo/Puzzle.rj org/nongnu/libvob/demo/Puzzle.java
+	python metacode/rj2java.py org/nongnu/libvob/demo/PuzzleBoard.rj org/nongnu/libvob/demo/PuzzleBoard.java
 	mkdir -p CLASSES
 	$(JAVAC) $(DEBUG) -d $(CLASSDIR) $(RAWSRC) 
 
