@@ -80,6 +80,7 @@ public class DecoratorLob extends AbstractDelegateLob {
 
 	if(cs >= 0) {
 	    scene.coords.getSqSize(cs, wh);
+	    cs = scene.coords.translate(cs, 0, 0, d); // XXX
 
 	    Lob layout = decoration.layout(wh[0], wh[1]);
 	    layout.render(scene, cs, matchingParent, d, visible);

@@ -29,25 +29,84 @@ package org.nongnu.libvob.lob;
 import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.lob.lobs.*;
 import javolution.lang.*;
+import javolution.realtime.*;
 import java.awt.Color;
+import java.util.*;
 
 public class Components {
+
+    public static Model getModel(Map params, String name, Object _default) {
+	return (Model)getParam(params, name, 
+			       StateModel.newInstance(name, _default));
+    }
+
+    public static Model getModel(Map params, String name, int _default) {
+	return (Model)getParam(params, name, 
+			       StateModel.newInstance(name, _default));
+    }
+
+    public static Object getParam(Map params, String name, Object _default) {
+	if(params.get(name) != null)
+	    return params.get(name);
+	else
+	    return _default;
+    }
+
+
+
+    public static Color 
+	lightColor = new java.awt.Color(1, 1, .9f),
+	darkColor = new java.awt.Color(.7f, .5f, .5f);
+
+
+
 
     public static Lob frame(Lob lob) {
 	return Lobs.frame(lob, null, Color.black, 1, 5, false);
 
     }
 
-    public static Lob textBox(Model text, Model cursor, LobFont font) {
-	return textComponent(text, cursor, font, false);
+    public static Lob listBox(List elements, Map params) {
+	TransformLobList.Transform tr = 
+	    (TransformLobList.Transform)getParam(params, "transform", 
+						 toStringTransform);
+
+	Object defaultSelection = elements.size() > 0 ? elements.get(0) : null;
+	Model selected = getModel(params, "selected", defaultSelection);
+
+	Axis axis = (Axis)getParam(params, "axis", Axis.Y);
+
+	LobList lobs = TransformLobList.newInstance(elements, tr);
+	lobs = ConcatLobList.newInstance(lobs, SingletonLobList.newInstance(Lobs.glue(axis, 0, 0, SizeRequest.INF)));
+
+	Lob lob = Lobs.box(axis, lobs);
+	
+        Lob cursor_lob = Lobs.filledRect(darkColor);
+        cursor_lob = Lobs.key(cursor_lob, "cursor");
+        lob = Lobs.decorate(lob, cursor_lob, selected.get(), -1);
+
+	lob = frame(lob);
+	return lob;
     }
 
-    public static Lob textArea(Model text, Model cursor, LobFont font) {
-	return textComponent(text, cursor, font, true);
+    public static Lob textBox(Model text, Map params) {
+	params.put("multiline", Boolean.FALSE);
+	return textComponent(text, params);
     }
 
-    public static Lob textComponent(Model text, Model cursor, LobFont font,
-				    boolean multiline) {
+    public static Lob textArea(Model text, Map params) {
+	params.put("multiline", Boolean.TRUE);
+	return textComponent(text, params);
+    }
+
+    public static Lob textComponent(Model text, Map params) {
+
+	Model cursor = (Model)getModel(params, "cursor", -1);
+	LobFont font = (LobFont)getParam(params, "font", Lobs.font());
+
+	Boolean multilineB = (Boolean)getParam(params, "multiline", null);
+	boolean multiline = multilineB.booleanValue();
+
 	Text txt = Text.valueOf((String)text.get());
 	LobList list = Lobs.text(font, txt);
 	list = KeyLobList.newInstance(list, "text");
@@ -61,4 +120,18 @@ public class Components {
 
 	return frame(lob);
     }
+
+
+    private static class ToStringTransform extends RealtimeObject
+	implements TransformLobList.Transform {
+
+	public Object transform(Object o) {
+	    if(o instanceof Realtime)
+		return Lobs.key(Lobs.hbox(Lobs.text(((Realtime)o).toText())),o);
+	    else
+		return Lobs.key(Lobs.hbox(Lobs.text(o.toString())), o);
+	}
+    }
+
+    private static final ToStringTransform toStringTransform = new ToStringTransform();
 }

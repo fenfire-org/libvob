@@ -80,21 +80,19 @@ public class TextKeyController extends AbstractDelegateLob {
 	    winAnim.switchVS();
 	    return true;
 	} else if(key.equals("Left")) {
-	    if(tc < 0) {
-		cursorModel.set(0);
-	    } else {
-		if(tc == 0) return true;
-		cursorModel.set(tc-1);
-	    }
+	    if(tc < 0)
+		tc = text.length();
+
+	    if(tc == 0) return true;
+	    cursorModel.set(tc-1);
 	    winAnim.animate();
 	    return true;
 	} else if(key.equals("Right")) {
-	    if(tc < 0) {
-		cursorModel.set(text.length());
-	    } else {
-		if(tc == text.length()) return true;
-		cursorModel.set(tc+1);
-	    }
+	    if(tc < 0)
+		tc = 0;
+
+	    if(tc == text.length()) return true;
+	    cursorModel.set(tc+1);
 	    winAnim.animate();
 	    return true;
 	} else {
