@@ -253,4 +253,9 @@ public interface WindowAnimation {
      *  you need to pass all events trough before the screen has updated.
      */
     boolean hasSceneReplacementPending();
+
+    /** Returns true if animate(), rerender() or switchVS()
+     *  has been called since the scene has been last rendered.
+     */
+    boolean hasAnimModeSet();
 } 

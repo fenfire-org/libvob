@@ -99,6 +99,10 @@ public class WindowAnimationImpl extends Screen
 	return animMode == ANIM || animMode == SWITCH;
     }
 
+    public boolean hasAnimModeSet() {
+	return animMode != null;
+    }
+
     /*
      * ----------------------------------------------
      *  Implement AbstractUpdateManager.Window

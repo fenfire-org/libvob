@@ -121,7 +121,8 @@ public abstract class LobMain extends Main implements Obs {
 		    origX = e.getX(); origY = e.getY();
 		}
 
-		if(lob.mouse(e, e.getX(), e.getY(), origX, origY))
+		if(lob.mouse(e, e.getX(), e.getY(), origX, origY) &&
+		   !windowAnim.hasAnimModeSet())
 		    //if(e.getType() == e.MOUSE_CLICKED)
 		    windowAnim.animate();
 	    }
