@@ -350,83 +350,101 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		return pt.sum(ap.mul(ans));
 	    }
 
+	    float[][] arrays = new float[512][];
+	    int usedArrays = 0;
+
+	    float[] getarr() {
+		float[] arr = arrays[usedArrays];
+		if(arr == null) arr = arrays[usedArrays] = new float[5];
+		for(int i=0; i<5; i++) arr[i] = 0;
+		usedArrays++;
+		return arr;
+	    }
+	    void releaseArrays(int n) { usedArrays -= n; }
+
 	    /** copied from include/vob/trans/LinearPrimitives.hxx 
 	     *  coded by Tuomas J. Lukka
 	     */
-	    void doTransformRect(float[] rect_, boolean useInterp) {
-		int areaCS = inds[cs()+1];
-		int anchorCS = inds[cs()+2];
+	    void doTransformRect(float[] rect, boolean useInterp) {
+		int vectorCount = Vect.currentVectorCount();
 
-		// get absolute area
-		float[] areaF = new float[5];
-		float[] areaScale = new float[2];
-		getAbsoluteRect(areaCS, areaF, areaScale, useInterp);
+		try {
+		    int areaCS = inds[cs()+1];
+		    int anchorCS = inds[cs()+2];
 
-		/*
-		// compute sq of the area
+		    // get absolute area
+		    float[] areaF = getarr();
+		    float[] areaScale = getarr();
+		    getAbsoluteRect(areaCS, areaF, areaScale, useInterp);
 
-		sqF[0] = areaF[2] - areaF[0];
-		sqF[1] = areaF[3] - areaF[1];
+		    /*
+		    // compute sq of the area
 
-		// get anchor
-		float[] anchorF = new float[5];
-		getAbsoluteRect(anchorCS, anchorF, 
-				new float[]{1,1},useInterp);
-		*/
+		    sqF[0] = areaF[2] - areaF[0];
+		    sqF[1] = areaF[3] - areaF[1];
+
+		    // get anchor
+		    float[] anchorF = new float[5];
+		    getAbsoluteRect(anchorCS, anchorF, 
+		    new float[]{1,1},useInterp);
+		    */
 
 
-		float[] anchorCoords = new float[5];
-		getSqSize(anchorCS, anchorCoords);
+		    float[] anchorCoords = getarr();
+		    getSqSize(anchorCS, anchorCoords);
 
-		anchorCoords[0] *= .5f; anchorCoords[1] *= .5f;
+		    anchorCoords[0] *= .5f; anchorCoords[1] *= .5f;
 
-		Trans t = getTrans(anchorCS);
-		t.transformRect(anchorCoords, useInterp);
-		t.pop();
+		    Trans t = getTrans(anchorCS);
+		    t.transformRect(anchorCoords, useInterp);
+		    t.pop();
 
-		t = getTrans(areaCS);
-		t.inverseTransformRect(anchorCoords, useInterp);
-		t.pop();
+		    t = getTrans(areaCS);
+		    t.inverseTransformRect(anchorCoords, useInterp);
+		    t.pop();
 
-		float[] sqF = new float[2];
-		getSqSize(areaCS, sqF);
+		    float[] sqF = getarr();
+		    getSqSize(areaCS, sqF);
 
-		anchorCoords[0] /= sqF[0];
-		anchorCoords[1] /= sqF[1];
+		    anchorCoords[0] /= sqF[0];
+		    anchorCoords[1] /= sqF[1];
 
-		Vect anchor = new Vect(anchorCoords[0], anchorCoords[1]);
+		    Vect anchor = Vect.get(anchorCoords[0], anchorCoords[1]);
 
 		
-		float shift = floats[inds[cs()+3]+1] / sqF[0];
-		float direction = floats[inds[cs()+3]];
-		int dir = direction > 0 ? 1 : -1;
+		    float shift = floats[inds[cs()+3]+1] / sqF[0];
+		    float direction = floats[inds[cs()+3]];
+		    int dir = direction > 0 ? 1 : -1;
 
-		Vect shifted = new Vect((float) anchor.x() + dir * shift, anchor.y());
-		Vect ctr = new Vect(.5f, .5f);
-		Vect buoy;
+		    Vect shifted = Vect.get((float) anchor.x() + dir * shift, anchor.y());
+		    Vect ctr = Vect.get(.5f, .5f);
+		    Vect buoy;
 
-		if(shifted.neg(ctr).abs() >= .5) {
-		    buoy = shifted;
-		} else {
-		    if(anchor.neg(ctr).abs() >= .5) {
-			buoy = anchor;
+		    if(shifted.neg(ctr).abs() >= .5) {
+			buoy = shifted;
 		    } else {
-			buoy = project2circle(
-			    anchor, 
-			    ctr.sum((new Vect(.5f,0)).mul(-dir)),
-			    ctr, .5f);
+			if(anchor.neg(ctr).abs() >= .5) {
+			    buoy = anchor;
+			} else {
+			    Vect v = ctr.sum(Vect.get(.5f,0).mul(-dir));
+			    buoy = project2circle(anchor, v, ctr, .5f);
+			}
 		    }
+
+		    //p("final: "+buoy);
+		    
+		    float scale = 1 - (anchor.neg(ctr)).abs() / .5f;
+		    if(scale < shift) scale = shift;
+		    rect[4] -= scale; // depth
+		    rect[0] = (buoy.x() * sqF[0] + scale*rect[0])*areaScale[0] + areaF[0];
+		    rect[1] = (buoy.y() * sqF[1] + scale*rect[1])*areaScale[1] + areaF[1];
+		    rect[2] *= scale * areaScale[0];
+		    rect[3] *= scale * areaScale[1];
+
+		    releaseArrays(4);
+		} finally {
+		    Vect.releaseVectors(vectorCount);
 		}
-
-		//p("final: "+buoy);
-
-		float scale = 1 - (anchor.neg(ctr)).abs() / .5f;
-		if(scale < shift) scale = shift;
-		rect_[4] -= scale; // depth
-		rect_[0] = (buoy.x() * sqF[0] + scale*rect_[0])*areaScale[0] + areaF[0];
-		rect_[1] = (buoy.y() * sqF[1] + scale*rect_[1])*areaScale[1] + areaF[1];
-		rect_[2] *= scale * areaScale[0];
-		rect_[3] *= scale * areaScale[1];
 	    }
 	    float w() { return 1; }
 	    float h() { return 1; }
@@ -629,9 +647,19 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	}
 
 	void transformRect(float[] rect, boolean useInterp) {
-	    if(!useInterp) 
-		doTransformRect(rect, useInterp);
-	    else {
+	    transform(rect, useInterp, false);
+	}
+	void inverseTransformRect(float[] rect, boolean useInterp) {
+	    transform(rect, useInterp, true);
+	}
+
+	void transform(float[] rect, boolean useInterp, boolean inverse) {
+	    if(!useInterp) {
+		if(!inverse)
+		    doTransformRect(rect, useInterp);
+		else
+		    doInverseTransformRect(rect, useInterp);
+	    } else {
 		int ocs;
 
 		if(cs() < interpList.length)
@@ -642,11 +670,17 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		if(ocs >= 0) {
 		    for(int i=0; i<tmprect.length; i++) tmprect[i] = rect[i];
 
-		    doTransformRect(rect, false);
+		    if(!inverse)
+			doTransformRect(rect, false);
+		    else
+			doInverseTransformRect(rect, false);
 
 		    Trans o = otherCoorder.getTrans(ocs);
 		    try {
-			o.transformRect(tmprect);
+			if(!inverse)
+			    o.transformRect(tmprect);
+			else
+			    o.inverseTransformRect(tmprect);
 		    } finally {
 			o.pop();
 		    }
@@ -656,17 +690,14 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		} else if(ocs == VobMatcher.DONT_INTERP) {
 		    throw new DoNotInterpolateException();
 		} else if(ocs == VobMatcher.SHOW_IN_INTERP) {
-		    doTransformRect(rect, true);
+		    if(!inverse)
+			doTransformRect(rect, true);
+		    else
+			doInverseTransformRect(rect, true);
 		} else {
 		    throw new UnsupportedOperationException("Interpolation type: "+ocs);
 		}
 	    }
-	}
-	void inverseTransformRect(float[] rect, boolean useInterp) {
-	    if(!useInterp)
-		doInverseTransformRect(rect, useInterp);
-	    else
-		throw new UnsupportedOperationException("not implemented");
 	}
 
 	void transformRect(float[] rect) {
