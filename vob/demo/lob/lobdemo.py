@@ -27,6 +27,8 @@ from java.awt import Color
 
 import vob, java
 
+vob.putil.demo.usingNormalBindings = 0
+
 class Table(TableLob.Table):
     def getRowCount(self): return 10
     def getColumnCount(self): return 10
@@ -45,6 +47,27 @@ def renderLob(scene, lob, x, y):
 
 class Scene:
     def key(self, k):
+        global text, textcursor
+
+        print 'key', k
+
+        if textcursor < 0 or textcursor > len(text):
+            textcursor = len(text)
+        
+        if len(k) == 1:
+            text = text[:textcursor] +  k   + text[textcursor:]
+            textcursor += 1
+        elif k.lower() == 'enter':
+            text = text[:textcursor] + '\n' + text[textcursor:]
+            textcursor += 1
+        elif k.lower() == 'backspace' and textcursor > 0:
+            text = text[:textcursor-1] + text[textcursor:]
+            textcursor -= 1
+        elif k.lower() == 'left':
+            textcursor -= 1
+        elif k.lower() == 'right':
+            textcursor += 1
+            
         vob.AbstractUpdateManager.chg()
         
     def mouse(self, m): pass
@@ -71,7 +94,7 @@ class Scene:
         print 'scene rendered'
         
 
-
+textcursor = -1
 
 text = """Copyright (c) 2005, Benja Fallenstein
 
