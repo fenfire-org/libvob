@@ -417,6 +417,9 @@ public class DefaultVobMap implements VobMap {
 	    i++;
 	    //System.out.println(i);
 
+	    if(ics >= nextInChain.length)
+		break;
+
 	    ics = nextInChain[ics];
 	} while(ics > 0 && ics < textChar.length && textChar[ics] > 0 &&
 		!isFirstInFragment(ics, other, interpList));
