@@ -68,9 +68,13 @@ public interface Lob extends Observable, Replaceable {
     boolean key(String key);
 
     /** This vob is asked to handle a mouse event.
+     *  When the user is dragging, origX and origY are the coordinates
+     *  where the dragging started. (At least normally, events should be
+     *  dispatched to the lob containing the point (origX, origY), not
+     *  necessarily the lob containing (x,y).)
      *  @returns Whether the mouse event was handled.
      */
-    boolean mouse(VobMouseEvent e, float x, float y);
+    boolean mouse(VobMouseEvent e, float x, float y, float origX, float origY);
 
 
     // List of decendants that can receive the focus.

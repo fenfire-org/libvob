@@ -69,7 +69,8 @@ public class ClickController extends AbstractMonoLob {
 	this.h = h;
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
 	if(x >= 0 && y >= 0 && x < w && y < h &&
 	   e.getType() == eventType && e.getButton() == button) {
 
@@ -77,7 +78,7 @@ public class ClickController extends AbstractMonoLob {
 	    AbstractUpdateManager.chg();
 	    return true;
 	} else {
-	    return super.mouse(e, x, y);
+	    return super.mouse(e, x, y, origX, origY);
 	}
     }
 }

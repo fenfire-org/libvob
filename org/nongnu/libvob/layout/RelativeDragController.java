@@ -74,7 +74,8 @@ public class RelativeDragController extends AbstractMonoLob {
 	return isDragging || content.isLargerThanItSeems(); 
     }
     
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
 	if (dbg) p("got event!"); 
 
 	if(x >= 0 && y >= 0 && x < w && y < h &&
@@ -94,7 +95,7 @@ public class RelativeDragController extends AbstractMonoLob {
 	    isDragging = false;
 	    return true;
 	}
-	return super.mouse(e, x, y);
+	return super.mouse(e, x, y, origX, origY);
 
     }
 }

@@ -48,9 +48,10 @@ public class VisibilityLob extends AbstractMonoLob {
 	return new VisibilityLob((Lob)params[0], (Model)params[1]);
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
 	if(visibility.getBool()) 
-	    return super.mouse(e, x, y);
+	    return super.mouse(e, x, y, origX, origY);
 	else
 	    return false;
     }

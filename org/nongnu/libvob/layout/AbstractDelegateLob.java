@@ -52,8 +52,9 @@ public abstract class AbstractDelegateLob extends AbstractLob
 	return getDelegate().key(key);
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
-	return getDelegate().mouse(e, x, y);
+    public boolean mouse(VobMouseEvent e, float x, float y, 
+			 float origX, float origY) {
+	return getDelegate().mouse(e, x, y, origX, origY);
     }
 
     public List getFocusableLobs() {

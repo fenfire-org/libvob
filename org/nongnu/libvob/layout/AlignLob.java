@@ -57,9 +57,12 @@ public class AlignLob extends AbstractMonoLob {
 
     protected float childW, childH, parentW, parentH;
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
 	return content.mouse(e, x - (parentX*parentW - childX*childW),
-			        y - (parentY*parentH - childY*childH));
+			        y - (parentY*parentH - childY*childH),
+			     origX - (parentX*parentW - childX*childW),
+			     origY - (parentY*parentH - childY*childH));
     }
 
     public void setSize(float w, float h) {

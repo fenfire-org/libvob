@@ -62,22 +62,23 @@ public class PanZoomLob extends AbstractMonoLob {
 				  (Model)params[2], (Model)params[3]);
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
-	x = x - w/2f;
-	y = y - h/2f;
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
+	x -= w/2f; origX -= w/2f;
+	y -= h/2f; origY -= h/2f;
 
-	x /= zoom.getFloat();
-	y /= zoom.getFloat();
+	x /= zoom.getFloat();  origX /= zoom.getFloat();  
+	y /= zoom.getFloat();  origY /= zoom.getFloat();  
 
-	x += panX.getFloat();
-	y += panY.getFloat();
+	x += panX.getFloat();  origX += panX.getFloat();
+	y += panY.getFloat();  origY += panY.getFloat();
 
 
 	if (dbg) p("mouse2: x: "+x+", y: "+y+
 		   ", pan: ("+panX.getFloat()+
 		   ", "+panY.getFloat()+
 		   "), zoom: "+zoom.getFloat());
-	return content.mouse(e, x,y);
+	return content.mouse(e, x, y, origX, origY);
     }
 
     public void setSize(float w, float h) {

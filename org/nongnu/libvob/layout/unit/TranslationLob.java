@@ -54,9 +54,10 @@ public class TranslationLob extends AbstractMonoLob {
 				  (Model)params[2]);
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
 	float myx = this.x.getFloat(), myy = this.y.getFloat();
-	return content.mouse(e, x-myx, y-myy);
+	return content.mouse(e, x-myx, y-myy, origX-myx, origY-myy);
     }
 
     public void setSize(float w, float h) {

@@ -48,17 +48,20 @@ public class NextToLob extends AbstractMonoLob {
 	return new NextToLob(axis, (Lob)params[0], (Lob)params[1]);
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
 	if(axis == X) {
-	    if(x < content.getNatSize(X)) 
-		return super.mouse(e, x, y);
+	    if(origX < content.getNatSize(X)) 
+		return super.mouse(e, x, y, origX, origY);
 	    else
-		return lob.mouse(e, x-content.getNatSize(X), y);
+		return lob.mouse(e, x-content.getNatSize(X), y,
+				 origX-content.getNatSize(X), origY);
 	} else {
-	    if(y < content.getNatSize(X)) 
-		return super.mouse(e, x, y);
+	    if(origY < content.getNatSize(Y)) 
+		return super.mouse(e, x, y, origX, origY);
 	    else
-		return lob.mouse(e, x, y-content.getNatSize(Y));
+		return lob.mouse(e, x, y-content.getNatSize(Y),
+				 origX, origY-content.getNatSize(Y));
 	}
     }
 

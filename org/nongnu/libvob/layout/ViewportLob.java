@@ -108,11 +108,14 @@ public class ViewportLob extends AbstractMonoLob {
 	return scroll;
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
 	if(axis == X)
-	    return content.mouse(e, x-getScroll(), y);
+	    return content.mouse(e, x-getScroll(), y, 
+				 origX-getScroll(), origY);
 	else
-	    return content.mouse(e, x, y-getScroll());
+	    return content.mouse(e, x, y-getScroll(),
+				 origX, origY-getScroll());
     }
 
     public void render(VobScene scene, int into, int matchingParent,

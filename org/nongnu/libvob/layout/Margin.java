@@ -76,8 +76,9 @@ public class Margin extends AbstractMonoLob {
 	    return content.getMaxSize(axis) + top + bottom;
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
-	return content.mouse(e, x - left, y - top);
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
+	return content.mouse(e, x - left, y - top, origX - left, origY - top);
     }
 
     public void setSize(float requestedWidth, float requestedHeight) {

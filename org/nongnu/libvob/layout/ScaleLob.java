@@ -55,8 +55,9 @@ public class ScaleLob extends AbstractMonoLob {
 	return scale*content.getMaxSize(axis);
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
-	return content.mouse(e, x/scale, y/scale);
+    public boolean mouse(VobMouseEvent e, float x, float y, 
+			 float origX, float origY) {
+	return content.mouse(e, x/scale, y/scale, origX/scale, origY/scale);
     }
 
     public void setSize(float requestedWidth, float requestedHeight) {

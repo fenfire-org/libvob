@@ -67,8 +67,9 @@ public class Stamp extends AbstractLob {
     public boolean key(String key) {
 	return content.key(key);
     }
-    public boolean mouse(VobMouseEvent e, float x, float y) {
-	return content.mouse(e, x, y);
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
+	return content.mouse(e, x, y, origX, origY);
     }
     public List getFocusableLobs() {
 	return content.getFocusableLobs();

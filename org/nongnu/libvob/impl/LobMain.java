@@ -113,9 +113,15 @@ public abstract class LobMain extends Main implements Obs {
 	    }
 	}
 
+	float origX, origY;
+
 	public void mouse(VobMouseEvent e) {
 	    if (initialized) {
-		if(lob.mouse(e, e.getX(), e.getY()))
+		if(e.getType() != e.MOUSE_DRAGGED) {
+		    origX = e.getX(); origY = e.getY();
+		}
+
+		if(lob.mouse(e, e.getX(), e.getY(), origX, origY))
 		    //if(e.getType() == e.MOUSE_CLICKED)
 		    windowAnim.animate();
 	    }

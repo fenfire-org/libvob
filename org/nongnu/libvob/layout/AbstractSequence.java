@@ -173,20 +173,25 @@ public abstract class AbstractSequence
 	return false;
     }
 
-    public boolean mouse(VobMouseEvent e, float x0, float y0) {
+    public boolean mouse(VobMouseEvent e, float x0, float y0,
+			 float ox0, float oy0) {
 	if(length() == 0) return false;
 
 	boolean handled = false;
 
-	int index = getLobIndexAt(x0, y0);
-	float x = x0 - getPosition(X, index);
-	float y = y0 - getPosition(Y, index);
-	handled = handled || getLob(index).mouse(e, x, y);
+	int index = getLobIndexAt(ox0, oy0);
+	float x  = x0  - getPosition(X, index);
+	float y  = y0  - getPosition(Y, index);
+	float ox = ox0 - getPosition(X, index);
+	float oy = oy0 - getPosition(Y, index);
+	handled = handled || getLob(index).mouse(e, x, y, ox, oy);
 
 	for(int i=0; i<length(); i++)
 	    if(getLob(i).isLargerThanItSeems())
 		handled = handled || getLob(i).mouse(e, x0 - getPosition(X, i),
-						     y0 - getPosition(Y, i));
+						     y0  - getPosition(Y, i),
+						     ox0 - getPosition(X, i),
+						     oy0 - getPosition(Y, i));
 
 	return handled;
     }

@@ -47,7 +47,8 @@ public abstract class AbstractLob
 	return false;
     }
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y,
+			 float origX, float origY) {
 	return false;
     }
 

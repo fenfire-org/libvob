@@ -71,7 +71,8 @@ public class DragController extends AbstractMonoLob {
     }
     
 
-    public boolean mouse(VobMouseEvent e, float x, float y) {
+    public boolean mouse(VobMouseEvent e, float x, float y, 
+			 float origX, float origY) {
 	if (dbg) p("got event! "+e); 
 	if (dbg) p("x: "+x+", y: "+y+", w: "+w+", h: "+h+", b: "+button);
 	if(x >= 0 && y >= 0 && x < w && y < h &&
@@ -92,7 +93,7 @@ public class DragController extends AbstractMonoLob {
 	    isDragging = false;
 	    return true;
 	} else {
-	    return super.mouse(e, x, y);
+	    return super.mouse(e, x, y, origX, origY);
 	}
     }
 }

@@ -79,12 +79,13 @@ public class Tray extends AbstractSequence {
 	return result;
     }
 
-    public boolean mouse(VobMouseEvent e, float x0, float y0) {
+    public boolean mouse(VobMouseEvent e, float x0, float y0,
+			 float ox0, float oy0) {
 	if(sendEventsOnlyToFrontLob)
-	    return getLob(length()-1).mouse(e, x0, y0);
+	    return getLob(length()-1).mouse(e, x0, y0, ox0, oy0);
 	else {
 	    for(int i=length()-1; i>=0; i--) {
-		if(getLob(i).mouse(e, x0, y0)) return true;
+		if(getLob(i).mouse(e, x0, y0, ox0, oy0)) return true;
 	    }
 	    return false;
 	}
