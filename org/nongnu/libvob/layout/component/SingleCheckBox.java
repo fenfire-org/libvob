@@ -35,21 +35,13 @@ import java.awt.Color;
 
 public class SingleCheckBox extends LobLob {
 
-    private static LobFont font;
-    private static LobFont getFont() {
-	if(font == null) font = new LobFont("SansSerif", 0, 12, 
-					    java.awt.Color.black);
-
-	return font;
-    }
-
     public SingleCheckBox() {
 	this(new BoolModel(false));
     }
     public SingleCheckBox(Model activated) {
 	this(new Frame(Theme.lightColor, Theme.darkColor,
 		       1,0,true, true, false), 
-	     getFont().getLabel("X"), activated);
+	     new Label("X"), activated);
     }
     public SingleCheckBox(MonoLob bg, Lob fill, Model activated) {
 	activated = Parameter.model(CheckBox.CHECKED, activated);

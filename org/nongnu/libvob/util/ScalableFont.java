@@ -132,6 +132,11 @@ public final class ScalableFont {
 	}
     }
 
+    private ScalableFont(Cache cache, int pt) {
+	this.defPt = pt;
+	this.myCache = cache;
+    }
+
     /** Get a scaled instance of the font.
      * @param scale        Scaling factor is (scale/1000).
      * @return May not return null.
@@ -139,6 +144,10 @@ public final class ScalableFont {
     public Font getFont(float scale) {
 	int pt=scale2pt(scale);
 	return myCache.getFont(pt);
+    }
+
+    public ScalableFont getScaledFont(float scale) {
+	return new ScalableFont(myCache, scale2pt(scale));
     }
 
     FontMetrics lastFM;

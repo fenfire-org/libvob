@@ -37,9 +37,6 @@ import java.util.*;
 
 public class Notebook extends LobLob {
 
-    protected Model font = 
-	new ObjectModel(new LobFont("Serif", 0, 16, Color.black));
-
     protected class Note extends ObsSet.AbstractObservable {
 	protected String title = "New note "+new Date();
 	protected String body = "";
@@ -63,7 +60,7 @@ public class Notebook extends LobLob {
 	notes.add(noteModel.get());
 	notes.add(new Note());
 
-	ComponentFactory comps = new ComponentFactory(font);
+	ComponentFactory comps = new ComponentFactory(Theme.getTextFont());
 
 	Action quit = new AbstractAction() { public void run() {
 	    System.exit(0);

@@ -38,6 +38,10 @@ public class RawTextStyle extends AWTTextStyle {
 
     public RawTextStyle(ScalableFont font, Color col) { super(font, col); }
 
+    public TextStyle getScaledStyle(float h) {
+	return new RawTextStyle(font.getScaledFont(font.getScale(h)), col);
+    }
+
     public void render(java.awt.Graphics g, int x, int y, 
 		       String s,
 		       float scale, 

@@ -175,6 +175,11 @@ public class GLTextStyle extends TextStyle {
 	return h / face.glFont.getHeight() / fontScale;
     }
 
+    public TextStyle getScaledStyle(float h) {
+	float scale = h / face.glFont.getHeight();
+	return new GLTextStyle(face, scale);
+    }
+
     private float getWidth(String s) {
 	float sum = 0;
 	for(int i=0; i<s.length(); i++) {

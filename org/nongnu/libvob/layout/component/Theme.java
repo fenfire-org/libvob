@@ -49,7 +49,7 @@ public class Theme {
 
 
     private static Theme defaultTheme;
-    private static Model font, whiteFont;
+    private static Model font, whiteFont, textFont;
 
     public static final Model 
 	lightColor = new ObjectModel(new java.awt.Color(1, 1, .9f)),
@@ -57,16 +57,23 @@ public class Theme {
 
     public static Model getFont() {
 	if(font == null) 
-	    font = new ObjectModel(new LobFont("SansSerif", 0, 12, 
+	    font = new ObjectModel(new LobFont("SansSerif", 0, 17, 
 					       java.awt.Color.black));
 	return font;
     }
 
     public static Model getWhiteFont() {
 	if(whiteFont == null) 
-	    whiteFont = new ObjectModel(new LobFont("SansSerif", 0, 12, 
+	    whiteFont = new ObjectModel(new LobFont("SansSerif", 0, 17, 
 						    java.awt.Color.white));
 	return whiteFont;
+    }
+
+    public static Model getTextFont() {
+	if(textFont == null) 
+	    textFont = new ObjectModel(new LobFont("Serif", 0, 20, 
+						   java.awt.Color.black));
+	return textFont;
     }
 
     public static Theme getDefaultTheme() {

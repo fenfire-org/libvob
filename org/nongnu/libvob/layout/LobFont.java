@@ -50,8 +50,16 @@ public class LobFont extends AbstractHashtable {
 
     protected Lob space, lineEnd, newline;
 
+    /*
     public LobFont(String family, int fstyle, int fsize, Color color) {
 	this(GraphicsAPI.getInstance().getTextStyle(family, fstyle, fsize),
+	     color);
+    }
+    */
+
+    public LobFont(String family, int fstyle, float height, Color color) {
+	this(GraphicsAPI.getInstance().getTextStyleByHeight(family, fstyle, 
+							    height),
 	     color);
     }
 

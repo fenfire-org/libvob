@@ -109,12 +109,10 @@ public class FileDialog extends LobLob {
 
     protected class FileLob extends AbstractDelegateLob {
 
-	protected LobFont font;
 	protected Lob delegate;
 	protected Model file;
 
-	protected FileLob(Model fileModel, LobFont font) {
-	    this.font = font;
+	protected FileLob(Model fileModel) {
 	    this.file = fileModel;
 
 	    String name;
@@ -129,7 +127,7 @@ public class FileDialog extends LobLob {
 		name = "..";
 	    }
 	    
-	    delegate = font.getLabel(name);
+	    delegate = new Label(name);
 	}
 
 	protected Lob getDelegate() { return delegate; }
@@ -138,7 +136,7 @@ public class FileDialog extends LobLob {
 	    return new Replaceable[] { file };
 	}
 	protected Object clone(Object[] params) {
-	    return new FileLob((Model)params[0], font);
+	    return new FileLob((Model)params[0]);
 	}
     }
 
@@ -150,8 +148,6 @@ public class FileDialog extends LobLob {
 	final float inf = Float.POSITIVE_INFINITY;
 	final float nan = Float.NaN;
 
-	final LobFont font = new LobFont("SansSerif", 0, 14, 
-					 java.awt.Color.black);
 	Box box = new Box(Lob.Y);
 
 	dirModel = new ObjectModel(null);
@@ -159,7 +155,7 @@ public class FileDialog extends LobLob {
 
 	dirModel.set(new java.io.File("/tmp").getAbsoluteFile());
 
-	ListBox listBox = new ListBox(filesModel, new FileLob(Parameter.model(ListModel.PARAM), font));
+	ListBox listBox = new ListBox(filesModel, new FileLob(Parameter.model(ListModel.PARAM)));
 
 	selectionModel = listBox.getSelectionModel();
 	if(selectionModel == null) throw new NullPointerException();
@@ -174,8 +170,7 @@ public class FileDialog extends LobLob {
 
 	Box buttons = new Box(Lob.X);
 
-	l = font.getLabel("Open");
-	l = new Button(l, new AbstractAction() { public void run() {
+	l = new Button("Open", new AbstractAction() { public void run() {
 	    Object selected = selectionModel.get();
 	    File file;
 	    
@@ -205,8 +200,7 @@ public class FileDialog extends LobLob {
 
 	buttons.glue(5, 5, 5);
 
-	l = font.getLabel("Cancel");
-	l = new Button(l, new AbstractAction() { public void run() {
+	l = new Button("Cancel", new AbstractAction() { public void run() {
 	    FileDialog.this.windowManager.remove(FileDialog.this);
 	}});
 	buttons.add(new KeyLob(l, "Cancel button"));

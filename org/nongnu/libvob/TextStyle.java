@@ -39,6 +39,11 @@ public abstract class TextStyle {
      */
     public abstract float getScaleByHeight(float h) ;
 
+    /** Get a copy of this style, scaled so that getHeight(1) 
+     *  is (approximately) h.
+     */
+    public abstract TextStyle getScaledStyle(float h);
+
     public abstract float getWidth(String s, float scale) ;
     public abstract float getWidth(char[] chars, int offs, int len, float scale) ;
 

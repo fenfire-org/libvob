@@ -45,18 +45,15 @@ public class MsgBox extends LobLob {
 	final float inf = Float.POSITIVE_INFINITY;
 	final float nan = Float.NaN;
 
-	final LobFont font = new LobFont("SansSerif", 0, 14, 
-					 java.awt.Color.black);
 	Box box = new Box(Lob.Y);
 
-	box.add(new AlignLob(font.getLabel(message), .5f, .5f, .5f, .5f));
+	box.add(new AlignLob(new Label(message), .5f, .5f, .5f, .5f));
 
 	box.glue(5, 5, 5);
 
 	Box buttons = new Box(Lob.X);
 
-	Lob l = font.getLabel("Ok");
-	l = new Button(l, new AbstractAction() { public void run() {
+	Lob l = new Button("Ok", new AbstractAction() { public void run() {
 	    MsgBox.this.windowManager.remove(MsgBox.this);
 	}});
 	buttons.add(new KeyLob(l, "Ok button"));

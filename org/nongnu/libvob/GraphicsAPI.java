@@ -102,6 +102,11 @@ public abstract class GraphicsAPI {
      */
     public abstract TextStyle getTextStyle(String family, int style, int size);
 
+    public TextStyle getTextStyleByHeight(String family, int style, float h) {
+	TextStyle s0 = getTextStyle(family, style, 12);
+	return s0.getScaledStyle(h);
+    }
+
     /** An interface for generic rendering surfaces.
      */
     static public interface RenderingSurface {

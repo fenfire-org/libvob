@@ -44,16 +44,11 @@ public class Menu extends LobLob {
     protected Model selected = new IntModel(-1);
     protected Menu parentMenu = null;
 
-    protected static LobFont font;
-
     public Menu(Axis axis) {
 	this(axis, new Box(axis));
     }
 
     public Menu(Axis axis, Sequence sequence) {
-	if(font == null) font = new LobFont("SansSerif", 0, 12, 
-					    java.awt.Color.black);
-
 	this.axis = axis;
 	this.sequence = sequence;
 
@@ -88,7 +83,7 @@ public class Menu extends LobLob {
     }
 
     public void add(String s, Action action) {
-	add(font.getLabel(s), action);
+	add(new Label(s), action);
     }
 
     public void add(Lob lob, final Action action) {
@@ -114,7 +109,7 @@ public class Menu extends LobLob {
     }
 
     public void add(String s, Menu submenu) {
-	add(font.getLabel(s), submenu);
+	add(new Label(s), submenu);
     }
 
     public void add(Lob lob, Menu submenu) {
