@@ -25,7 +25,7 @@ FastInt.java
 /*
  * Written by Benja Fallenstein
  */
-package org.nongnu.libvob.lob;
+package org.nongnu.libvob.fn;
 import javolution.realtime.*;
 
 /** A version of Integer that Javolution can re-use.

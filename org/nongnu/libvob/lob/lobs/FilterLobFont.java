@@ -29,6 +29,7 @@ FilterLobFont.java
 package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.lob.*;
+import org.nongnu.libvob.fn.*;
 import javolution.realtime.*;
 import javolution.util.*;
 import java.util.*;

@@ -33,41 +33,30 @@ import java.util.*;
 
 /** A lob drawing a lobs in front of and behind another lob.
  */
-public class Between extends AbstractLob {
+public class Between extends AbstractDelegateLob {
 
-    protected Lob back, middle, front;
+    protected Lob back, front;
 
     private Between() {}
 
     public static Between newInstance(Lob back, Lob middle, Lob front) {
 	Between b = (Between)LOB_FACTORY.object();
 	
-	b.back   = (back == null) ?   NullLob.instance : back;
-	b.middle = (middle == null) ? NullLob.instance : middle;
-	b.front  = (front == null) ?  NullLob.instance : front;
+	b.back     = (back == null) ?   NullLob.instance : back;
+	b.delegate = (middle == null) ? NullLob.instance : middle;
+	b.front    = (front == null) ?  NullLob.instance : front;
 
 	return b;
     }
 
-    public SizeRequest getSizeRequest() {
-	return middle.getSizeRequest();
-    }
-
-    public Lob getImplementation(Class clazz) {
-	if(clazz.isInstance(this))
-	    return this;
-	else
-	    return middle.getImplementation(clazz);
-    }
-
     public Lob layout(float w, float h) {
-	return newInstance(back.layout(w, h), middle.layout(w, h),
+	return newInstance(back.layout(w, h), delegate.layout(w, h),
 			   front.layout(w, h));
     }
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
-	    back.move(os); middle.move(os); front.move(os);
+	    back.move(os); front.move(os);
 	    return true;
 	}
 	return false;
@@ -79,7 +68,7 @@ public class Between extends AbstractLob {
 	int cs = scene.coords.translate(_cs, 0, 0, 2*d/4);
 	back.render(scene, cs, matchingParent, d/4, visible);
 	cs = scene.coords.translate(_cs, 0, 0, d/4);
-	middle.render(scene, cs, matchingParent, d/4, visible);
+	delegate.render(scene, cs, matchingParent, d/4, visible);
 	cs = _cs;
 	front.render(scene, cs, matchingParent, d/4, visible);
     }

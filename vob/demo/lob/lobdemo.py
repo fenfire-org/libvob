@@ -19,6 +19,7 @@
 # MA  02111-1307  USA
 # 
 
+from org.nongnu.libvob.fn import *
 from org.nongnu.libvob.lob import *
 from org.nongnu.libvob.lob.lobs import *
 from javolution.lang import *
@@ -49,31 +50,28 @@ def renderLob(scene, lob, key, x, y):
 
 class Scene:
     def key(self, k):
-        global text, textcursor
-
         print 'key', k
 
-        if textcursor < 0 or textcursor > len(text):
-            textcursor = len(text)
-        
-        if len(k) == 1:
-            text = text[:textcursor] +  k   + text[textcursor:]
-            textcursor += 1
-        elif k.lower() == 'enter':
-            text = text[:textcursor] + '\n' + text[textcursor:]
-            textcursor += 1
-        elif k.lower() == 'backspace' and textcursor > 0:
-            text = text[:textcursor-1] + text[textcursor:]
-            textcursor -= 1
-        elif k.lower() == 'left':
-            textcursor -= 1
-        elif k.lower() == 'right':
-            textcursor += 1
-
-        print self.anim
-        self.anim.animate()
+        if self.textlob().key(k):
+            self.anim.animate()
         
     def mouse(self, m): pass
+
+    def textlob(self):
+        t = Text.valueOf(text.get())
+        loblist = TextLobList.newInstance(Lobs.font(), t)
+        loblist = KeyLobList.newInstance(loblist, "text")
+        loblist = Linebreaker.newInstance(Axis.X, loblist, 300)
+        lob = BoxLob.newInstance(Axis.Y, loblist)
+        lob = Lobs.frame(lob, None, Color.black, 1, 5, 0)
+
+        cursor_lob = Lobs.line(java.awt.Color.black, 0, 0, 0, 1)
+        cursor_lob = Lobs.key(cursor_lob, "textcursor")
+        lob = Lobs.decorate(lob, cursor_lob, "text", textcursor.getInt())
+
+        lob = TextKeyController.newInstance(lob, text, textcursor)
+        
+        return lob
 
     #foo = 0
     def scene(self, scene):
@@ -109,26 +107,16 @@ class Scene:
         render(scene, lob.layout(size.natW, size.natH), "hello world",
                300-size.natW/2, 50)
 
-        loblist = TextLobList.newInstance(Lobs.font(), Text.valueOf(text))
-        loblist = KeyLobList.newInstance(loblist, "text")
-        loblist = Linebreaker.newInstance(Axis.X, loblist, 300)
-        lob = BoxLob.newInstance(Axis.Y, loblist)
-        lob = Lobs.frame(lob, None, Color.black, 1, 5, 0)
-
-        cursor_lob = Lobs.line(java.awt.Color.black, 0, 0, 0, 1)
-        cursor_lob = Lobs.key(cursor_lob, "textcursor")
-        lob = Lobs.decorate(lob, cursor_lob, "text", textcursor)
-        
-        renderLob(scene, lob, "textbox", 600, 100)
+        renderLob(scene, self.textlob(), "textbox", 600, 100)
 
         print 'scene rendered'
 
         return scene
         
 
-textcursor = -1
+textcursor = SimpleModel.newInstance(-1)
 
-text = """Copyright (c) 2005, Benja Fallenstein
+text = SimpleModel.newInstance("""Copyright (c) 2005, Benja Fallenstein
 
 This file is part of Libvob.
 
@@ -136,4 +124,4 @@ Libvob is free software; you can redistribute it and/or modify it under the term
 
 Libvob is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with Libvob; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA."""
+You should have received a copy of the GNU General Public License along with Libvob; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.""")

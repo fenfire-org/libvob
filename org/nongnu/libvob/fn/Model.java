@@ -1,7 +1,7 @@
 /*
-AbstractLob.java
+Model.java
  *    
- *    Copyright (c) 2005, Benja Fallenstein
+ *    Copyright (c) 2005 Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -25,28 +25,15 @@ AbstractLob.java
 /*
  * Written by Benja Fallenstein
  */
-package org.nongnu.libvob.lob;
+package org.nongnu.libvob.fn;
 import javolution.realtime.*;
 import java.util.*;
 
-public abstract class AbstractLob extends RealtimeObject implements Lob {
+public interface Model extends Realtime {
 
-    public Lob getImplementation(Class clazz) {
-	if(clazz.isInstance(this))
-	    return this;
-	else
-	    return null;
-    }
+    Object get();
+    void set(Object value);
 
-    public Axis getLayoutableAxis() {
-	return null;
-    }
-
-    public Lob layoutOneAxis(float size) {
-	throw new UnsupportedOperationException();
-    }
-
-    public boolean key(String key) {
-	return false;
-    }
+    int getInt();
+    void set(int value);
 }

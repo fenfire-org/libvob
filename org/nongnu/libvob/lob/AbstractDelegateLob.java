@@ -54,7 +54,11 @@ public abstract class AbstractDelegateLob extends AbstractLob {
 			  int matchingParent, float d, boolean visible) {
 	delegate.render(scene, into, matchingParent, d, visible);
     }
-	
+
+    public boolean key(String key) {
+	return delegate.key(key);
+    }
+
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
 	    delegate.move(os);

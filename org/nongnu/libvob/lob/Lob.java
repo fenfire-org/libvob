@@ -109,7 +109,7 @@ public interface Lob extends Realtime {
     /** A key has been pressed and this Lob is asked to handle it.
      *  @returns Whether the key was handled.
      */
-    //boolean key(String key);
+    boolean key(String key);
 
     /** This vob is asked to handle a mouse event.
      *  When the user is dragging, origX and origY are the coordinates

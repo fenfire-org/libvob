@@ -35,40 +35,28 @@ import java.util.*;
 /** A lob that draws its child, then searches the scene for a cs with
  *  a given key, then draws another lob in that cs.
  */
-public class DecoratorLob extends AbstractLob {
+public class DecoratorLob extends AbstractDelegateLob {
 
-    protected Lob child, decoration;
+    protected Lob decoration;
     protected Object key;
     protected int intKey;
 
     private DecoratorLob() {}
 
-    public static DecoratorLob newInstance(Lob child, Lob decoration,
+    public static DecoratorLob newInstance(Lob delegate, Lob decoration,
 					   Object key, int intKey) {
 	DecoratorLob l = (DecoratorLob)LOB_FACTORY.object();
-	l.child = child; l.decoration = decoration;
+	l.delegate = delegate; l.decoration = decoration;
 	l.key = key; l.intKey = intKey;
 	return l;
     }
 
-    public SizeRequest getSizeRequest() {
-	return child.getSizeRequest();
-    }
-
-    public Lob getImplementation(Class clazz) {
-	if(clazz.isInstance(this))
-	    return this;
-	else
-	    return child.getImplementation(clazz);
-    }
-
     public Lob layout(float w, float h) {
-	return newInstance(child.layout(w, h), decoration, key, intKey);
+	return newInstance(delegate.layout(w, h), decoration, key, intKey);
     }
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
-	    child.move(os);
 	    decoration.move(os);
 	    return true;
 	}
@@ -79,7 +67,7 @@ public class DecoratorLob extends AbstractLob {
     public void render(VobScene scene, int into, int matchingParent,
 		       float d, boolean visible) {
 
-	child.render(scene, into, matchingParent, d, visible);
+	delegate.render(scene, into, matchingParent, d, visible);
 
 	int cs;
 

@@ -197,6 +197,26 @@ public class TableLob extends AbstractLob {
 	throw new UnsupportedOperationException("not layouted yet");
     }
 
+    public boolean key(String key) {
+	return keyImpl(table, key);
+    }
+
+    protected static boolean keyImpl(Table table, String key) {
+	for(int r=0; r<table.getRowCount(); r++) {
+	    for(int c=0; c<table.getColumnCount(); c++) {
+		PoolContext.enter();
+		try {
+		    if(table.getLob(r, c).key(key)) 
+			return true;
+		} finally {
+		    PoolContext.exit();
+		}
+	    }
+	}
+
+	return false;
+    }
+
     private static final class TableLayout extends AbstractLayout {
 	private Table table;
 	private float[] posX = new float[MAXSIZE], posY = new float[MAXSIZE];
@@ -264,6 +284,10 @@ public class TableLob extends AbstractLob {
 		return true;
 	    }
 	    return false;
+	}
+
+	public boolean key(String key) {
+	    return keyImpl(table, key);
 	}
     }
 
