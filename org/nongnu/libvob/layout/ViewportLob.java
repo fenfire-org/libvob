@@ -36,20 +36,29 @@ public class ViewportLob extends AbstractMonoLob {
     protected Model positionModel;
     protected float width, height;
 
+    protected Model visibleFractionModel;
+
     public ViewportLob(Axis axis, Lob content, Model positionModel) {
 	super(content);
 	this.axis = axis;
 	this.positionModel = positionModel;
+	this.visibleFractionModel = new FloatModel();
     }
 
     protected Replaceable[] getParams() { 
 	return new Replaceable[] { content, positionModel };
     }
     protected Object clone(Object[] params) {
-	return new ViewportLob(axis, (Lob)params[0], (Model)params[1]);
+	ViewportLob ret =  new ViewportLob(axis, (Lob)params[0], (Model)params[1]);
+	ret.visibleFractionModel = this.visibleFractionModel;
+	return ret;
     }
 
     public Model getPositionModel() { return positionModel; }
+
+    public Model getVisibleFractionModel() {
+	return visibleFractionModel;
+    }
 
     public void setSize(float requestedWidth, float requestedHeight) {
 	if(axis == X) {
@@ -62,6 +71,8 @@ public class ViewportLob extends AbstractMonoLob {
 
 	width = requestedWidth;
 	height = requestedHeight;
+
+	visibleFractionModel.setFloat(axis.coord(width,height)/content.getNatSize(axis));
     }
 
     protected float getScroll() {
