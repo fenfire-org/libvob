@@ -38,6 +38,8 @@ import javolution.lang.*;
 import javolution.realtime.*;
 import java.awt.Color;
 import java.util.*;
+import java.io.File;
+import java.io.InputStream;
 
 /** Static methods for creating common kinds of lobs.
  */
@@ -49,23 +51,50 @@ public class Lobs {
 
 
 
+    public static Lob vob(Vob vob) {
+	return VobLob.newInstance(vob);
+    }
+
     public static Lob rect(Color color, float lineWidth) {
-	return VobLob.newInstance(RectVob.newInstance(color, lineWidth));
+	return vob(RectVob.newInstance(color, lineWidth));
     }
 
     public static Lob rect3d(Color color, float lineWidth, boolean raised) {
-	return VobLob.newInstance(RectVob.newInstance(color, lineWidth, 
+	return vob(RectVob.newInstance(color, lineWidth, 
 						      raised));
     }
 
     public static Lob filledRect(Color color) {
-	return VobLob.newInstance(FilledRectVob.newInstance(color));
+	return vob(FilledRectVob.newInstance(color));
     }
 
     public static Lob line(Color color, float x1, float y1, 
 			   float x2, float y2) {
 	Vob conn = SimpleConnection.newInstance(x1, y1, x2, y2, color);
-	return VobLob.newInstance(conn);
+	return vob(conn);
+    }
+
+    public static Lob image(File file) {
+	try {
+	    ImageVob vob = new ImageVob(file);
+	    float w = vob.getWidth(), h = vob.getHeight();
+	    return request(vob(vob), w, w, w, h, h, h);
+	} catch (java.io.IOException e) {
+	    e.printStackTrace();
+	    return null;
+	}
+    
+    }
+
+    public static Lob image(InputStream in) {
+	try {	
+	    ImageVob vob = new ImageVob(in);
+	    float w = vob.getWidth(), h = vob.getHeight();
+	    return request(vob(vob), w, w, w, h, h, h);
+	} catch (java.io.IOException e) {
+	    e.printStackTrace();
+	    return null;
+	}
     }
 
     public static Lob translate(Lob l, float x, float y) {

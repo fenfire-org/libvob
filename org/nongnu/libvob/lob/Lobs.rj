@@ -35,6 +35,8 @@ import javolution.lang.*;
 import javolution.realtime.*;
 import java.awt.Color;
 import java.util.*;
+import java.io.File;
+import java.io.InputStream;
 
 /** Static methods for creating common kinds of lobs.
  */
@@ -70,15 +72,26 @@ public class Lobs {
     }
 
     public static Lob image(File file) {
-	ImageVob vob = new ImageVob(file);
-	float w = vob.getWidth(), h = vob.getHeight();
-	return request(vob(vob), w, w, w, h, h, h);
+	try {
+	    ImageVob vob = new ImageVob(file);
+	    float w = vob.getWidth(), h = vob.getHeight();
+	    return request(vob(vob), w, w, w, h, h, h);
+	} catch (java.io.IOException e) {
+	    e.printStackTrace();
+	    return null;
+	}
+    
     }
 
     public static Lob image(InputStream in) {
-	ImageVob vob = new ImageVob(in);
-	float w = vob.getWidth(), h = vob.getHeight();
-	return request(vob(vob), w, w, w, h, h, h);
+	try {	
+	    ImageVob vob = new ImageVob(in);
+	    float w = vob.getWidth(), h = vob.getHeight();
+	    return request(vob(vob), w, w, w, h, h, h);
+	} catch (java.io.IOException e) {
+	    e.printStackTrace();
+	    return null;
+	}
     }
 
     public static Lob translate(Lob l, float x, float y) {
