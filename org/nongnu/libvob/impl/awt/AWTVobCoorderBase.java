@@ -378,8 +378,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    public String toString() { return "concat inverse"; }
 	    void put(Coordinates into) {
 		int p1 = inds[cs()+1], p2 = inds[cs()+2];
-		into.setX(cs(), into.x(p2)*into.sx(p1)/into.sx(p2)+into.x(p1));
-		into.setY(cs(), into.y(p2)*into.sy(p1)/into.sy(p2)+into.y(p1));
+		into.setX(cs(), into.x(p1)-into.x(p2)*into.sx(p1)/into.sx(p2));
+		into.setY(cs(), into.y(p1)-into.y(p2)*into.sy(p1)/into.sy(p2));
 		into.setSX(cs(), into.sx(p1)/into.sx(p2));
 		into.setSY(cs(), into.sy(p1)/into.sy(p2));
 		into.setD(cs(), into.d(p1) - into.d(p2));
