@@ -36,22 +36,51 @@ import java.util.*;
  */
 public class Box extends AbstractSequence {
     static public final Object 
-	URI = "XXX_Box",
-	AXIS = "XXX_axis_YYYY_axis_ZZZZZZZ_axis";
+	URI = "http://fenfire.org/2004/07/layout/Box",
+	AXIS = "http://fenfire.org/2004/07/layout/boxAxis";
 
     public static final Object[] PARAMS = { AXIS };
 
+
     protected final Lob.Axis axis;
 
-    protected float[] positions;
 
-    protected float natSize=0, minSize=0, maxSize=0;
+    // the children's sizes:
+
+    /** Cumulative sizes along the axis of this box (i.e., the sum
+     *  of the min/nat/max sizes of the box's children -- the
+     *  width for an hbox and the height for a vbox).
+     */
+    protected float axisMin, axisNat, axisMax;
+
+    /** How many of the children of this box are infinitely stretchable
+     *  along the axis of this box.
+     */
     protected int nInfiniteStretch = 0;
 
-    protected float minSize2=0, natSize2=0, maxSize2=Float.POSITIVE_INFINITY;
+    /** Minimum/maximum of the min/nat/max sizes of this box's children,
+     *  along the axis <em>other</em> than this box's axis -- i.e.,
+     *  the height for an hbox and the width for a vbox.
+     */
+    protected float otherMin, otherNat, otherMax;
 
-    protected boolean sizesAreCurrent, layoutIsCurrent;
+    protected boolean sizesAreCurrent;
+
+
+    // the layout (where to place each child):
+
+    /** The layout of this box: the coordinate of every child
+     *  on this box's axis, relative to the box.
+     */
+    protected float[] positions;
+    protected boolean positionsAreCurrent;
+
+
+    // whether we're currently layouting:
+
     protected boolean isLayouting;
+
+
 
     public Box(Lob.Axis axis) {
 	this(axis, new SequenceModel.SimpleModel());
@@ -61,6 +90,7 @@ public class Box extends AbstractSequence {
 	super(model);
 	this.axis = axis;
     }
+
 
     /** Convenience function for add(new Glue(axis, min, nat, max))
      */
@@ -85,37 +115,37 @@ public class Box extends AbstractSequence {
     }
 
     protected void computeSizes() {
-	minSize = natSize = maxSize = minSize2 = natSize2 = 0;
-	maxSize2 = Float.POSITIVE_INFINITY;
+	axisMin = axisNat = axisMax = otherMin = otherNat = 0;
+	otherMax = Float.POSITIVE_INFINITY;
 	nInfiniteStretch = 0;
 
 	for(int i=0; i<length(); i++) {
 	    Lob l = getLob(i);
 
-	    if(!Float.isNaN(natSize)) {
+	    if(!Float.isNaN(axisNat)) {
 		try {
-		    minSize += l.getMinSize(axis);
-		    natSize += l.getNatSize(axis);
-		    maxSize += l.getMaxSize(axis);
+		    axisMin += l.getMinSize(axis);
+		    axisNat += l.getNatSize(axis);
+		    axisMax += l.getMaxSize(axis);
 		    if(l.getMaxSize(axis) == Float.POSITIVE_INFINITY)
 			nInfiniteStretch++;
 		} catch(UnknownSizeError e) {
-		    minSize = natSize = maxSize = Float.NaN;
+		    axisMin = axisNat = axisMax = Float.NaN;
 		}
 	    }
 	    
-	    if(!Float.isNaN(minSize2)) {
+	    if(!Float.isNaN(otherMin)) {
 		try {
 		    float min2 = l.getMinSize(axis.other());
-		    if(min2>minSize2) minSize2 = min2;
+		    if(min2>otherMin) otherMin = min2;
 		    float nat2 = l.getNatSize(axis.other());
-		    if(nat2>natSize2) natSize2 = nat2;
+		    if(nat2>otherNat) otherNat = nat2;
 		    float max2 = l.getMaxSize(axis.other());
-		    if(max2<maxSize2) maxSize2 = max2;
+		    if(max2<otherMax) otherMax = max2;
 
-		    if(natSize2>maxSize2) natSize2 = maxSize2;
+		    if(otherNat>otherMax) otherNat = otherMax;
 		} catch(UnknownSizeError e) {
-		    minSize2 = natSize2 = maxSize2 = Float.NaN;
+		    otherMin = otherNat = otherMax = Float.NaN;
 		}
 	    }
 	}
@@ -126,11 +156,11 @@ public class Box extends AbstractSequence {
     public float getMinSize(Lob.Axis axis) {
 	if(!sizesAreCurrent) computeSizes();
 	if(axis == this.axis) {
-	    if(!Float.isNaN(minSize))
-		return minSize;
+	    if(!Float.isNaN(axisMin))
+		return axisMin;
 	} else {
-	    if(!Float.isNaN(minSize2))
-		return minSize2;
+	    if(!Float.isNaN(otherMin))
+		return otherMin;
 	}
 	throw new UnknownSizeError(axis.toString());
     }
@@ -138,13 +168,13 @@ public class Box extends AbstractSequence {
     public float getNatSize(Lob.Axis axis) {
 	if(!sizesAreCurrent) computeSizes();
 	if(axis == this.axis) {
-	    if(!Float.isNaN(natSize))
-		return natSize;
+	    if(!Float.isNaN(axisNat))
+		return axisNat;
 	} else {
-	    if(!Float.isNaN(natSize2))
-		return natSize2;
+	    if(!Float.isNaN(otherNat))
+		return otherNat;
 	    else
-		return minSize2;
+		return otherMin;
 	}
 	throw new UnknownSizeError(axis.toString());
     }
@@ -152,11 +182,11 @@ public class Box extends AbstractSequence {
     public float getMaxSize(Lob.Axis axis) {
 	if(!sizesAreCurrent) computeSizes();
 	if(axis == this.axis) {
-	    if(!Float.isNaN(maxSize))
-		return maxSize;
+	    if(!Float.isNaN(axisMax))
+		return axisMax;
 	} else {
-	    if(!Float.isNaN(maxSize2))
-		return maxSize2;
+	    if(!Float.isNaN(otherMax))
+		return otherMax;
 	}
 	throw new UnknownSizeError(axis.toString());
     }
@@ -186,7 +216,7 @@ public class Box extends AbstractSequence {
     public void render(VobScene scene, int into, int matchingParent,
 		       float x, float y, float w, float h, float d,
 		       boolean visible) {
-	if(!layoutIsCurrent)
+	if(!positionsAreCurrent)
 	    //layout(width, height);
 	    layout(w, h);
 
@@ -241,8 +271,8 @@ public class Box extends AbstractSequence {
 
     public void setSize(float w, float h) {
 	/*
-	if(Float.isNaN(minSize) || Float.isNaN(natSize) || 
-	   Float.isNaN(maxSize)) {
+	if(Float.isNaN(axisMin) || Float.isNaN(axisNat) || 
+	   Float.isNaN(axisMax)) {
 	    throw new UnknownSizeError(this.axis);
 	}
 	*/
@@ -265,7 +295,7 @@ public class Box extends AbstractSequence {
 	width = w;
 	height = h;
 
-	layoutIsCurrent = false;
+	positionsAreCurrent = false;
     }
 
     protected void layout(float w, float h) {
@@ -283,11 +313,11 @@ public class Box extends AbstractSequence {
 	    float tmp = w; w = h; h = tmp;
 	}
 
-	float totalStretch = maxSize-natSize;
-	float totalShrink = natSize-minSize;
+	float totalStretch = axisMax-axisNat;
+	float totalShrink = axisNat-axisMin;
 
 	// the amount by which we need to stretch/shrink
-	float totalDiff = w-natSize;
+	float totalDiff = w-axisNat;
 
 	float x = 0;
 
@@ -324,14 +354,14 @@ public class Box extends AbstractSequence {
 	positions[length()] = w;
 
 	isLayouting = false;
-	layoutIsCurrent = true;
+	positionsAreCurrent = true;
     }
 
     int nc;
 
     public void chg() {
 	if(!isLayouting) {
-	    sizesAreCurrent = layoutIsCurrent = false;
+	    sizesAreCurrent = positionsAreCurrent = false;
 	    super.chg();
 	}
     }
