@@ -80,7 +80,6 @@ public abstract class AWTScreen
 	return new VobScene(
 		new DefaultVobMap(),
 		new AWTVobCoorder_Gen(size.width, size.height),
-		//new OrthoCoorder(size.width, size.height),
 		new DefaultVobMatcher(),
 		this.getGraphicsAPI(),
 		this,
@@ -90,7 +89,6 @@ public abstract class AWTScreen
     public ChildVobScene createChildVobScene(Dimension size, 
 					     int numberOfParameterCS) {
 
-	//OrthoCoorder coorder = new OrthoCoorder(size.width, size.height); // XXX getSize()???
 	AWTVobCoorder_Gen coorder = new AWTVobCoorder_Gen(size.width, size.height);
 	coorder.setNumberOfParameterCS(numberOfParameterCS);
 	return new ChildVobScene(
@@ -267,24 +265,6 @@ public abstract class AWTScreen
 		createInterpList(sc, osc, towardsOther);
 		AWTRenderer.render(sc, osc, towardsOther,
 				   fract, gr, fg);
-		/*
-		OrthoCoorder oc;
-		if(osc != null)
-		    oc = (OrthoCoorder)osc.coords;
-		else {
-		    oc = null;
-		    interplist = null;
-		}
-
-		
-		((OrthoCoorder)sc.coords).renderVobs((DefaultVobMap)sc.map,
-						     oc,
-						     interplist,
-						     fract,
-						     gr, fg,
-						     sc, osc
-						     );
-		*/
 	    }
 	} finally {
 	    gr.setClip(oldClip);
