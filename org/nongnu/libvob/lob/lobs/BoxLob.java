@@ -41,10 +41,10 @@ public class BoxLob extends AbstractLob {
     private class BoxTable extends RealtimeObject implements TableLob.Table {
 	
 	public int getRowCount() {
-	    return (axis == Axis.Y) ? items.getLobCount() : 1;
+	    return (axis == Axis.Y) ? items.size() : 1;
 	}
 	public int getColumnCount() {
-	    return (axis == Axis.X) ? items.getLobCount() : 1;
+	    return (axis == Axis.X) ? items.size() : 1;
 	}
 
 	public Lob getLob(int row, int column) {
@@ -52,7 +52,7 @@ public class BoxLob extends AbstractLob {
 	       (axis == Axis.Y && column != 0))
 		throw new IndexOutOfBoundsException(row+" "+column);
 
-	    Lob lob = items.getLob((axis == Axis.X) ? column : row);
+	    Lob lob = (Lob)items.get((axis == Axis.X) ? column : row);
 
 	    if(otherAxisSize < 0 || axis.other() != lob.getLayoutableAxis())
 		return lob;
@@ -62,7 +62,7 @@ public class BoxLob extends AbstractLob {
     }
 
     private Axis axis;
-    private LobList items;
+    private List items;
 
     private float otherAxisSize; // size along the other axis; -1 if unknown
 
@@ -70,11 +70,11 @@ public class BoxLob extends AbstractLob {
 
     private BoxLob() {}
 
-    public static BoxLob newInstance(Axis axis, LobList items) {
+    public static BoxLob newInstance(Axis axis, List items) {
 	return newInstance(axis, items, -1);
     }
 
-    private static BoxLob newInstance(Axis axis, LobList items, 
+    private static BoxLob newInstance(Axis axis, List items, 
 				      float otherAxisSize) {
 	BoxLob bl = (BoxLob)FACTORY.object();
 	bl.axis = axis; bl.items = items; bl.otherAxisSize = otherAxisSize;

@@ -37,7 +37,7 @@ import java.util.*;
  *  they don't need to be lines of characters, either; for example,
  *  they can be columns, each containing a vbox of text lines.
  */
-public class LinebreakerLobList extends RealtimeObject implements LobList {
+public class LinebreakerLobList extends RealtimeList {
     private static void p(String s) { System.out.println("LinebreakerLobList:: "+s); }
 
     private static final float INF = Breakable.INF;
@@ -45,7 +45,7 @@ public class LinebreakerLobList extends RealtimeObject implements LobList {
     public static int MAXSIZE = (1 << 14);
 
     protected Axis lineAxis;
-    protected LobList items;
+    protected List items;
     protected float lineSize;
 
     protected int[] breaks = new int[MAXSIZE];
@@ -53,19 +53,19 @@ public class LinebreakerLobList extends RealtimeObject implements LobList {
 
     private LinebreakerLobList() {}
 
-    public static LinebreakerLobList newInstance(Axis lineAxis, LobList items,
+    public static LinebreakerLobList newInstance(Axis lineAxis, List items,
 						float lineSize) {
 	LinebreakerLobList br = (LinebreakerLobList)FACTORY.object();
 	br.init(lineAxis, items, lineSize);
 	return br;
     }
 
-    private void init(Axis lineAxis, LobList items, float lineSize) {
+    private void init(Axis lineAxis, List items, float lineSize) {
 	this.lineAxis = lineAxis;
 	this.items = items;
 	this.lineSize = lineSize;
 
-	int nitems = items.getLobCount();
+	int nitems = items.size();
 
 	breaks[0] = -1;
 
@@ -79,10 +79,10 @@ public class LinebreakerLobList extends RealtimeObject implements LobList {
 	    float wid = 0, nextwid = 0;
 	    float nextBreakQuality = INF;
 
-	    for(next=i+1; next<items.getLobCount(); next++) {
+	    for(next=i+1; next<items.size(); next++) {
 		PoolContext.enter();
 		try {
-		    Lob l = items.getLob(next);
+		    Lob l = (Lob)items.get(next);
 		    SizeRequest r = l.getSizeRequest();
 
 		    nextBreakQuality = -INF;
@@ -114,43 +114,43 @@ public class LinebreakerLobList extends RealtimeObject implements LobList {
 	    breakQuality = nextBreakQuality;
 	    i = next;
 
-	} while(i < items.getLobCount());
+	} while(i < items.size());
 
-	breaks[lineCount] = items.getLobCount();
+	breaks[lineCount] = items.size();
     }
 
-    public int getLobCount() {
+    public int size() {
 	return lineCount;
     }
 
-    public Lob getLob(int line) {
+    public Object get(int line) {
 	if(line >= lineCount)
 	    throw new IndexOutOfBoundsException(line+" >= "+lineCount);
 
 	int start = breaks[line]+1, end = breaks[line+1];
-	if(end > items.getLobCount()) end = items.getLobCount();
+	if(end > items.size()) end = items.size();
 
-	LobList lobs = SubLobList.newInstance(items, start, end);
+	List lobs = items.subList(start, end);
 
 	if(breaks[line] >= 0) {
-	    Lob brLob = items.getLob(breaks[line]);
+	    Lob brLob = (Lob)items.get(breaks[line]);
 	    Breakable br = (Breakable)brLob.getImplementation(Breakable.class);
 
 	    Lob before = br.getPostBreakLob(lineAxis);
 	    if(before != null) {
-		LobList singleton = SingletonLobList.newInstance(before);
-		lobs = ConcatLobList.newInstance(singleton, lobs);
+		List singleton = SingletonLobList.newInstance(before);
+		lobs = ConcatList.newInstance(singleton, lobs);
 	    }
 	}
 
-	if(breaks[line+1] < items.getLobCount()) {
-	    Lob brLob = items.getLob(breaks[line+1]);
+	if(breaks[line+1] < items.size()) {
+	    Lob brLob = (Lob)items.get(breaks[line+1]);
 	    Breakable br = (Breakable)brLob.getImplementation(Breakable.class);
 
 	    Lob after = br.getPreBreakLob(lineAxis);
 	    if(after != null) {
-		LobList singleton = SingletonLobList.newInstance(after);
-		lobs = ConcatLobList.newInstance(lobs, singleton);
+		List singleton = SingletonLobList.newInstance(after);
+		lobs = ConcatList.newInstance(lobs, singleton);
 	    }
 	}
 
@@ -161,7 +161,7 @@ public class LinebreakerLobList extends RealtimeObject implements LobList {
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
-	    items.move(os);
+	    if(items instanceof Realtime) ((Realtime)items).move(os);
 	    return true;
 	}
 	return false;

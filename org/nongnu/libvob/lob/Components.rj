@@ -75,12 +75,12 @@ public class Components {
 
 	Axis axis = (Axis)getParam(params, "axis", Axis.Y);
 
-	tr = new @realtime Transform(Transform tr, Model selected) {
+	tr = new @realtime-i Transform(Transform tr, Model selected) {
 	    public Object transform(Object o) {
 		Lob lob = (Lob)tr.transform(o);
 		lob = Lobs.margin(lob, 1);
 
-		Action select = new @realtime Action(Model selected,Object o) {
+		Action select = new @realtime-i Action(Model selected,Object o) {
 		    public void run() {
 			selected.set(o);
 		    }
@@ -92,8 +92,8 @@ public class Components {
 	    }
 	};
 
-	LobList lobs = TransformLobList.newInstance(elements, tr);
-	lobs = ConcatLobList.newInstance(lobs, SingletonLobList.newInstance(Lobs.glue(axis, 0, 0, SizeRequest.INF)));
+	List lobs = TransformList.newInstance(elements, tr);
+	lobs = ConcatList.newInstance(lobs, SingletonLobList.newInstance(Lobs.glue(axis, 0, 0, SizeRequest.INF)));
 
 	Lob lob = Lobs.box(axis, lobs);
 	
@@ -124,7 +124,7 @@ public class Components {
 	boolean multiline = multilineB.booleanValue();
 
 	Text txt = Text.valueOf((String)text.get());
-	LobList list = Lobs.text(font, txt);
+	List list = Lobs.text(font, txt);
 	list = KeyLobList.newInstance(list, "text");
 	Lob lob = multiline ? Lobs.linebreaker(list) : Lobs.hbox(list);
 
@@ -139,7 +139,7 @@ public class Components {
 
 
     public static Transform toStringTransform() {
-	return new @realtime Transform() {
+	return new @realtime-i Transform() {
 	    public Object transform(Object o) {
 		if(o instanceof Realtime)
 		    return Lobs.hbox(Lobs.text(((Realtime)o).toText()));

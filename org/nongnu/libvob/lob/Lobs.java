@@ -158,23 +158,23 @@ public class Lobs {
 	return ClickController.newInstance(child, button, action);
     }
 
-    public static Lob hbox(LobList items) {
+    public static Lob hbox(List items) {
 	return box(Axis.X, items);
     }
 
-    public static Lob vbox(LobList items) {
+    public static Lob vbox(List items) {
 	return box(Axis.Y, items);
     }
 
-    public static Lob box(Axis axis, LobList items) {
+    public static Lob box(Axis axis, List items) {
 	return BoxLob.newInstance(axis, items);
     }
 
-    public static Lob linebreaker(LobList items) {
+    public static Lob linebreaker(List items) {
 	return linebreaker(Axis.X, items);
     }
 
-    public static Lob linebreaker(Axis lineAxis, LobList items) {
+    public static Lob linebreaker(Axis lineAxis, List items) {
 	return LinebreakerLob.newInstance(lineAxis, items);
     }
 
@@ -187,19 +187,19 @@ public class Lobs {
 	return font(Color.black);
     }
 
-    public static LobList text(String s) {
+    public static List text(String s) {
 	return text(font(), s);
     }
 
-    public static LobList text(LobFont font, String s) {
+    public static List text(LobFont font, String s) {
 	return text(font, Text.valueOf(s));
     }
 
-    public static LobList text(Text text) {
+    public static List text(Text text) {
 	return text(font(), text);
     }
 
-    public static LobList text(LobFont font, Text text) {
+    public static List text(LobFont font, Text text) {
 	return TextLobList.newInstance(font, text);
     }
 

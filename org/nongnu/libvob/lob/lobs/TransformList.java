@@ -1,5 +1,5 @@
 /*
-TransformLobList.java
+TransformList.java
  *    
  *    Copyright (c) 2005, Benja Fallenstein
  *
@@ -30,26 +30,26 @@ import org.nongnu.libvob.lob.*;
 import javolution.realtime.*;
 import java.util.*;
 
-public class TransformLobList extends RealtimeObject implements LobList { 
+public class TransformList extends RealtimeList { 
 
     private List elements;
     private Transform transform;
 
-    private TransformLobList() {}
+    private TransformList() {}
 
-    public static TransformLobList newInstance(List elements,
+    public static TransformList newInstance(List elements,
 					       Transform transform) {
-	TransformLobList l = (TransformLobList)FACTORY.object();
+	TransformList l = (TransformList)FACTORY.object();
 	l.elements = elements; l.transform = transform;
 	return l;
     }
 
-    public int getLobCount() {
+    public int size() {
 	return elements.size();
     }
 
-    public Lob getLob(int index) {
-	return (Lob)transform.transform(elements.get(index));
+    public Object get(int index) {
+	return transform.transform(elements.get(index));
     }
 
     public boolean move(ObjectSpace os) {
@@ -64,7 +64,7 @@ public class TransformLobList extends RealtimeObject implements LobList {
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
-		return new TransformLobList();
+		return new TransformList();
 	    }
 	};
 }

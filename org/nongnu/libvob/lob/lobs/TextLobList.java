@@ -31,7 +31,7 @@ import org.nongnu.libvob.*;
 import javolution.lang.*;
 import javolution.realtime.*;
 
-public class TextLobList extends RealtimeObject implements LobList {
+public class TextLobList extends RealtimeList {
     private static void p(String s) { System.out.println("TextLobList:: "+s); }
 
     private LobFont font;
@@ -46,11 +46,11 @@ public class TextLobList extends RealtimeObject implements LobList {
 	return l;
     }
 
-    public int getLobCount() {
+    public int size() {
 	return text.length() + 1;
     }
 
-    public Lob getLob(int index) {
+    public Object get(int index) {
 	if(index < text.length())
 	    return font.getLob(text.charAt(index));
 	else if(index == text.length())

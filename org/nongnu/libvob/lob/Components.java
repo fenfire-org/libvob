@@ -80,8 +80,8 @@ public class Components {
 
 	tr = new_Transform_1(tr,selected);
 
-	LobList lobs = TransformLobList.newInstance(elements, tr);
-	lobs = ConcatLobList.newInstance(lobs, SingletonLobList.newInstance(Lobs.glue(axis, 0, 0, SizeRequest.INF)));
+	List lobs = TransformList.newInstance(elements, tr);
+	lobs = ConcatList.newInstance(lobs, SingletonLobList.newInstance(Lobs.glue(axis, 0, 0, SizeRequest.INF)));
 
 	Lob lob = Lobs.box(axis, lobs);
 	
@@ -112,7 +112,7 @@ public class Components {
 	boolean multiline = multilineB.booleanValue();
 
 	Text txt = Text.valueOf((String)text.get());
-	LobList list = Lobs.text(font, txt);
+	List list = Lobs.text(font, txt);
 	list = KeyLobList.newInstance(list, "text");
 	Lob lob = multiline ? Lobs.linebreaker(list) : Lobs.hbox(list);
 
@@ -130,8 +130,7 @@ public class Components {
 	return new_Transform_2();
     }
 
-        private static class _Transform_1 extends RealtimeObject
-            implements Transform {
+        private static class _Transform_1 extends RealtimeObject implements Transform {
 
                 private _Transform_1() {}
 
@@ -163,8 +162,7 @@ the_new_Transform_1.selected = selected;
             return the_new_Transform_1;
         }
     
-        private static class _Transform_2 extends RealtimeObject
-            implements Transform {
+        private static class _Transform_2 extends RealtimeObject implements Transform {
 
                 private _Transform_2() {}
 
@@ -191,8 +189,7 @@ the_new_Transform_1.selected = selected;
             return the_new_Transform_2;
         }
     
-        private static class _Action_3 extends RealtimeObject
-            implements Action {
+        private static class _Action_3 extends RealtimeObject implements Action {
 
                 private _Action_3() {}
 

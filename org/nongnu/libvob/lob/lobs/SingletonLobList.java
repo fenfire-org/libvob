@@ -30,7 +30,7 @@ import org.nongnu.libvob.lob.*;
 import javolution.realtime.*;
 import java.util.*;
 
-public class SingletonLobList extends RealtimeObject implements LobList { 
+public class SingletonLobList extends RealtimeList { 
 
     private Lob lob;
 
@@ -43,11 +43,11 @@ public class SingletonLobList extends RealtimeObject implements LobList {
     }
 
 
-    public int getLobCount() {
+    public int size() {
 	return 1;
     }
 
-    public Lob getLob(int index) {
+    public Object get(int index) {
 	if(index != 0)
 	    throw new IndexOutOfBoundsException(index+" != 0");
 

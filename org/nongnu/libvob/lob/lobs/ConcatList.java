@@ -1,5 +1,5 @@
 /*
-ConcatLobList.java
+ConcatList.java
  *    
  *    Copyright (c) 2005, Benja Fallenstein
  *
@@ -30,34 +30,44 @@ import org.nongnu.libvob.lob.*;
 import javolution.realtime.*;
 import java.util.*;
 
-public class SimpleLobList extends RealtimeObject implements LobList { 
+public class ConcatList extends RealtimeList { 
 
-    private List lobs = new ArrayList();
+    private List l1, l2;
 
-    private SimpleLobList() {}
+    private ConcatList() {}
 
-    public static SimpleLobList newInstance() {
-	SimpleLobList l = (SimpleLobList)FACTORY.object();
-	l.lobs.clear();
+    public static ConcatList newInstance(List l1, List l2) {
+	ConcatList l = (ConcatList)FACTORY.object();
+	l.l1 = l1; l.l2 = l2;
 	return l;
     }
 
-    public void add(Lob l) {
-	lobs.add(l);
+    public static ConcatList newInstance(List l1, List l2, 
+					    List l3) {
+	return newInstance(l1, newInstance(l2, l3));
     }
 
-    public int getLobCount() {
-	return lobs.size();
+    public static ConcatList newInstance(List l1, List l2, 
+					    List l3, List l4) {
+	return newInstance(newInstance(l1, l2), newInstance(l3, l4));
     }
 
-    public Lob getLob(int index) {
-	return (Lob)lobs.get(index);
+
+    public int size() {
+	return l1.size() + l2.size();
+    }
+
+    public Object get(int index) {
+	if(index >= l1.size())
+	    return l2.get(index - l1.size());
+	else
+	    return l1.get(index);
     }
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
-	    for(int i=0; i<lobs.size(); i++)
-		((Lob)lobs.get(i)).move(os);
+	    if(l1 instanceof Realtime) ((Realtime)l1).move(os);
+	    if(l2 instanceof Realtime) ((Realtime)l2).move(os);
 	    return true;
 	}
 	return false;
@@ -65,7 +75,7 @@ public class SimpleLobList extends RealtimeObject implements LobList {
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
-		return new SimpleLobList();
+		return new ConcatList();
 	    }
 	};
 }

@@ -30,32 +30,33 @@ import org.nongnu.libvob.lob.*;
 import javolution.realtime.*;
 import java.util.*;
 
-/** A LobList putting KeyLobs around the lobs in another LobList.
+/** A List putting KeyLobs around the lobs in another List.
  */
-public class KeyLobList extends RealtimeObject implements LobList { 
+public class KeyLobList extends RealtimeList { 
 
-    private LobList list;
+    private List list;
     private Object key;
 
     private KeyLobList() {}
 
-    public static KeyLobList newInstance(LobList list, Object key) {
+    public static KeyLobList newInstance(List list, Object key) {
 	KeyLobList l = (KeyLobList)FACTORY.object();
 	l.list = list; l.key = key;
 	return l;
     }
 
-    public int getLobCount() {
-	return list.getLobCount();
+    public int size() {
+	return list.size();
     }
 
-    public Lob getLob(int index) {
-	return KeyLob.newInstance(list.getLob(index), key, index);
+    public Object get(int index) {
+	return KeyLob.newInstance((Lob)list.get(index), key, index);
     }
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
-	    list.move(os);
+	    if(list instanceof Realtime)
+		((Realtime)list).move(os);
 	    if(key instanceof Realtime)
 		((Realtime)key).move(os);
 	    return true;

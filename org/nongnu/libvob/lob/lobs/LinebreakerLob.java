@@ -39,11 +39,11 @@ public class LinebreakerLob extends AbstractLob {
     private static void p(String s) { System.out.println("LinebreakerLob:: "+s); }
 
     private Axis lineAxis;
-    private LobList items;
+    private List items;
 
     private LinebreakerLob() {}
 
-    public static LinebreakerLob newInstance(Axis lineAxis, LobList items) {
+    public static LinebreakerLob newInstance(Axis lineAxis, List items) {
 	LinebreakerLob bl = (LinebreakerLob)FACTORY.object();
 	bl.lineAxis = lineAxis; bl.items = items;
 	return bl;
@@ -54,7 +54,7 @@ public class LinebreakerLob extends AbstractLob {
     }
 
     public Lob layoutOneAxis(float size) {
-	LobList lines = LinebreakerLobList.newInstance(lineAxis, items, size);
+	List lines = LinebreakerLobList.newInstance(lineAxis, items, size);
 	return BoxLob.newInstance(lineAxis.other(), lines);
     }
 
@@ -75,7 +75,7 @@ public class LinebreakerLob extends AbstractLob {
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
-	    items.move(os);
+	    if(items instanceof Realtime) ((Realtime)items).move(os);
 	    return true;
 	}
 	return false;

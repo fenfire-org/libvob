@@ -36,14 +36,14 @@ import java.util.*;
  */
 public class Tray extends AbstractLob {
 
-    private LobList lobs;
+    private List lobs;
     private boolean sendEventsOnlyToFrontLob;
 
     private float width, height;
 
     private Tray() {}
 
-    public static Tray newInstance(LobList lobs, 
+    public static Tray newInstance(List lobs, 
 				   boolean sendEventsOnlyToFrontLob) {
 	Tray l = (Tray)FACTORY.object();
 	l.lobs = lobs;
@@ -59,10 +59,10 @@ public class Tray extends AbstractLob {
 	SizeRequest r = SizeRequest.newInstance(SizeRequest.INF, 0, 0,
 						SizeRequest.INF, 0, 0);
 	
-	for(int i=0; i<lobs.getLobCount(); i++) {
+	for(int i=0; i<lobs.size(); i++) {
 	    PoolContext.enter();
 	    try {
-		SizeRequest s = lobs.getLob(i).getSizeRequest();
+		SizeRequest s = ((Lob)lobs.get(i)).getSizeRequest();
 		
 		r.minW = min(r.minW, s.minW);
 		r.natW = max(r.natW, s.natW);
@@ -81,12 +81,12 @@ public class Tray extends AbstractLob {
 
     public boolean key(String key) {
 	if(sendEventsOnlyToFrontLob) {
-	    return lobs.getLob(0).key(key);
+	    return ((Lob)lobs.get(0)).key(key);
 	} else {
-	    for(int i=0; i<lobs.getLobCount(); i++) {
+	    for(int i=0; i<lobs.size(); i++) {
 		PoolContext.enter();
 		try {
-		    if(lobs.getLob(i).key(key))
+		    if(((Lob)lobs.get(i)).key(key))
 			return true;
 		} finally {
 		    PoolContext.exit();
@@ -101,15 +101,15 @@ public class Tray extends AbstractLob {
 			 float x, float y) {
 	
 	if(sendEventsOnlyToFrontLob) {
-	    return lobs.getLob(0).mouse(e, scene, cs, x, y);
+	    return ((Lob)lobs.get(0)).mouse(e, scene, cs, x, y);
 	} else {
-	    for(int i=0; i<lobs.getLobCount(); i++) {
+	    for(int i=0; i<lobs.size(); i++) {
 		PoolContext.enter();
 		try {
 		    if(width < 0 || height < 0)
 			throw new UnsupportedOperationException("not layouted");
 
-		    Lob layout = lobs.getLob(i).layout(width, height);
+		    Lob layout = ((Lob)lobs.get(i)).layout(width, height);
 
 		    if(layout.mouse(e, scene, cs, x, y))
 			return true;
@@ -135,7 +135,7 @@ public class Tray extends AbstractLob {
 	if(width < 0 || height < 0)
 	    throw new UnsupportedOperationException("not layouted");
 
-	int nlobs = lobs.getLobCount();
+	int nlobs = lobs.size();
 
 	float z = 0;
 	float dd = d/nlobs;
@@ -147,12 +147,20 @@ public class Tray extends AbstractLob {
 
 	    PoolContext.enter();
 	    try {
-		Lob layout = lobs.getLob(i).layout(width, height);
+		Lob layout = ((Lob)lobs.get(i)).layout(width, height);
 		layout.render(scene, cs, matchingParent, dd, visible);
 	    } finally {
 		PoolContext.exit();
 	    }
 	}
+    }
+
+    public boolean move(ObjectSpace os) {
+	if(super.move(os)) {
+	    if(lobs instanceof Realtime) ((Realtime)lobs).move(os);
+	    return true;
+	}
+	return false;
     }
 
     private static final Factory FACTORY = new Factory() {

@@ -32,6 +32,7 @@ import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.lob.lobs.*;
 import org.nongnu.libvob.impl.NewLobMain;
 import javolution.realtime.*;
+import javolution.util.*;
 import java.awt.Color;
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class LobDemo extends NewLobMain {
     }
 
     public Lob createLob() {
-        SimpleLobList lobs = SimpleLobList.newInstance();
+        List lobs = FastList.newInstance();
 
         Lob lob = TableLob.newInstance(table);
         lob = Lobs.request(lob, 400, 400, 400, 300, 300, 300);

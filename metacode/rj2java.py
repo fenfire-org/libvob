@@ -37,7 +37,7 @@ then looks.
 
 I found this too hard in practice, so with this new preprocessor, this becomes
 
-    new @realtime LobList(LobList list) {
+    new @realtime-i LobList(LobList list) {
         public int getLobCount() { list.getLobCount(); }
         public Lob getLob(int index) {
             return KeyLob.newInstance(list.getLob(index));
@@ -47,7 +47,8 @@ I found this too hard in practice, so with this new preprocessor, this becomes
 The preprocessor will create an inner class and create a Javolution FACTORY
 for that class etc.
 
-The thing after @realtime must be an interface, not a class (for now).
+@realtime extends a class, @realtime-i implements an interface
+(and inherits from RealtimeObject).
 
 We can not access final members of the enclosing method from the inner class,
 though, that was too hard to program, that's why we explicitly have to say
@@ -104,7 +105,7 @@ def parse_balanced_parens(str, start):
         return parse_balanced_parens(str, e)
 
 
-new_realtime = re.compile(r'new\s*@realtime\s*([^ \r\n\t\f\v\(\)]*)\s*\(([^\(\)]*)\)\s*\{')
+new_realtime = re.compile(r'new\s*@realtime(-i)?\s*([^ \r\n\t\f\v\(\)]*)\s*\(([^\(\)]*)\)\s*\{')
 variable = re.compile(r'\s*(\S*)\s*(\S*)\s*')
 
 replacements = []
@@ -127,8 +128,9 @@ while True:
     start = match.start()
     end   = parse_balanced_parens(code, match.end())
 
-    interface = match.group(1)
-    params_spec = match.group(2)
+    is_interface = match.group(1) != None
+    interface = match.group(2)
+    params_spec = match.group(3)
     parameters = params_spec.split(',')
     body = code[match.end() : end-1]
 
@@ -148,9 +150,13 @@ while True:
     repl = """new%(impl)s(%(params_list)s)""" % locals();
     code = code[:start] + repl + code[end:]
 
+    if is_interface:
+        extends = 'extends RealtimeObject implements %(interface)s' % locals()
+    else:
+        extends = 'extends %(interface)s' % locals()
+
     code += """
-        private static class %(impl)s extends RealtimeObject
-            implements %(interface)s {
+        private static class %(impl)s %(extends)s {
 
                 private %(impl)s() {}
 
