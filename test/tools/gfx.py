@@ -135,6 +135,7 @@ def checkTrans(vs, cs, srclist, dstlist, delta=0, alsoRender = 1):
 	if abs(dst[i]-dstlist[i]) > delta:
 	    raise str([srclist, dstlist, dst, i, dst[i], dstlist[i]])
     if alsoRender:
+        vs.fader = None
 	for i in range(0, len(src), 3):
 	    vs.map.clear()
 	    vs.map.put(vob.vobs.SolidBackdropVob(Color.red))

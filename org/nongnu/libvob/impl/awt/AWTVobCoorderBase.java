@@ -88,11 +88,40 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    Arrays.fill(coords, 0);
 	    maxcs = ncs;
 
+	    if(parentCoorder != null) {
+		Coordinates parent = parentCoorder.coordinates;
+		parent.check();
+		for(int cs=0; cs<numberOfParameterCS; cs++) {
+		    for(int i=0; i<5; i++) {
+			int pcs = parentCoorder.inds[parentCS+3+cs];
+			coords[5*cs+i] = parent.coords[5*pcs+i];
+		    }
+		}
+	    }
+
 	    for(int i=0; i<ncs; i++) {
-		Trans t = getTrans(cses[i]);
-		t.put(this);
-		//p("init "+i+"th ("+cses[i]+", type "+inds[cses[i]]+") to "+coords[5*cses[i]+0]+" "+coords[5*cses[i]+1]+" "+coords[5*cses[i]+2]+" "+coords[5*cses[i]+3]+" "+coords[5*cses[i]+4]);
-		t.pop();
+		int cs = cses[i];
+		if(inds[cs] >= 0) {
+		    Trans t = getTrans(cses[i]);
+		    t.put(this);
+		    //p("init "+i+"th ("+cses[i]+", type "+inds[cses[i]]+") to "+coords[5*cses[i]+0]+" "+coords[5*cses[i]+1]+" "+coords[5*cses[i]+2]+" "+coords[5*cses[i]+3]+" "+coords[5*cses[i]+4]);
+		    t.pop();
+		} else if(inds[cs] == -1) {
+		    // child vobscene -- don't need to do anything
+		} else if(inds[cs] == -2) {
+		    // cs exported from child vs
+		    ChildVobScene cvs = children[inds[cs+1]];
+		    int ccs = inds[cs+2];
+
+		    AWTVobCoorderBase child = (AWTVobCoorderBase)cvs.coords;
+		    child.setParentCoorder(AWTVobCoorderBase.this, inds[cs+1]);
+		    child.coordinates.check();
+		    for(int k=0; k<5; k++) {
+			coords[5*cs+k] = child.coordinates.coords[5*ccs+k];
+		    }
+		} else {
+		    throw new Error("cs type "+inds[cs]);
+		}
 	    }
 
 	    _interpList = null;
@@ -117,7 +146,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    _interpList = interpList;
 	    _fract = fract;
 
-	    for(int i=0; i<ncs; i++) {
+	    for(int i=numberOfParameterCS; i<ncs; i++) {
 		int cs = cses[i];
 		int ocs;
 
@@ -163,11 +192,15 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		initInterpolation();
 	}
 
-	float x(int cs) { return coords[5*cs]; }
-	float y(int cs) { return coords[5*cs+1]; }
-	float sx(int cs) { return coords[5*cs+2]; }
-	float sy(int cs) { return coords[5*cs+3]; }
-	float d(int cs) { return coords[5*cs+4]; }
+	float get(int cs, int offs) {
+	    return coords[5*cs+offs];
+	}
+
+	float x(int cs) { return get(cs, 0); }
+	float y(int cs) { return get(cs, 1); }
+	float sx(int cs) { return get(cs, 2); }
+	float sy(int cs) { return get(cs, 3); }
+	float d(int cs) { return get(cs, 4); }
 
 	void setX(int cs, float value) { coords[5*cs] = value; }
 	void setY(int cs, float value) { coords[5*cs+1] = value; }
@@ -683,45 +716,45 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     };
     
     Trans getTrans(int cs) {
-	if (dbg) p("cs "+cs+ ", "+inds[cs]+(parentCoordsys ==null));
-	if (cs < numberOfParameterCS || (inds[cs] < 0 && inds[cs] > -3)) {
+	if (dbg) p("cs "+cs+ ", "+inds[cs]+(parentCoorder ==null));
 	    
+	if(cs < numberOfParameterCS) {
 	    // it may also be export!
 	    // no it may not because cs < numberOfParameterCS
-	    if (parentCoordsys == null) {
+	    if (parentCoorder == null) {
 		root.push(cs);
 		return root;
 	    }
 
 	    // there is parent coorder...
 
-	    if((cs >= 0) && (cs < numberOfParameterCS)) {
-		// go to parent vob coorder
+	    // go to parent vob coorder
 
-		int n = cs;
-		int len = parentCoordsys.inds[parentCS+2];
-		if (n >= len) throw new Error("cs too big");
-		int c = parentCoordsys.inds[parentCS+3+n];
-		return parentCoordsys.getTrans(c);
-	    }
-	    // check child coorder, i.e., parent: -1 = put 
-	    // and -2 = export
-	    if (inds[cs] == -1) return noOp;
-
-	    if (inds[cs] == -2) {
-		ChildVobScene cvs = children[inds[cs+1]];
-		AWTVobCoorderBase coords = (AWTVobCoorderBase)cvs.coords;
-		coords.parentCoordsys = this;
-		coords.parentCS = inds[cs+1];
-		return coords.getTrans(inds[cs+2]);
-	    }
-	    throw new Error("Help! Wrong coordsys: "+cs);
-	} else {
-	    if (dbg) p(", ind: "+inds[cs]+", "+isActive(cs));
-	    Trans t = trans[inds[cs] & (~GL.CSFLAGS)];
-	    t.push(cs);
-	    return t;
+	    int n = cs;
+	    int len = parentCoorder.inds[parentCS+2];
+	    if (n >= len) throw new Error("cs too big");
+	    int c = parentCoorder.inds[parentCS+3+n];
+	    return parentCoorder.getTrans(c);
 	}
+
+	// check child coorder, i.e., parent: -1 = put 
+	// and -2 = export
+	if (inds[cs] == -1) return noOp;
+
+	if (inds[cs] == -2) {
+	    ChildVobScene cvs = children[inds[cs+1]];
+	    AWTVobCoorderBase coords = (AWTVobCoorderBase)cvs.coords;
+	    coords.setParentCoorder(this, inds[cs+1]);
+	    return coords.getTrans(inds[cs+2]);
+	}
+
+	if(inds[cs] < -2)
+	    throw new Error("Help! Wrong coordsys: "+cs);
+
+	if (dbg) p(", ind: "+inds[cs]+", "+isActive(cs));
+	Trans t = trans[inds[cs] & (~GL.CSFLAGS)];
+	t.push(cs);
+	return t;
     }
     
 
@@ -729,8 +762,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	for (int i=0; i<trans.length; i++) 
 	    if (trans[i].csInd != 0)
 		throw new Error(trans[i] +" is guilty!");
-	if(parentCoordsys != null)
-	    parentCoordsys.check();
+	if(parentCoorder != null)
+	    parentCoorder.check();
     }
 
 
@@ -744,14 +777,14 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		System.out.print(csInd+": ");
 		for (int i=0; i<csInd; i++)
 		    System.out.print(" ");
-		System.out.println("push "+cs+", "+this+ ", "+(parentCoordsys ==null));
+		System.out.println("push "+cs+", "+this+ ", "+(parentCoorder ==null));
 	    }
 	    this.cs[++csInd] = cs; 
 	}
 	int cs() { return cs[csInd]; }
 	void pop() { 
 	    if (dbg)
-		System.out.println("pop "+ cs() +", "+this+ ", "+(parentCoordsys ==null));
+		System.out.println("pop "+ cs() +", "+this+ ", "+(parentCoorder ==null));
 	    csInd--; 
 	}
 
@@ -889,7 +922,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 
     int parentCS = 0;
-    AWTVobCoorderBase parentCoordsys = null;
+    AWTVobCoorderBase parentCoorder = null;
 
 
     public void activate(int cs) {
@@ -972,7 +1005,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	for(int i=0; i<cs.length; i++)
 	    inds[j+3+i] = cs[i];
 
-	ninds += 3+cs.length;
+	addInds(3+cs.length);
 
 	return j;
     }
@@ -1018,7 +1051,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	inds[j+0] = -2; // Code for child vobscene cs export
 	inds[j+1] = childVobSceneId; // index in list
 	inds[j+2] = nth;
-	ninds += 3;
+	addInds(3);
 	return j;
     }
     
@@ -1052,6 +1085,15 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     }
 
 
+    void setParentCoorder(AWTVobCoorderBase coorder, int cs) {
+	if(parentCoorder == coorder && parentCS == cs) return;
+
+	parentCoorder = coorder;
+	parentCS = cs;
+	coordinates.maxcs = interpCoordinates.maxcs = 0;
+    }
+
+
     public int getChildCSAt(int[] activateCSs, 
 			    int parent, 
 			    float x, float y, 
@@ -1061,14 +1103,12 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    css[i] = Integer.parseInt((String)actChildren.get(""+activateCSs[i]));
 
 	ChildVobScene cvs = children[css[0]];
-	((AWTVobCoorderBase)cvs.coords).parentCoordsys = this;
-	((AWTVobCoorderBase)cvs.coords).parentCS = css[0];
+	((AWTVobCoorderBase)cvs.coords).setParentCoorder(this, css[0]);
 	for (int i=1; i<css.length; i++) {
 	    ChildVobScene oldCvs = cvs;
 	    cvs = ((AWTVobCoorderBase)cvs.coords).children[css[i]];
-	    ((AWTVobCoorderBase)cvs.coords).parentCoordsys = 
-		((AWTVobCoorderBase)oldCvs.coords);
-	    ((AWTVobCoorderBase)cvs.coords).parentCS = css[i];
+	    ((AWTVobCoorderBase)cvs.coords).setParentCoorder(
+                (AWTVobCoorderBase)oldCvs.coords, css[i]);
 	}
 
 	return cvs.getCSAt(parent, x,y, targetcoords);

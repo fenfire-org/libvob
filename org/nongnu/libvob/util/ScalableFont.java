@@ -175,6 +175,9 @@ public final class ScalableFont {
     /** Gets the scale for the point size which is nearest the given height.
      */
     public float getScale(float height) {
+	if(height > 1000)
+	    throw new IllegalArgumentException("too large height: "+height);
+
 	int index = (int)height;
 	if(index < 0) index = 0;
 	if(index < scaleByHeight.length && scaleByHeight[index] > 0)

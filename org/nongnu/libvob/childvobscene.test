@@ -43,6 +43,24 @@ def printTrans(vs, str, cs, pt):
     print "TRANS: ",str,pt,dst
 
 
+def testCoordsNoChild():
+    """
+    Same as testCoords(), but without using a child vs.
+    This is here so that we know that if testCoords() fails,
+    it's a bug with child scenes, not a bug with the
+    testing infrastructure.
+    """
+
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.blue))
+
+    cs = vs.scaleCS(0, "A", 10, 10)
+    cs = vs.translateCS(cs, "A", 1, 1)
+    cs = vs.translateCS(cs, "A", 2, 2)
+
+    checkTrans(vs, cs, [1,2,3], [40, 50, 3])
+
+
 def testCoords():
     """Placing a child vobscene and importing 
     and exporting coords

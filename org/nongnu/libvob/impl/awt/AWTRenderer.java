@@ -141,8 +141,7 @@ public class AWTRenderer {
 		    (AWTVobCoorderBase) c.children[sorted[i]].coords;
 		if (dbg) childCoord.dump();
 		if (dbg) p("sys: "+childCoord);
-		childCoord.parentCS = sorted[i];
-		childCoord.parentCoordsys = c;
+		childCoord.setParentCoorder(c, sorted[i]);
 		renderImpl(
 			c.children[sorted[i]],
 			ocsc, towardsOther,
