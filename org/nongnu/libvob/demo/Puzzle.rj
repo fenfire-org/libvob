@@ -59,6 +59,7 @@ public class Puzzle extends NewLobMain {
 	    l = Lobs.request(l, 30, 30, 30, 30, 30, 30);
 	    l = Components.frame(l);
 	    l = Lobs.margin(l, 10);
+
 	    l = RoleContext.lob(l);
 	} finally {
 	    RoleContext.exit();
@@ -87,7 +88,7 @@ public class Puzzle extends NewLobMain {
 	    (PuzzleBoard)Components.getState(params, "board", null);
 	
 	if(board == null) {
-	    board = PuzzleBoard.newInstance();
+	    board = new PuzzleBoard();
 	    Components.setState(params, "board", board);
 	}
 

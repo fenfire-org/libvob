@@ -1,5 +1,5 @@
-/* -*-java-*-
-PuzzleBoard.rj
+/*
+PuzzleBoard.java
  *    
  *    Copyright (c) 2005, Benja Fallenstein.
  *
@@ -35,16 +35,16 @@ import javolution.realtime.*;
 import java.awt.Color;
 import java.util.*;
 
-public @realtime class PuzzleBoard {
+public class PuzzleBoard {
 
     private int[][] pieces = new int[4][4];
 
-    public @constructor() {
+    public PuzzleBoard() {
 	for(int row=0; row<4; row++)
 	    for(int col=0; col<4; col++)
-		this.pieces[row][col] = 4*row + col + 1;
+		pieces[row][col] = 4*row + col + 1;
 
-	this.pieces[3][3] = -1; // the gap
+	pieces[3][3] = -1; // the gap
     }
     
     public int getPiece(int r, int c) {
