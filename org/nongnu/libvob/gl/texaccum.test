@@ -1,0 +1,134 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+needGL()
+
+import math
+import java
+from java.awt import Color
+
+
+from test.tools.gfx import *
+
+dbg = 0
+
+def al(accum):
+    return [accum.get(i) for i in range(0, 20)]
+
+def prep(mult = 1):
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.black))
+
+    paper = vob.gl.SpecialPapers.cgraphPaper(1)
+
+    accum = vob.gl.GL.createTexAccum()
+    accum.clear()
+    print accum.get(0)
+
+    quad = vob.gl.GLRen.createFixedPaperQuad(paper,
+		0, 0, 1, 1, 0, 1, 1, 10, accum, mult)
+
+    return (vs, accum, quad)
+
+def testLinear():
+    (vs, accum, quad) = prep()
+
+    cs = vs.orthoCS(0, "A", 0, 0, 0, 0, 0)
+    vs.put(quad, cs)
+
+    for size,ind,val in (
+	(1.9, 1, 4),
+	(3.1, 2, 10),
+	(7.2, 3, 52)):
+	vs.coords.setOrthoParams(cs, 0, 10, 10, size, size)
+	render(vs)
+	l = al(accum)
+	if dbg:
+	    print size, l
+	for i in range(0,len(l)):
+	    if i != ind and l[i] != 0:
+		raise ("Shouldn't be nonzero: ",i, l)
+	assert (int(l[ind]+.5) == val)
+
+	accum.clear()
+
+def testAreaMult():
+    (vs, accum, quad) = prep(1);
+    (vs4, accum4, quad4) = prep(4);
+    cs = vs.orthoCS(0, "A", 0, 10, 10, 10, 10)
+    vs.put(quad, cs)
+    vs.put(quad4, cs)
+    render(vs)
+    l = al(accum)
+    l4 = al(accum4)
+    assert l[2] == 0 and l[3] != 0 and l[4] == 0
+    assert l4[1] == 0 and l4[2] != 0 and l4[3] == 0
+
+def testNonLinear():
+    (vs, accum, quad) = prep()
+    
+    cs = vs.coords.distort(0, 
+	0, 0, 
+	.5, .5, 
+	math.log(1000), math.log(1))
+    vs.put(quad, cs)
+    render(vs)
+
+    l =  al(accum)
+    assert l[10] != 0
+    assert l[9] != 0
+
+    assert l[8] != 0
+    assert l[7] == 0
+    assert l[11] == 0
+
+class CB(vob.gl.GL.StatsCallback):
+    def __init__(self):
+	self.list = []
+    def call(self, o):
+	self.list.append(o)
+
+def testCallback():
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.black))
+
+    paper = vob.gl.SpecialPapers.cgraphPaper(1)
+
+    cb = CB()
+    accum = vob.gl.GL.createTexAccum(cb, "1")
+    assert len(cb.list) == 0
+
+    quad = vob.gl.GLRen.createFixedPaperQuad(paper,
+		0, 0, 1, 1, 0, 1, 1, 10, accum, 1)
+    cs = vs.orthoCS(0, "A", 0, 10, 10, 100, 100)
+    vs.put(quad, cs)
+
+    # Rendering triggers clearing and callback.
+
+    render(vs)
+    assert len(cb.list) == 1
+
+    assert cb.list[0] == "1"
+    
+
+
+
+

@@ -1,0 +1,88 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+from test.tools.gfx import *
+import vob
+GL = vob.gl.GL
+
+needGL()
+
+def testIndirectTextureColor():
+    # Create two textures, teximage them to blue and red.
+
+    blue = GL.createTexture()
+    red = GL.createTexture()
+
+    blue.texImage2D(0, "RGB", 1, 1, 0, "RGBA", "UNSIGNED_BYTE",
+		[0,0,-1,-1])
+    red.texImage2D(0, "RGB", 1, 1, 0, "RGBA", "UNSIGNED_BYTE",
+		[-1,0,0,-1])
+
+    # Create an indirect texture, initializing it to blue
+
+    indirectTexture = GL.createIndirectTexture(blue)
+
+    # Create a paper
+
+    paper = vob.gl.Paper()
+    paper.setNPasses(1)
+    ppass = paper.getPass(0)
+    ppass.setNIndirectTextureBinds(1)
+    ppass.putIndirectTextureBind(0,
+	    "TEXTURE0_ARB",
+	    "TEXTURE_2D",
+	    indirectTexture)
+    ppass.setSetupcode("""
+	PushAttrib ENABLE_BIT TEXTURE_BIT
+	Enable TEXTURE_2D
+	TexEnv TEXTURE_ENV TEXTURE_ENV_MODE REPLACE
+    """)
+    ppass.setTeardowncode("""
+	PopAttrib
+    """)
+
+    # Create a vobscene with a simple paper quad
+
+    vs = getvs()
+
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.white))
+    vs.put(
+	    GLRen.createFixedPaperQuad(paper,
+		    0, 0, 1, 1, 0, 1, 1, 1),
+	    vs.orthoCS(0, "A", 0, 100,100, 100, 100))
+
+    # Render it, should be blue
+
+    render(vs)
+    checkAvgColor(90,90,5,5,(255,255,255))
+    checkAvgColor(110,110,5,5,(0,0,255))
+
+    # Change the indirect texture pointer and 
+    # render again - now should be red
+
+    indirectTexture.setTexture(red)
+    render(vs)
+    checkAvgColor(90,90,5,5,(255,255,255))
+    checkAvgColor(110,110,5,5,(255,0,0))
+
+
+# : vim: set syntax=python :
+

@@ -1,0 +1,300 @@
+# -*-python-*-
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+from test.tools.gfx import *
+import vob
+import java
+import jarray
+
+
+def testCreate():
+    """Creating a child vobscene should succeed.
+
+    """
+
+    childVS = vob.putil.demowindow.w.createChildVobScene(
+	java.awt.Dimension(100,100),
+	2
+	)
+    
+
+def printTrans(vs, str, cs, pt):
+    src = jarray.array(pt, 'f')
+    dst = vs.coords.transformPoints3(cs, src, None)
+    print "TRANS: ",str,pt,dst
+
+
+def testCoords():
+    """Placing a child vobscene and importing 
+    and exporting coords
+
+    """
+
+    childVS = vob.putil.demowindow.w.createChildVobScene(
+	java.awt.Dimension(100,100),
+	2
+	)
+    ccs0 = childVS.translateCS(1, "A", 1, 1)
+
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.blue))
+
+    cs0 = vs.scaleCS(0, "A", 10, 10)
+
+    childId = vs.putChildVobScene(childVS, "A", [0, cs0])
+
+    p_ccs0 = vs.exportChildCoordsys(childId, ccs0)
+
+    cs1 = vs.translateCS(p_ccs0, "A", 2, 2)
+
+    checkTransEq(vs, cs1, [0,0,0, 2,1,.5, 200,33,10])
+
+
+    checkTrans(vs, cs1, [1,2,3], [40, 50, 3])
+
+def testPlace():
+    """Placing a child vobscene and rendering
+
+    fail: AWT
+    """
+
+    childVS = vob.putil.demowindow.w.createChildVobScene(
+	java.awt.Dimension(100,100),
+	2
+	)
+
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.blue))
+    
+    childVS.map.put(vob.gl.GLCache.getCallList("""
+	Color 1 1 0
+	Disable TEXTURE_2D
+	Begin TRIANGLES
+	Vertex 100 100
+	Vertex 100 200
+	Vertex 200 100
+	End
+    """))
+
+    vs.putChildVobScene(childVS, "A", [0, 1])
+    render(vs)
+
+    checkAvgColor(10, 10, 2, 2, (0, 0, 255), 2)
+    checkAvgColor(110, 110, 2, 2, (255, 255, 0), 2)
+
+
+def testMultiplePlace():
+    childVS = vob.putil.demowindow.w.createChildVobScene(
+	java.awt.Dimension(100,100),
+	2
+	)
+    cs = childVS.orthoBoxCS(1, "box", 0, 50,50, 1,1,40,40)
+    childVS.put(vob.vobs.RectBgVob(), cs) #white
+
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+
+    tr = [
+        vs.translateCS(0, "1", 0,0),
+        vs.translateCS(0, "2", 0, 100),
+        vs.translateCS(0, "3", 100,100),
+        vs.translateCS(0, "4",100, 0),
+        ]
+
+    for cs in tr:
+        if 1:
+            vs.putChildVobScene(childVS, str(cs), [0, cs])
+        else:
+            cs = vs.orthoBoxCS(cs, "box", 0, 50,50, 1,1,50,50)
+            vs.put(vob.vobs.RectBgVob(), cs)
+    render(vs)
+    white = (255,255,255)
+    checkAvgColor(60,60, 20,20, white, 2)
+    checkAvgColor(160,60, 20,20, white, 2)
+    checkAvgColor(160,160, 20,20, white, 2)
+    checkAvgColor(60,160, 20,20, white, 2)
+
+    for i in range(100000):
+        pass
+    #for j in range(10000):
+    #        pass
+
+
+sty1 = win.getGraphicsAPI().getTextStyle("SansSerif", 0, 20)
+
+dbg = 0
+
+def testWH():
+    """Test that TextVob is drawn with the width and height
+    that it claims with getWidth() and getHeight().
+
+    fail: AWT
+    """
+    text_scale = 0
+    for scale in range(1, 3):
+	text_scale += scale
+    	pvs = getvs()
+
+        vs = vob.putil.demowindow.w.createChildVobScene(
+            java.awt.Dimension(100,100),
+            1
+            )
+
+    	size = pvs.getSize()
+    	vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+    	textvob = vob.vobs.TextVob(sty1, "Xj"+chr(196)+"j"+chr(197)+"j"+chr(214)+"jX")
+
+	quadFont = sty1.getQuadFont()
+
+    	text_width = int(textvob.getWidth(text_scale))
+   	text_height = int(textvob.getHeight(text_scale))
+    	text_depth = int(textvob.getDepth(text_scale))
+
+	sizes = (text_width, text_height, text_depth)
+	if dbg: print "SIZES:",sizes
+	assert 50 < text_width < 200, sizes
+	assert 10 < text_height < 60, sizes
+	assert 1 < text_depth < 30, sizes
+
+
+	if dbg: print "meas"
+	def sl():
+	    if dbg: java.lang.Thread.sleep(4000)
+
+    	cs = vs.orthoBoxCS(0, "window",  0, 100, 100, 1, 1, size.width, size.height)
+    	cs_text = vs.orthoCS(cs, "text", 0, 0, 0, text_height + text_depth, text_height + text_depth)
+    	vs.map.put(textvob, cs_text)
+
+	sl()
+
+        pvs.putChildVobScene(vs, "foo", [0])
+
+
+	if dbg: print "rendering"
+    	render(pvs)
+
+	sl()
+
+	if dbg: print "rendered"
+
+    	"""The top edge."""
+    	checkNotAvgColor(100, 100, text_width, 10, (255, 0, 0), delta=1)
+	if dbg: print "checked1"
+
+	sl()
+
+    	"""The left edge."""
+    	checkNotAvgColor(100, 100, 10, text_height+text_depth, (255, 0, 0), delta=1)
+	if dbg: print "checked2"
+
+	sl()
+
+    	"""The right edge."""
+    	checkNotAvgColor(100+text_width-10, 100, 10, text_height+text_depth, (255, 0, 0), delta=1)
+	if dbg: print "checked3"
+	sl()
+
+    	"""The bottom edge."""
+    	checkNotAvgColor(100, 100+text_height-1, text_width, text_depth+1, (255, 0, 0), delta=1)
+	if dbg: print "checkedX1"
+	sl()
+
+    	"""The top side."""
+    	checkAvgColor(100, 100-19, text_width, 10, (255, 0, 0), delta=1)
+
+    	"""The left side."""
+    	checkAvgColor(100-19, 100, 10, text_height+text_depth, (255, 0, 0), delta=1)
+
+    	"""The right side."""
+    	checkAvgColor(100+text_width+10, 100, 10, text_height+text_depth, (255, 0, 0), delta=1)
+
+    	"""The bottom side."""
+    	checkAvgColor(100, 100+text_height+text_depth+10, text_width, 10, (255, 0, 0), delta=1)
+
+	if dbg: print "finished"
+
+
+def testComplex():
+    """ XXX
+    """
+
+    useChild = 1
+
+    pvs = getvs()
+    pvs.put(vob.vobs.SolidBackdropVob(Color.red))
+
+    if useChild:
+        vs = vob.putil.demowindow.w.createChildVobScene(
+            java.awt.Dimension(100,100),
+            3
+            )
+    else: vs = pvs
+
+    box2screen = pvs.orthoBoxCS(0, "b2s", 0, 100,100, 1,1, 200,200)
+    box2paper = pvs.coords.orthoBox(0, 0, -100,-100, 1,1, 200,200)
+    pvs.matcher.add(box2screen, box2paper, "b2p")
+
+    if useChild:
+        b2s, b2p = 1,2
+    else:
+        b2s, b2p = box2screen, box2paper
+        
+    paper2box = vs.invertCS(b2p, "canvasview_INv")
+    paper2screen = vs.concatCS(b2s, "canvasview_conc", paper2box)
+
+    print ''
+    print b2s, b2p, paper2box, paper2screen
+
+    from org.nongnu.libvob.lava.placeable import impl as simpl
+
+    pl = simpl.SimpleTextPlaceable("TEST", sty1)
+    cs = vs.orthoBoxCS(paper2box, "text", 0, 0,0,1,1,
+                       pl.getWidth(),pl.getHeight())
+    size = jarray.zeros(3, 'f')
+    vs.coords.getSqSize(cs, size)
+    print "\n"+"-"*40+"\n",size,"\n"+"-"*40
+
+    vs.put(vob.vobs.RectBgVob(), cs)
+    pl.place(vs, cs)
+    pl.place(vs, cs)
+
+    #pl.place(vs, vs.orthoBoxCS(b2s, "foo", 0, 40,40, 1,1, pl.getWidth(), pl.getHeight()))
+    #pl.place(vs, vs.orthoBoxCS(paper2box, "bar", 0, 40,40, 1,1, pl.getWidth(), pl.getHeight()))
+
+    if useChild: 
+        pvs.putChildVobScene(vs, "foo", [0, box2screen, box2paper])
+
+
+    render(pvs)
+
+
+    import time
+    time.sleep(1)
+
+
+
+
+
+
+
+
+# : vim: set syntax=python :

@@ -1,0 +1,342 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka and Asko Soukka
+# 
+# This file is part of Gzz.
+# 
+# Gzz is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Gzz is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Gzz; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+# 
+
+
+from __future__ import nested_scopes
+needGL()
+
+from jarray import zeros
+
+from java.awt import Color
+
+from test.tools.gfx import *
+
+vs = getvs()
+c = vs.coords
+
+interp = zeros(1000, 'i')
+interp[0] = 999
+vs1 = getvs()
+c1 = vs1.coords
+vs2 = getvs()
+c2 = vs2.coords
+
+import math
+
+def testTransform():
+
+    cs1 = c.ortho(0, 5, 10, 15, 0.5, 1)
+    cs2 = c.scale(0, 2, 3, 4)
+    cs = c.concat(cs1, cs2)
+    checkTrans(vs, cs, [0, 0, 0, 1, 1, 1, 2, 2, 2], [10, 15, 5, 11, 18, 9, 12, 21, 13])
+
+
+    cs3 = c.distort(0, 0, 0, 0.1, 0.1, math.log(20), math.log(5))
+
+
+    checkTrans(vs, cs3, [0, 0, 0, 0.001, 0.001, 1], [0, 0, 0, 0.02, 0.02, 1], delta=0.00001, alsoRender = 0)
+
+
+    t = c.translate(0, 100, 100)
+    r = c.rotate(t, 0)
+    checkTrans(vs, r, [0, 0, 0, 0, 50, 0], [100, 100, 0, 100, 150, 0])
+    # Clockwise rotation
+    c.setRotateParams(r, 90)
+    checkTrans(vs, r, [0, 0, 0, 0, 50, 0], [100, 100, 0, 50, 100, 0])
+
+def checkInverse(c, cs):
+    # unit cube
+    list = [
+	0, 0, 0,
+	0, 0, 1,
+	0, 1, 0,
+	0, 1, 1,
+	1, 0, 0,
+	1, 0, 1,
+	1, 1, 0,
+	1, 1, 1,
+
+	0, 0, 0,
+	0, 0, -100,
+	0, -100, 0,
+	0, -100, -100,
+	-100, 0, 0,
+	-100, 0, -100,
+	-100, -100, 0,
+	-100, -100, -100,
+	]
+    src = array(list , 'f')
+
+    checkTransEq(vs, cs, list)
+
+    dst = zeros(len(src), 'f')
+    src2 = zeros(len(src), 'f')
+    dst2 = zeros(len(src), 'f')
+    src3 = zeros(len(src), 'f')
+
+    c.transformPoints3(cs, src, dst)
+    c.inverseTransformPoints3(cs, dst, src2)
+
+    cs_inv = c.concatInverse(0, cs)
+
+    c.transformPoints3(cs_inv, dst, src3)
+    c.inverseTransformPoints3(cs_inv, src2, dst2)
+
+    msg = str((src, dst, src2, dst2, src3))
+    for i in range(0,len(src)):
+	failIf( abs(src[i] - src2[i])/(abs(src[i])+1) > 0.01, msg=msg)
+
+	failIf( abs(src[i] - src3[i])/(abs(src[i])+1) > 0.01, msg=msg)
+	failIf( abs(dst[i] - dst2[i])/(abs(dst[i])+1) > 0.01, msg=msg)
+
+    # As a bonus, test that the unit square is reported right
+
+    c.getSqSize(cs, dst)
+
+    cs1 = c.scale(cs, dst[0], dst[1], 1)
+    cs2 = c.unitSq(cs)
+
+    c.transformPoints3(cs1, src, dst)
+    c.transformPoints3(cs2, src, dst2)
+
+    msg = str((src, dst, dst2))
+    for i in range(0,len(src)):
+	failIf( abs(dst[i] - dst2[i])/(abs(dst[i])+1) > 0.01, msg=msg)
+
+
+def testInverses():
+    for i in range(0,5):
+
+	cs_ortho = c.ortho(0, 2, 3.5, 9.1, 1.2, 3.9)
+	cs_ortho2 = c.ortho(cs_ortho, -1.92, 4.1, 2.951, 2.52, 291)
+	cs_rot = c.rotate(0, 15)
+	cs_rot2 = c.rotate(cs_ortho, 15.8)
+	cs_rot3 = c.rotateXYZ(cs_rot2, 15, 1, 2, 3)
+	cs_ortho3 = c.ortho(cs_rot, -1.92, 4.1, 2.951, 2.52, 291)
+	cs_ortho4 = c.ortho(cs_rot2, -1.92, 4.1, 2.951, 2.52, 291)
+	cs_ortho5 = c.ortho(cs_rot3, -1.92, 4.1, 2.951, 2.52, 291)
+
+	checkInverse(c, cs_rot)
+	checkInverse(c, cs_rot2)
+	checkInverse(c, cs_rot3)
+
+	checkInverse(c, cs_ortho)
+	checkInverse(c, cs_ortho2)
+	checkInverse(c, cs_ortho3)
+	checkInverse(c, cs_ortho4)
+	checkInverse(c, cs_ortho5)
+
+	cs_affine = c.affine(0, 0, 0, 0, 100, 0, 0, 100)
+    	cs_affine_clip = c.affine(0, 0, 50, 50, 10, 0, 0, 10)
+    	cs_cull = c.cull(cs_affine, cs_affine_clip)
+    	checkInverse(c, cs_cull)
+
+	cs_box = c.orthoBox(0, 0, 100, 150, .2, .3, 420, 430)
+    	checkInverse(c, cs_box)
+	# Now, place a nadir cs under this - it should retain
+	# the box
+	box = zeros(2, 'f')
+	c.getSqSize(cs_box, box)
+	failUnlessEqual(box[0], 420)
+	failUnlessEqual(box[1], 430)
+
+def testInterpolateTranslation():
+
+    cs_trans1 = c1.translate(0, 10, 10)
+    cs_trans2 = c2.translate(0, 100, 20)
+
+    interp[cs_trans1] = cs_trans2
+    checkInterp(vs1, vs2, interp, .5, cs_trans1, 
+	[0, 0, 0],
+	[55, 15, 0]
+    )
+
+def testBuoy():
+
+    cs_anch = c.translate(0, 50, 100)
+    cs_b = c.buoyOnCircle1(0, cs_anch, 
+	50, 100, 
+	25, 
+	25, 100,
+	.01)
+    checkTrans(vs, cs_b, [0, 0, 0], [75,100,-1])
+
+def testCulling():
+    """Test culling.
+    """
+
+    def putThings():
+	vs.map.clear()
+	vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+	vs.map.put(renderable, cs_cull)
+	render(vs)
+
+    renderable = vob.gl.GLRen.createCallListBoxCoorded(
+	"PushAttrib CURRENT_BIT ENABLE_BIT\n"+
+        "Disable TEXTURE_2D\n"+
+	"Color 0 0 0 1\n" +
+	"Begin QUAD_STRIP\n"+
+	"Vertex 1 1\nVertex 1 0\n"+
+	"Vertex 0 1\nVertex 0 0\n"+
+	"End\n"+
+        "PopAttrib\n"
+	)
+
+#test box forwarding
+    cs = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_box = c.orthoBox(cs, 0, 0, 0, 1, 1, 10, 10)
+    cs_clip = c.affine(0, 0, 0, 0, 200, 0, 0, 200)
+    cs_cull = c.cull(cs_box, cs_clip)
+    boxwh = zeros(2, 'f')
+    c.getSqSize(cs_cull, boxwh)
+    a = str(boxwh)
+    failIf(boxwh[0] != 10.0, "%s != 10.0" % (boxwh[0]))
+    failIf(boxwh[1] != 10.0, "%s != 10.0" % (boxwh[1]))
+
+#test translation forward
+    cs4 = c.affine(0, 0, 0, 0, 100, 0, 0, 100)
+    cs4clip = c.affine(0, 0, 50, 50, 10, 0, 0, 10)
+    cs4cull = c.cull(cs4, cs4clip)
+    checkTrans(vs, cs4cull, [0, 0, 0, 1, 1, 1, 2, 2, 2], [0, 0, 0, 100, 100, 1, 200, 200, 2])
+
+#Why is that? AFAIK, culling hasn't ever affected translation.
+#    c.setAffineParams(cs4clip, 0, 1500, 1500, 10, 0, 0, 10)
+#    checkNoTrans(vs, cs4cull)
+
+#test side touch (should not be drawn)
+    cs = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_clip = c.affine(0, 0, 111, 60, 10, 0, 0, 10)
+    cs_cull = c.cull(cs, cs_clip)
+
+    putThings()
+    checkAvgColor(10, 10, 100, 100, (255, 0, 0), delta=50)
+
+#test corner-touch (should not be drawn)
+    cs = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_clip = c.affine(0, 0, 110, 110, 10, 0, 0, 10)
+    cs_cull = c.cull(cs, cs_clip)
+
+    putThings()
+    checkAvgColor(10, 10, 100, 100, (255, 0, 0), delta=50)
+
+#test clip outside (should not be drawn)
+    cs = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_clip = c.affine(0, 0, 120, 60, 10, 0, 0, 10)
+    cs_cull = c.cull(cs, cs_clip)
+
+    putThings()
+    checkAvgColor(10, 10, 100, 100, (255, 0, 0), delta=50)
+
+#test same area (should be drawn)
+    cs = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_clip = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_cull = c.cull(cs, cs_clip)
+
+    putThings()
+    checkNotAvgColor(10, 10, 100, 100, (255, 0, 0), delta=50)
+
+#test normal intersection (should be drawn)
+    cs = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_clip = c.affine(0, 0, 60, 60, 100, 0, 0, 100)
+    cs_cull = c.cull(cs, cs_clip)
+
+    putThings()
+    checkNotAvgColor(10, 10, 100, 100, (255, 0, 0), delta=50)
+
+#test clip inside (should be drawn)
+    cs = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_clip = c.affine(0, 0, 60, 60, 10, 0, 0, 10)
+    cs_cull = c.cull(cs, cs_clip)
+
+    putThings()
+    checkNotAvgColor(10, 10, 100, 100, (255, 0, 0), delta=50)
+
+#test findBoundingBox bugfix (should be drawn)
+    cs_box = c.orthoBox(0, 0, 0, 0, 200, 100, 1, 2)
+    cs_clip = c.orthoBox(0, 0, 100, 0, 100, 100, 1, 1)
+    cs_cull = c.cull(cs_box, cs_clip)
+
+    putThings()
+    checkNotAvgColor(0, 0, 200, 200, (255, 0, 0), delta=50)
+
+##test distorted inside (should be drawn)
+#normally without distortion this should not be drawn
+    from org.nongnu.libvob.gl import PaperMill
+    paper = PaperMill.getInstance().getPaper(57)
+    pq = GLRen.createPaperQuad(paper, 0, 0, 1, 1, 1)
+
+    cs = c.affine(0, 0, 10, 10, 100, 0, 0, 100)
+    cs_d = c.distort(cs, 0, 0, 1, 1, 0.1, 1) 
+    cs_clip = c.affine(0, 0, 110, 110, 10, 0, 0, 10)
+    cs_cull = c.cull(cs_d, cs_clip)
+
+    vs.map.clear()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+    vs.map.put(pq, cs_cull, 0)
+    render(vs)
+
+    checkNotAvgColor(10, 10, 100, 100, (255, 0, 0), delta=50)    
+	
+def testInterpolateType():
+    """Test that cses of different types get interpolated
+    """
+    cs1 = vs.affineCS(0, "FOO", 0, 0, 0, 2, 0, 0, 2)
+
+    vs2 = getvs()
+    cs2 = vs2.rotateCS(0, "FOO", 90)
+
+    interp = vs.matcher.interpList(vs2.matcher, 0)
+    interp[0] = len(interp)
+    failUnlessEqual(interp[cs1], cs2)
+    checkInterp(vs, vs2, interp , 0, cs1, [0, 1, 0], [0, 2, 0])
+    checkInterp(vs, vs2, interp , 1, cs1, [0, 1, 0], [-1, 0, 0])
+    checkInterp(vs, vs2, interp , .5, cs1, [0, 1, 0], [-.5, 1, 0])
+
+def testBox():
+    cs1 = vs.orthoBoxCS(0, "A", 1, 2, 3, 4, 5, 6, 7)
+    cs2 = vs.translateCS(0, "B", 100,100,100)
+    wh = zeros(2, 'f')
+    vs.coords.getSqSize(cs1, wh)
+    failUnlessEqual(wh[0], 6);
+    failUnlessEqual(wh[1], 7);
+    cs3 = vs.coords.nadirUnitSq(cs1, cs2)
+
+    checkTransEq(vs, cs1, [0,0,0, 1,1,1, 100,100,100])
+    checkTransEq(vs, cs2, [0,0,0, 1,1,1, 100,100,100])
+    checkTransEq(vs, cs3, [0,0,0, 1,1,1, 100,100,100])
+
+
+    wh = zeros(2, 'f')
+    vs.coords.getSqSize(cs3, wh)
+    failUnlessEqual(wh[0], 6);
+    failUnlessEqual(wh[1], 7);
+    
+def testBuoy2():
+    anchor = vs.orthoBoxCS(0, "A", 0, 100, 100, 0, 0, 0, 0)
+    sea = vs.orthoBoxCS(0, "F", 0, 0, 0, 1, 1, 100, 100)
+    buoy = vs.coords.buoyOnCircle2(sea, anchor, 1, 10)
+
+    checkTrans(vs, buoy, [0, 0, 0], [110, 100, None])
+
+
+
+# : vim: set syntax=python :

@@ -1,0 +1,146 @@
+# -*-python-*-
+# 
+# Copyright (c) 2003, Matti J. Katila
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+import vob, java
+from test.tools.gfx import *
+
+# Constructors for setting test up
+##################################
+
+
+class MainNode(vob.buoy.BuoyViewMainNode):
+    def renderMain(self, vs, into):
+        pass
+    
+    def getGeometer(self, mainNode, conn):
+        pass
+
+class Connector(vob.buoy.BuoyViewConnector, vob.buoy.BuoyViewNodeType):
+    def __init__(self, oldCS, newCS):
+        self.oldCS = oldCS
+        self.newCS = newCS
+        self.b = 1
+    def addBuoys(self, vs, cs, mainNode, listener):
+        listener.link(1, self.getCS(), self, 'TEST', 'anchor')
+    def getSize(self, id, anchor, size):
+        pass
+    def renderBuoy(self, vs, into, w,h,id, anchor,s):
+        return 0
+    def getCS(self):
+        if self.b: cs = self.oldCS
+        else: cs = self.newCS
+        self.b = (1-self.b)
+        return cs
+    def createMainNode(self, id, anchor):
+        return MainNode()
+
+
+class Configuration(vob.buoy.BuoyGeometryConfiguration):
+    class BuoyOnCircle(vob.buoy.impl.BuoyOnCircleGeometer):
+        def prepare(self, vs, into, key, create):
+            pass
+        def buoyCS(self, vs, anchor, dir, key, index, total, w,h,scale):
+            print 'BuoyOnCircle: ',anchor
+            return anchor
+
+    def __init__(self):
+        self.geometer = self.BuoyOnCircle()
+        
+    def getMainViewGeometer(self, mainNode):
+        return vob.buoy.impl.RatioMainGeometer(1,2,3,4)
+    def getGeometers(self, mainNode):
+        set = java.util.HashSet()
+        set.add(self.geometer)
+        return set
+
+    def getSizer(self, mainNode, conn):
+        class Sizer(vob.buoy.BuoySizer):
+            def getBuoySize(a,s,d,f):
+                return 1
+        return Sizer()
+
+    def getGeometer(self, mainNode, conn):
+        return self.geometer
+
+
+# Test Vobscene and matcher
+###########################
+
+class TestMatcher(vob.impl.DefaultVobMatcher):
+    def __init__(self):
+        self.keymaps = []
+    def keymapSingleCoordsys(self, new, old):
+        #vob.impl.DefaultVobMatcher(self, new, old)
+        self.keymaps.append([new, old])
+
+matcher = TestMatcher()
+
+class Map(vob.VobMap):
+    def setVS(self, vs): pass
+    def put(self, vob, c1, c2): pass
+
+class VobCoorder(vob.VobCoorder):
+    def __init__(self):
+        self.list = [123,435,567,87,34,236, 82, 78]
+    def ortho(self,parent, d,x,y,w,h):
+        return self.list.pop(0)
+    def orthoBox(self, p,d,x,y, t,u, w,h):
+        return self.list.pop(0)
+    def getSqSize(self, cs, into): pass
+    def setOrthoBoxParams(self, cs, d,x,y,t,u,w,h): pass
+    def activate(self, cs): pass
+
+class VobScene(vob.VobScene):
+    def __init__(self, matcher):
+        vob.VobScene.__init__(self, Map(), VobCoorder(), matcher,
+                              vob.GraphicsAPI.getInstance(),
+                              win, win.getSize())
+
+
+def testInterpolationFromMainToBuoy():
+    """ Quite stupid test if interpolation from main view port
+    to buoy viewport works or not.
+    The test replaces VobMap.keymapSingleCoordsys -method
+    with new one and checks if two interpolations are done.
+    Test can not see if the keymapping is rigth or not :/
+    """
+    vsOld = getvs()
+
+    mainOldCS = vsOld.orthoCS(0, 'MainOld', 0,0,0, .5, .5)
+    buoyOldCS = vsOld.orthoCS(0, 'buoyOld', 0,0,0, .5, .5)
+
+    vsNew = VobScene(matcher)
+    mainNewCS = vsNew.orthoCS(0, 'MainNew', 0,0,0, .5, .5)
+    buoyNewCS = vsNew.orthoCS(0, 'buoyNew', 0,0,0, .5, .5)
+
+    manager = vob.buoy.impl.FocusWithBuoysManager(MainNode(), [Connector(buoyOldCS, buoyNewCS)], Configuration())
+    manager.dbg = 1
+    manager.draw(vsOld, mainOldCS)
+    buoy = manager.getBuoy(buoyOldCS)
+    assert buoy != None
+    
+    manager.moveFocusTo(buoy)
+    
+    manager.draw(vsNew, mainNewCS)
+    assert len(matcher.keymaps) == 2
+
+    

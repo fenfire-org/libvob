@@ -1,0 +1,221 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+# Test various aspects of FTFont and QuadFont.
+
+from test.tools.gfx import *
+needGL()
+
+fontFile = "/usr/share/fonts/type1/gsfonts/n019004l.pfb";
+
+import vob
+import java
+
+dbg = 0
+
+def printBitmaps(chars, meas, bitmaps):
+    """Print a human-readable version of the bitmaps.
+    """
+    for ind in range(0,len(chars)):
+	if bitmaps[ind] == None: continue
+	print "---"
+	print chars[ind]
+	print "---"
+	for y in range(0, meas[6*ind + 3]):
+	    str = ""
+	    for x in range(0, meas[6*ind + 2]):
+		c = bitmaps[ind][x + y * meas[6*ind + 2]]
+		if c > 64:
+		    s = "."
+		elif c >= 0:
+		    s = " "
+		elif c > -64:
+		    s = "X"
+		else:
+		    s = "o"
+		str = str + s
+	    print str
+
+def testFTFont_withFont():
+    """See that the measurements and bitmaps we get make sense.
+    """
+    ftfont = vob.gl.GL.createFTFont(fontFile, 64, 64)
+    
+    height = ftfont.getHeight() / 2.**6
+    yoffset = ftfont.getYOffs() / 2.**6
+    assert height == 96, (height, yoffset)
+    assert yoffset == 61, (height, yoffset)
+
+    # "A", "!"
+    chars = [ 65, 33 ]
+    meas = ftfont.getMeasurements(chars)
+
+    if dbg: print meas
+
+    assert meas[0] == 1
+    assert meas[1] == -47
+    assert meas[2] == 44
+    assert meas[3] == 47
+    assert meas[4] == 2944
+    assert meas[5] == 0
+
+    assert meas[7] == -48
+
+    bitmaps = ftfont.getBitmaps(chars)
+    if dbg:
+	printBitmaps(chars, meas, bitmaps)
+
+    assert bitmaps[0][0] == 0
+    assert bitmaps[0][20] == -1, bitmaps[0][20]
+
+
+    if dbg:
+	# Dump the whole font at a smallish size
+	ftfont = vob.gl.GL.createFTFont(fontFile, 14, 14)
+
+	chars = range(0, 255)
+	bitmaps = ftfont.getBitmaps(chars)
+	meas = ftfont.getMeasurements(chars)
+
+	printBitmaps(chars, meas, bitmaps)
+
+
+def testFTFont_notfound():
+    """See that the file not found situation is handled
+    gracefully
+    """
+
+    try:
+	ftfont = vob.gl.GL.createFTFont("no/such/fontfile", 42)
+	assert 0 == 1, "NO EXCEPTION!"
+    except:
+	# Fine
+	pass
+
+def testGLFont_SimpleAlpha():
+    """See that making simple alpha GLFonts and destroying them
+    works gracefully.
+    """
+
+    for i in range(0,2):
+	ftfont = vob.gl.GL.createFTFont(fontFile, 20 + 5 * i, 20 + 5 * i)
+	glfont = vob.gl.SimpleAlphaFont.convertFont(ftfont, 5, 1, 1, 
+		    ["TEXTURE_MAG_FILTER", "LINEAR",
+		     "TEXTURE_MIN_FILTER", "LINEAR_MIPMAP_LINEAR"])
+
+	# Now, render something to see if there's anything in the textures
+	textures = glfont.getQuadFont().getTextures()
+
+	vs = getvs()
+	vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+	vs.map.put(vob.gl.GLCache.getCallList("""
+	    Enable TEXTURE_2D
+	    Enable BLEND
+	    TexEnv TEXTURE_ENV TEXTURE_ENV_MODE MODULATE
+	    Color 0 0 0
+	    """))
+	vs.map.put(vob.putil.misc.quad(textures[0].getTexId()),
+		    vs.orthoCS(0, "A", 0, 50, 50, 400, 400))
+	render(vs)
+	checkNotAvgColor(50,50,400,400,(255,0,0))
+
+
+
+	vob.gl.GL.freeQueue()
+    ftfont = None
+    glfont = None
+    for i in range(0,2):
+	java.lang.System.gc()
+	vob.gl.GL.freeQueue()
+
+
+def testQuadFont_Block():
+    """Test that quadfont works by some simple standards.
+    """
+    tex = vob.gl.GL.createTexture()
+    tex.shade(64,64,0,4, "RGBA", "RGBA", 
+		"noise", ["bias","-2"])
+    # white
+    tex2 = vob.gl.GL.createTexture()
+    tex2.shade(64,64,0,4, "RGBA", "RGBA", 
+		"noise", ["bias","2"])
+
+    quadFont = vob.gl.GL.createQuadFont()
+    quadFont.setTextures(["TEXTURE0_ARB"], ["TEXTURE_2D"], ["TEXTURE0_ARB"], 
+		    [tex, tex2])
+    quadFont.setNGlyphs(256)
+    for i in range(0, 256):
+	quadFont.setMeasurements(i, i % 2,
+	    0, 0, 10, 10,
+	    0, 0, 1, 1,
+	    20, 0)
+
+    textvob = vob.gl.GLRen.createText1(quadFont, "ABC", 0, 0)
+    
+    # First, with no textures
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+    vs.map.put(vob.gl.GLCache.getCallList("""
+	Disable TEXTURE_2D
+	Disable BLEND
+	Color 0 0 0
+	"""))
+    vs.map.put(textvob, vs.orthoCS(0, "A", 0, 100, 100, 1, 1))
+    render(vs)
+    if dbg: java.lang.Thread.sleep(2000)
+
+    checkAvgColor(100,100,10,10, (0,0,0))
+    checkAvgColor(110,100,10,10, (255,0,0))
+    checkAvgColor(120,100,10,10, (0,0,0))
+
+    # Then, repeat the same with an interesting texture
+
+
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+    vs.map.put(vob.gl.GLCache.getCallList("""
+	Enable TEXTURE_2D
+	TexEnv TEXTURE_ENV TEXTURE_ENV_MODE MODULATE
+	Disable BLEND
+	Disable ALPHA_TEST
+	Color 1 1 1
+	""" ))
+    vs.map.put(textvob, vs.orthoCS(0, "A", 0, 100, 100, 1, 1))
+    vs.map.put(vob.gl.GLCache.getCallList("""
+	Disable TEXTURE_2D
+	Disable BLEND
+	Color 0 0 0
+	""" ))
+
+    render(vs)
+    if dbg: java.lang.Thread.sleep(5000)
+
+    # First texture white
+    checkAvgColor(100,100,10,10, (255,255,255))
+    checkAvgColor(110,100,10,10, (255,0,0))
+    checkAvgColor(120,100,10,10, (0,0,0))
+    checkAvgColor(130,100,10,10, (255,0,0))
+    checkAvgColor(140,100,10,10, (255,255,255))
+
+
+
+
+# : vim: set syntax=python :

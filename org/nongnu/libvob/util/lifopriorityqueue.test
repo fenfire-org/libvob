@@ -1,0 +1,58 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+# The lifo queue obeys all normal invariants
+# plus some of its own.
+
+from vob.util.priorityqueuetest import *
+
+def setUp():
+    setUp_PriorityQueue(vob.util.LifoPriorityQueue)
+
+def test_lifo():
+    q = vob.util.LifoPriorityQueue()
+
+    A, B, C, D, E = "A", "B", "C", "D", "E"
+
+    q.add(A, 3)
+    q.add(C, 4)
+    q.add(B, 3)
+    q.add(D, 4)
+
+    failUnlessEqual(q.getAndRemoveLowest(), "B")
+    failUnlessEqual(q.getAndRemoveLowest(), "A")
+    failUnlessEqual(q.getAndRemoveLowest(), "D")
+    failUnlessEqual(q.getAndRemoveLowest(), "C")
+    failUnlessEqual(q.getAndRemoveLowest(), None)
+    failUnlessEqual(q.getAndRemoveLowest(), None)
+    
+    q.add(A, 3)
+    q.add(C, 4)
+    q.add(B, 3)
+    q.add(D, 4)
+    q.add(A, 4)
+
+    failUnlessEqual(q.getAndRemoveLowest(), "A")
+    failUnlessEqual(q.getAndRemoveLowest(), "B")
+    failUnlessEqual(q.getAndRemoveLowest(), "D")
+    failUnlessEqual(q.getAndRemoveLowest(), "C")
+    failUnlessEqual(q.getAndRemoveLowest(), None)
+    failUnlessEqual(q.getAndRemoveLowest(), None)

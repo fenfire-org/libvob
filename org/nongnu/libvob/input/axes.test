@@ -1,0 +1,55 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+import vob
+
+def testRelativeAxis():
+    modelA = vob.input.impl.StandardBoundedFloatModel(0,1)
+    adapterA = vob.input.BoundedFloatLinearAbsoluteAdapter(modelA)
+
+    modelB = vob.input.impl.StandardBoundedFloatModel(5,10)
+    adapterB = vob.input.BoundedFloatLogAbsoluteAdapter(modelB)
+
+    modelA.value = .5
+    modelB.value = .5
+
+    axis = vob.input.impl.RelativeAxis("Foo")
+    state = vob.input.InputDeviceManager
+
+    # Calibrate between 0 and 100, but shift first to make it hard
+    axis.changedRelative(42)
+
+    axis.setState(state.STATE_CALIBRATING)
+    axis.changedRelative(100)
+    axis.changedRelative(-100)
+    axis.changedRelative(50)
+    axis.changedRelative(50)
+    axis.changedRelative(-100)
+    axis.setState(state.STATE_NORMAL)
+
+    axis.setMainListener(adapterA)
+    assert modelA.value == 0, modelA.value
+
+    def approx(a, b): return abs(a-b) < .0001
+
+    axis.changedRelative(10)
+    assert approx(modelA.value, 0.1), modelA.value
+

@@ -1,0 +1,56 @@
+# -*-python-*-
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# 
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+# 
+
+needGL()
+# Really basic
+
+import java
+import vob
+from org.nongnu.libvob.gl import IrregularFrame
+from test.tools.gfx import *
+from vob.putil.effects import IrreguFrame
+
+def testCreate():
+    irregu = IrregularFrame.create(0,0,1,1,2,3)
+
+def testCrash():
+    for i in range(0,20):
+	if i % 5 == 0: 
+	    java.lang.System.gc()
+	    vob.gl.GL.freeQueue()
+
+	irregu = IrreguFrame(-2, -1.5, 2, 1.5, 0.2, 1.0, type="ellipse")
+	irregu2 = IrreguFrame(-2, -1.5, 2, 1.5, 0.2, 1.0)
+
+	vs = getvs()
+
+	cs1 = vs.orthoCS(0, "1", 0, 0, 0, 150, 300)
+	cs2 = vs.orthoCS(0, "2", 0, 0, 0, 0, 1 )
+
+	vs.map.put(irregu.frame, cs1, cs2)
+	vs.map.put(irregu.content, cs1, cs2)
+	vs.map.put(irregu2.frame, cs1, cs2)
+	vs.map.put(irregu2.content, cs1, cs2)
+
+	for i in range(0,10):
+	    render(vs)

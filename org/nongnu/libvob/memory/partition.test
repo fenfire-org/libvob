@@ -1,0 +1,96 @@
+from __future__ import nested_scopes
+
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# 
+# This file is part of libvob.
+# 
+# libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+# 
+
+from org.nongnu import libvob as vob
+import java
+
+def setUp():
+    global pool
+    pool = vob.memory.MemoryPartitioner(500)
+
+class Reserver(vob.memory.MemoryConsumer):
+    def __init__(self):
+	self.rese = 0
+	self.qual = 0
+    def getMaxBytes(self, qual):
+	return 230
+    def setReservation(self, priority, byt, qual):
+	self.rese = byt
+	self.qual = qual
+	return byt
+    def getReservation(self):
+	return self.rese
+    def getQuality(self):
+	return self.qual
+
+def waitFor(f, dontStop = 0):
+    for i in range(0,30):
+	java.lang.Thread.sleep(500)
+	if f():
+	    if not dontStop: pool.stop()
+	    return
+    pool.stop()
+    failUnless(0)
+    
+
+def testLoading1():
+    """Test that one block does get loaded.
+    """
+    b = Reserver()
+
+    pool.request(b, .5, 1)
+
+    waitFor(lambda: b.rese == 230)
+
+
+def testLoading3():
+    """Test that two important and one less important blocks
+    load and that the less important block is smaller.
+    """
+    b = Reserver()
+    c = Reserver()
+    d = Reserver()
+
+    pool.request(b, .5, 1)
+    pool.request(c, .25, 1)
+    pool.request(d, .5, 1)
+
+    waitFor(lambda: b.rese == 230 and d.rese == 230 and 1 < c.rese < 220 )
+
+def testChange():
+    """Test that the partitioner reacts to new requests.
+    """
+    b = Reserver()
+    c = Reserver()
+    d = Reserver()
+
+    pool.request(b, .5, 1)
+    pool.request(c, .25, 1)
+    pool.request(d, .5, 1)
+
+    waitFor(lambda: b.rese == 230 and d.rese == 230 and 1 < c.rese < 220, dontStop=1 )
+
+    pool.request(c, 1, 1)
+    waitFor(lambda: c.rese == 230 and b.rese + d.rese <= 500 - 230 )
+

@@ -1,0 +1,22 @@
+# The next two lines define what
+# vobs and primitives are included.
+TRANS=	\
+	LinearPrimitives  		\
+	FunctionalPrimitives 		\
+	DisablablePrimitives 		\
+	FisheyePrimitives		\
+	ScalarFuncs
+VOBS=		\
+	Trivial 			\
+	Pixel 				\
+	Text 				\
+	Paper 				\
+	Irregu				\
+	Program				\
+	GLState				\
+	Lines				\
+	Fillet				\
+	Debug				\
+	Texture
+
+

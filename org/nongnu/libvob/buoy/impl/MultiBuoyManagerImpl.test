@@ -1,0 +1,145 @@
+# -*-python-*-
+# Copyright (c) 2003, Matti J. Katila
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+import org.nongnu.libvob as vob
+import org.nongnu.libvob.buoy as buoy
+from test.tools.gfx import *
+import java
+
+class MainNode(buoy.BuoyViewMainNode):
+    def __init__(self, depth=0, buoyId = None):
+        self.depth = depth
+        self.buoyId = buoyId
+
+    def getMainNode(self): return self
+    def hasMouseHit(self, vs, x,y, hit):
+        hit[0] = self.depth
+        return 1
+
+    def renderMain(self, vs, into): pass
+ 
+class Geometer(buoy.FocusViewPortsGeometer):
+    def place(self, vs, cs):
+        c = 10
+        for i in range(len(cs)):
+            cs[i] = c
+
+def testFindTopmostManager():
+    """ This test tries to find the topmost manager
+    from given set.
+    """
+
+    # create some overlapping managers with depth. max is topmost.
+    m1 = MainNode(depth=2)
+    m2 = MainNode(depth=-3)
+    m3 = MainNode(depth=5)
+    m4 = MainNode(depth=4)
+    
+    #print m1, m2,m3
+    multimanager = buoy.impl.MultiBuoyManagerImpl([m1,m2,m3, m4],
+                                                  None, Geometer(), None)
+    multimanager.draw(None)
+    # let's say that all focis are overlapping at
+    # coordinates (51, 100)..
+    print multimanager.findTopmostBuoyManager(None, 51,100).getMainNode()
+    assert m3 == multimanager.findTopmostBuoyManager(None, 51,100).getMainNode()
+
+
+def testSetGetActiveManager():
+    """ Trivial test that set and get the same buoy manager.
+    """
+
+    class Manager(buoy.BuoyManager):
+        pass
+
+    m = Manager()
+    multimanager = buoy.impl.MultiBuoyManagerImpl([], None, None, None)
+    multimanager.setActiveBuoyManager(m)
+    assert multimanager.getActiveBuoyManager() == m
+
+
+
+
+class TestUtil(buoy.BuoyViewConnector,
+               buoy.BuoyMainViewGeometer,
+               buoy.BuoyGeometryConfiguration,
+               buoy.FocusViewPortsGeometer,
+               buoy.BuoyGeometer,
+               buoy.BuoyViewNodeType,
+               buoy.BuoySizer):
+    def __init__(self, mainNode):
+        self.mainNode = mainNode
+        self.now = 0
+    def place(self, vs, cs):
+        cs[0] = vs.orthoBoxCS(0, 'mainA', 0,70,70,1,1,100,100);
+        cs[1] = vs.orthoBoxCS(0, 'mainB', 0,50,50,1,1,100,100);
+
+
+    def getMainViewGeometer(self, m): return self
+    def getSizer(self, main, conns): return self
+    def getGeometer(self, main, vonns): return self
+    def mainCS(self, vs, into, a,b):
+        return vs.orthoBoxCS(into, 'asdf', 0,0,0,1,1,3,5)
+    def getGeometers(self, mainNode, conns = None):
+        set = java.util.HashSet()
+        set.add(self)
+        return set
+    def prepare(self, vs,a,b,c): pass
+    def addBuoys(self, vs, into, mainNode, manager):
+        manager.link(1, into, self, mainNode.buoyId, None)
+    def getSize(self, linkId,b,c):
+        if linkId == self.mainNode.buoyId: self.now = 1
+        else: self.now = 0
+        return None
+    def getBuoySize(self, a,b,c): return 1
+    def buoyCS(self, vs, cs, dir, a,b,c,d,e,f):
+        if self.now == 1:
+            x,y = 0,0
+        else:
+            x,y = 20,20
+        print 'xy:',x,y
+        cs = vs.orthoBoxCS(0, 'buoy',0, x,y,1,1,100,100)
+        vs.coords.activate(cs)
+        return cs
+    def renderBuoy(self, vs, into,w,h,id, o, b): return 0
+
+
+def testFindIfBuoyHit():
+    """ Finds the buoy from two managers and test that we found the
+    rigth buoy and the manager after that.
+    """
+
+        
+    # Let's say there are 2 managers
+    # and the buoy must found from m2
+    m1 = MainNode(buoyId = 'A')
+    m2 = MainNode(buoyId = 'B')
+
+    # ugly test kludge
+    util = TestUtil(m2)
+
+    vs = getvs()
+    multimanager = vob.buoy.impl.MultiBuoyManagerImpl([m1,m2], [util], util, util)
+    multimanager.draw(vs)
+    buoy = multimanager.findIfBuoyHit(vs, 10,10)
+    assert buoy.getLinkId() == 'B'
+    assert multimanager.getLastFoundBuoy() == buoy
+    assert multimanager.getManagerByLastBuoyHit().getMainNode() == m2

@@ -1,0 +1,96 @@
+# -*-python-*-
+# 
+# Copyright (c) 2003, Asko Soukka
+# 
+# This file is part of Gzz.
+# 
+# Gzz is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Gzz is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Gzz; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+# 
+
+
+"""Test text sizes, rendering etc.
+"""
+
+from test.tools.gfx import *
+from java.awt import Color
+
+sty1 = win.getGraphicsAPI().getTextStyle("SansSerif", 0, 20)
+sty2 = win.getGraphicsAPI().getTextStyle("SansSerif", 0, 50)
+sty3 = win.getGraphicsAPI().getTextStyle("SansSerif", 0, 10)
+
+def testStyleSize():
+    """Test that the different styles give out suitable heights.
+    """
+    failUnlessApprox(4, sty1.getHeight(1), 20)
+    failUnlessApprox(15, sty2.getHeight(1), 50)
+    failUnlessApprox(4, sty3.getHeight(1), 10)
+
+    failUnlessApprox(10, sty1.getHeight(2), 40)
+    failUnlessApprox(25, sty2.getHeight(2), 100)
+    failUnlessApprox(8, sty3.getHeight(2), 20)
+
+    failUnlessApprox(20, sty2.getWidth("xx", 1), 50)
+    failUnlessApprox(4, sty3.getWidth("xx", 1), 10)
+
+def testStyleScaling():
+    """Test scaling by height.
+    """
+    for height in range (0, 100):
+	scale = sty1.getScaleByHeight(height)
+	failUnlessApprox(1, sty1.getHeight(scale), height, "height")
+	failUnlessApprox(1, sty1.getAscent(scale) + sty1.getDescent(scale), height, "ascender + descender")
+    	
+def testSize():
+    """Test, for various box sizes, that text consisting of 
+    lower-case letter x is on the baseline or slightly above.
+    """
+
+def testScale():
+    """Test that hierarchical coordinate systems affect the scaling
+    in the same way.
+    """
+
+def testSpaceWidth():
+    """
+    Test that TextStyle give right width for space.
+
+    fail: GL
+
+    """
+    vs = getvs()
+    size = vs.getSize()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+    spaces = "                    "
+    textvob = vob.vobs.TextVob(sty1, spaces + 'M')
+    rectbg = vob.vobs.RectBgVob(Color.black)
+
+    text_height = int(sty1.getAscent(1))
+    text_depth = int(sty1.getDescent(1))
+
+    spaceWidth = int(sty1.getWidth(spaces, 1.))
+
+    cs = vs.orthoBoxCS(0, "window",  0, 100, 100, 1, 1, size.width, size.height)
+    cs_text = vs.orthoCS(cs, "text", 0, 0, 0, text_height + text_depth, text_height + text_depth)
+    cs_rect = vs.orthoCS(cs, "text", 0, 0, text_height + text_depth, spaceWidth, 10)
+    vs.map.put(textvob, cs_text)
+    vs.map.put(rectbg, cs_rect)
+    render(vs)
+
+    """The right side."""
+    checkAvgColor(100, 100, spaceWidth, text_height+text_depth, (255, 0, 0), delta=1)
+
+# : vim: set syntax=python :

@@ -1,0 +1,231 @@
+Tasks for libvob
+
+
+Current:
+    - peg Actions and co
+    - recursive vob scenes
+
+0.1alpha1: First separate release
+    anybody:
+	- .cvsignores
+	- make sure libvob works right with kaffe
+	- change window title from "Gzz"
+	- error handling:
+	    - make texture module to throw error if texture not found
+	    - crash test GL + GLRen entry points with invalid values
+	    - make mipzips into temp file, move to target only after all successful!
+	      benja's kaffe port showed that this is important as libpng may
+	      bomb
+    tjl:
+	- port more demos
+	    - organize
+	- move Vec23 into util.
+	- tutorial
+    humppake:
+	- navidocize
+
+0.1alpha2: Cleanup
+    tjl:
+	+ rethink nonlinearity: maybe should rather be "local magnification"...
+	- error for setting coordsys with wrong type
+	- transform derivatives
+	- document the template build system
+	- go through " grep cout gfx/*/*.[ch]* "
+	  and deal with them.
+	- make benchmark work right with xgobi
+	- work on the much needed partial ordering system for 
+	  GL.
+	    - using recursive vobscenes
+		- check PEG, fix
+	    - VobBatcher?
+	- speedups to text rendering:
+	    - per-text-vob: from partial ordering system, avoiding
+	      init/deinit code
+	    - per-letter: better cs batching code; using GL transform if possible
+	- proper UpdateManager -- gfxapi interface PEG
+	    - interpolation functions
+    anybody:
+	- get the vobthreading test from fenfire:
+	     org/fenfire/LibvobThreading.test	
+	  and adapt it.
+	- reimplement getCoordSystemStr using src/jni
+	  generator
+	- revamp DisplayList objects from storing Ids to storing
+	  the CallGL displaylist objects.
+	  The point is that then we can print out the code that
+	  was compiled into the list when an error occurs.
+	- fix the generator to pass on the parameter names
+	  defined in the "vob_defined" call somehow!
+
+Unscheduled, pending fixes
+    tjl:
+	- figure out bytevector.
+	- the great buoy redesign
+	    - buoy comes too early through the new main frame when animateing.
+	      Eli poiju napsahtaa liian aikaisin esiin, tätä on tietysti vaikea korjata, 
+              koska kyse on lineaarisesta interpolaatiosta?
+	    - rename the classes of buoy view
+	    - figure out how to combine buoys with the same view!
+    jvk:
+	- fixes to demokeys 
+	    - log slider
+	    - slider min/max
+	    - ...
+    tjl:
+	- 4-dimensional homogeneous type?
+	    - useful for projective coordinate transformations where texturing
+	      goes awry unless w is used
+	- buoy circle -> ellipse
+	- mipzip maker running instrs
+	- change memorypartitioner focus scale:  0..1 is not good,
+	  should be 0..2, where 0..1 as now, 1..2 = things that are so
+	  close to focus that they should be loaded at highest res.
+	  if possible, if not, prioritize them.
+	- the great buoy redesign
+	    - multiple instances of same cell visible as a buoy --> keys?
+		- special matcher? or pp/VobKeyer?
+		- really USE hierarchical keys
+	+ CoordSys::DistordCoords::canPerformGL() returns false.
+          Define action (=complain in stderr?) when trying to use
+	  distorted coordsys with vobs calling directly CallGL.
+	+ PEG getCS hierarchy from either coordsys or matcher
+	- javadoc gzz.vob.Vob* interfaces TOTALLY, including semantics of
+	  coordinate systems!
+    mudyc:
+	- redesign liblines API to be more generic
+	- Extension disabling altough gfx provides them. 
+          "OpenGL 1.1 emulator".
+	- propagate expose events correctly 
+	- when a gl window is closed, call Binder.windowClosed()
+    humppake:
+	+ Better algorithm for CullingCoordSys. Uses now parallel
+          bounding boxes. Fast, but not very exact.
+          + Should not try to be "too smart". Probably option to select
+            between fast parallel bounding box comparison and more
+            time consuming polygon intersect scanning (the latter for
+            distorted views like fisheye).
+          + Still one more between those two: check intersections between
+            two rotated but non distorted rectangles.
+	+ implement Paper TexGenEmboss::setUp_explicit
+          + Discuss with jvk about the current state and use
+            of whole TexGenEmboss.
+    anybody:
+	- rendering papers to pbuffer
+        - option to get alternative dark backgrounds, for white text
+	- make demo start screen size adjustable by environment vars
+	- matrix inversion for point-to-point interpolating cs!
+	- vobmatcher keymapping to work in both directions
+	- better graphics for xupdf and pp
+	    - fillets without the original object
+		- normal direction as data
+		- dicing only when needed
+		- fill with fading color
+	- implement "needInterp"
+	- shape transformation & dicing framework
+	+ soft shadows
+	    - use ATI fragment programs
+	+ fix the way nonlinearity of coordsys is handled.
+	  Needs a slightly better approach, with also 
+	  direction of nonlinearity taken into account.
+	  If we can save a lot of dicing by thinking a little
+	  more, we probably should.
+	  Need to have alternative algorithms (fast/good) though, for 
+	  different cases.
+	+ glvobcoorder.test : testCulling:
+	  don't use Paper, use a different-colored
+	  filled rectangle and test clearly for both
+	  colors (not "not" tests but test that the 
+	  color really is right)
+	- irregu:
+		- borders for paperquads
+		  Perhaps should add "ZVec CoordSys::grad(const ZPt)"
+	          or directional derivative for determining 
+		  the width of a nonlinearly scaled border
+		    - need to think about how to generalize...
+		      linestyle objects for npr scaling?
+	  paragraphs, as well as libpaper backgrounds
+	    - PEG the actual view
+	- make GLVobCoorder's all coordsys types
+	  work like affineCoordsys and setAffineParams, so
+	  that we can set the params from outside easier.
+	- Mosaic: don't store texture in memory;
+	  storing in only the OpenGL texture object will
+	  save memory and time.
+	- Coords.hxx: methods to transform many points at a time
+	  to avoid virtual function call overhead
+	- implement PEG 1021 for AWT (vobscene_mouseclicks--tjl/click.rst)
+	- check OpenGL maximum texture size at run time, adjust mosaic and bg
+	+ make gldemo able to use fullscreen sync_to_vblank mode so that we could
+	  get the benefits of page flipping. How does this interact with e.g.
+	  twinview? Need to turn it off?
+	+ fix text quality on plain OpenGL: on NV10+ we get good 
+	  results by multiplying the alpha obtained from the mipmaps
+	  by 2. However, this is not necessarily possible in general, 
+	  definitely not when magnifying (textures clamped to 1.0).
+	  Maybe rerendering each mipmap level by freetype?
+
+
+	+ implement getCachedTexture in gzz/gfx/gl/GLCache.java
+	  (current implementation is in gfx/libpaper/texcache.py)
+	+ coordsys interpolation: clicks to interpolated coordsys
+	+ fillet implementation handling all connections from a node
+	  simultaneously.
+	+ move *DebugVar* from GL into a new class, same on JNI side. (cleanup)
+	+ proper icons and names for the windows, both AWT and GL
+	+ implement PEG 1012
+	+ implement PEG 1015
+	- porting: make sure all demos etc. work with plain mesa
+	- implement Perlin's "improving noise" paper
+	- animation: save images directly into target
+	  format from C++. Should cut down generation time a lot.
+	+ update irregu renderable
+	    - ?
+	+ irregu
+		- better sawnoise texture: less intermediate freqs
+		- puzzle view
+	  	- soft shadows of irregus- ?!?!?! Need algorithm...
+			- only very approximate needed
+	+ if there are problems with performance, edit libcoords to use
+	  boost::object_pool for making allocations much faster
+	+ if performance problems, redesign coordsys to allow
+	  concatenation, reading only parameters and template
+	  compilation of renderables.
+	    - statistics of what coordinate systems used inside
+	      each other how much ==> which to templatize
+
+	- OpenGL window size handling; whole-screen mode;
+	  detecting and adapting to window size.
+	  Test syncing to vblank!
+
+	- bulges:
+	    - try to find good grid size based on x0,y0,x1,y1
+	    - use less vertices where the distortion is close to linear
+	    - use projective texture mapping
+	    - implement distortion in vertex programs
+	    - use better distortion function
+	    - do not evaluate points twice
+
+	- fix jython locale bug: some gldemos work improperly
+	  when locale is changed from the default
+	- invert PaperQuad coords2
+	- Figure out how to use jreload() in Jython for rerunning test
+	  in the same Java interpreter.
+	    - to rerun tests after changes to only python at the moment, just
+	      start a jython interpreter and repeatedly run
+		execfile("test/test.py")
+	    - changes to Java classes are, however, not found without jreload()
+	- convert basalt/pdlimg ---> gfx/libtexture texturer. Remove gfx/images/*cell* and *conn*
+
+	- show erroneous debug vars: a call to get
+	  list of vars touched by "setDbgvar"
+	  but not used by any code.
+    jvk:
+	+ parseCombiner -> fragment program compiler
+	- in gldemo.py, add "R" key for "cvs update":ing in addition 
+	  to reloading the scenefile
+
+
+
+1.0:
+    - Cpython support
+

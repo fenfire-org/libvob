@@ -1,0 +1,116 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+needGL()
+
+import vob
+from java.awt import Color
+from test.tools.gfx import *
+from vob.putil.misc import quad
+
+
+def testSolid():
+    vs = getvs()
+    vs.put(vob.vobs.SolidBackdropVob(Color.black))
+
+    checkState1(vs)
+
+    paper = vob.gl.SpecialPapers.solidPaper(Color.blue)
+    pq = vob.gl.GLRen.createFixedPaperQuad(paper, 0, 0, 1, 1, 0, 10, 10, 10)
+
+    vs.put(pq, vs.coords.ortho(0, 0, 100,100, 100, 100))
+
+    checkState2(vs)
+    checkState1(vs)
+
+    paper = vob.gl.SpecialPapers.solidPaper(Color.red)
+    pq = vob.gl.GLRen.createFixedPaperQuad(paper, 0, 0, 1, 1, 0, 10, 10, 10)
+
+    vs.put(pq, vs.coords.ortho(0, 0, 200,100, 100, 100))
+
+    checkState2(vs)
+
+    render(vs)
+
+    checkState3(vs)
+
+    checkAvgColor(95, 95, 4, 4, (0,0,0))
+    checkAvgColor(140, 140, 20, 20, (0,0,255))
+    checkAvgColor(240, 140, 20, 20, (255,0,0))
+
+def testGraph():
+    vs = getvs()
+    vs.put(vob.vobs.SolidBackdropVob(Color.black))
+
+    checkState1(vs)
+
+    paper = vob.gl.SpecialPapers.cgraphPaper(100)
+    pq = vob.gl.GLRen.createFixedPaperQuad(paper, -100, -100, 200, 200, 0, 10, 10, 10)
+
+    vs.put(pq, vs.coords.ortho(0, 0, 100, 100, 1, 1))
+
+    checkState2(vs)
+
+    render(vs)
+
+    checkState3(vs)
+
+    checkAvgColor(50, 50, 4, 4, (0,0,0))
+    checkAvgColor(50, 250, 4, 4, (255,0,0))
+    checkAvgColor(250, 50, 4, 4, (0,255,0))
+    checkAvgColor(250, 250, 4, 4, (255,255,255))
+
+def testSelection():
+    vs = getvs()
+    vs.put(vob.vobs.SolidBackdropVob(Color.black))
+
+    paper = vob.gl.SpecialPapers.solidPaper(Color.blue)
+    pq1 = vob.gl.GLRen.createFixedPaperQuad(paper, 0, 0, 1, 1, 0, 10, 10, 10)
+
+    paper = vob.gl.SpecialPapers.solidPaper(Color.red)
+    pq2 = vob.gl.GLRen.createFixedPaperQuad(paper, 0, 0, 1, 1, 0, 10, 10, 10)
+
+    checkState1(vs)
+    vs.put(pq1, vs.coords.ortho(0, 0, 100,100, 100, 100))
+    vs.put(pq2, vs.coords.ortho(0, 0, 200,100, 100, 100))
+    checkState2(vs)
+    render(vs)
+    checkState3(vs)
+
+    checkAvgColor(140, 140, 20, 20, (0,0,255))
+    checkAvgColor(240, 140, 20, 20, (255,0,0))
+
+    # now, the selection
+    sel = vob.gl.SpecialPapers.selectionFixedPaperQuad()
+
+    checkState1(vs)
+    vs.put(sel, vs.coords.ortho(0, -1, 130, 130, 240, 40))
+    checkState2(vs)
+    render(vs)
+    checkState3(vs)
+
+    checkAvgColor(140, 140, 20, 20, (153,128,255))
+    checkAvgColor(240, 140, 20, 20, (255,128,170))
+
+
+
+
+

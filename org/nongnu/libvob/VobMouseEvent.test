@@ -1,0 +1,11 @@
+# (c): Matti J. Katila
+
+import org.nongnu.libvob as vob
+
+def test_getStateAndcreateState():
+    ev1 = vob.VobMouseEvent(1,2,3,4,5,6) 
+    ev1_state = ev1.getObjectStateStr()
+
+    ev2 = vob.VobMouseEvent.createObjectFromStateStr(ev1_state)
+
+    assert ev1 == ev2

@@ -1,0 +1,73 @@
+# 
+# Copyright (c) 2003, Asko Soukka
+# 
+# This file is part of libvob.
+#    
+# libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#    
+# libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+#    
+# You should have received a copy of the GNU General
+# Public License along with libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+"""
+Tests ColorableVob interface and AbstractColorableVob implementation
+"""
+
+from org.nongnu.libvob.vobs import *
+from java.awt import Color
+from jarray import array
+from java.util import ArrayList
+
+def testColorableVob():
+     """Test AbstractColorableVob"""
+     vob = RectBgVob();
+     assert vob.getColors() == None, \
+            'New ColorableVob returned non null colors.'
+     
+     vob = vob.cloneColored(Color.blue)
+     assert vob.getColors() == array([Color.blue], Color), \
+            'Additive cloning with single color failed.'
+
+     vob = vob.cloneColored([Color.red, Color.yellow])
+     assert vob.getColors() == array([Color.blue, Color.red, Color.yellow], Color), \
+            'Additive cloning with Color array failed.'
+
+     list = ArrayList()
+     list.add(Color.blue)
+     list.add(Color.red)
+     vob = vob.cloneColored(list)
+     assert vob.getColors() == array([Color.blue, Color.red, Color.yellow, \
+                                      Color.blue, Color.red], Color), \
+                                      'Additive cloning with Color list failed.'
+
+     vob2 = vob.cloneColorReplace(Color.blue)
+     assert vob2.getColors() == array([Color.blue], Color), \
+            'Substitive cloning with single color failed.'
+
+     vob2 = vob.cloneColorReplace([Color.red, Color.yellow])
+     assert vob2.getColors() == array([Color.red, Color.yellow], Color), \
+            'Substitive cloning with Color array failed.'
+
+     vob2 = vob.cloneColorReplace(list)
+     assert vob2.getColors() == array([Color.blue, Color.red], Color), \
+            'Substitive cloning with Color list failed.'
+
+     vob = vob.cloneColored(None)
+     assert vob.getColors() == array([Color.blue, Color.red, Color.yellow, \
+                                      Color.blue, Color.red], Color), \
+                                      'Additive cloning with None Color failed.'
+
+     vob = vob.cloneColorReplace(None)
+     assert vob.getColors() == None, \
+            'Substitive cloning with None Color failed.'

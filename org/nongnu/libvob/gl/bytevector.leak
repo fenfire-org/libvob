@@ -1,0 +1,20 @@
+
+import gzz
+import java
+
+gzz.gfx.gl.GL.loadLib()
+gzz.gfx.gl.GL.setDebugVar("JNI.general", 1)
+prop = java.lang.System.getProperties()
+prop.setProperty("vob.api", "gl")
+java.lang.System.setProperties(prop)
+
+GL=gzz.gfx.gl.GL
+
+class Foo(java.lang.Runnable):
+    def run(self):
+	print "RUN"
+	while 1:
+	    a = GL.createByteVector(10)
+	    GL.freeQueue()
+
+gzz.client.GraphicsAPI.getInstance().startUpdateManager(Foo())

@@ -1,0 +1,32 @@
+
+Vobs - a novel 2 1/2D UI framework
+
+
+LibVob contains implementations for the framework both in C++ OpenGL and in 
+Java AWT. In addition, there's a JNI bridge for using the OpenGL 
+implementation from Java. OpenGL requires a wrapper file under src/os per each 
+operating platform (currently, the only one is for GLX on Linux).
+
+
+Before compiling, you should have:
+* Boost.org libraries version 1.30 
+  (the Debian package is called libboost-dev)
+
+* JAVAHOME pointing to the JDK, which should contain one of:
+   * include/linux/jni.h
+   * include/kaffe/jni.h
+   * include/jni.h
+
+* CVS module libvob-depends checked out as ../libvob-depends
+
+
+Compile with command "make".
+
+
+We try to optimize the C++ compilation to the hardware platform. In case of 
+problems, please have a look at the options ARCH and OPTIMIZE in file rules.mk.
+
+
+In the future, you should have the option of compiling only the AWT graphics 
+code or only the C++ OpenGL graphics code, but at the moment the JNI bridge
+is built anyway.

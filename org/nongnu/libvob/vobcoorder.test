@@ -1,0 +1,361 @@
+# -*-python-*-
+# 
+# Copyright (c) 2003, Tuomas J. Lukka and Asko Soukka
+# 
+# This file is part of Gzz.
+# 
+# Gzz is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Gzz is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Gzz; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+# 
+
+from __future__ import nested_scopes
+
+import vob
+
+from java.awt import Color
+from test.tools.gfx import *
+
+from jarray import zeros
+
+def setUp():
+    global vs, c, tmpsize
+    vs = getvs()
+    c = vs.coords
+    tmpsize = zeros(2, 'f')
+
+def testTransform():
+
+    cs1 = c.ortho(0, 5, 10, 15, 0.5, 1)
+    checkTrans(vs, cs1, [0, 0, 0, 1, 1, 1], [10, 15, 5, 10.5, 16, 6])
+
+    cs2 = c.scale(0, 2, 3)
+    checkTrans(vs, cs2, [0, 0, 0, 1, 1, 1], [0, 0, 0, 2, 3, 1])
+
+def testFailTrans():
+    def er(x):
+	ok = 0
+	try:
+	    x()
+	except:
+	    ok = 1
+	assert ok
+    cs1 = c.ortho(0, 5, 10, 15, 0.5, 1)
+    v2 = zeros(2, 'f')
+    v3 = zeros(3, 'f')
+    v6 = zeros(6, 'f')
+    vs.coords.transformPoints3(0, v3, v3)
+    vs.coords.transformPoints3(cs1, v3, v3)
+    er(lambda : vs.coords.transformPoints3(-1, v3, v3))
+    er(lambda : vs.coords.transformPoints3(cs1+500000, v3, v3))
+    er(lambda : vs.coords.transformPoints3(cs1, v2, v3))
+    er(lambda : vs.coords.transformPoints3(cs1, v3, v2))
+    er(lambda : vs.coords.transformPoints3(cs1, v6, v3))
+    
+    
+
+def testActivateSimply():
+    """First, trivial test: two "buttons", activate
+    each separately.
+    """
+
+    cs1 = c.ortho(0, 0, 100, 100, 50, 50)
+    cs2 = c.ortho(0, 0, 200, 100, 50, 50)
+
+    failUnlessEqual(-1, c.getCSAt(0, 125, 125, None))
+    failUnlessEqual(-1, c.getCSAt(0, 225, 125, None))
+    failUnlessEqual(-1, c.getCSAt(0, 175, 125, None))
+
+    c.activate(cs1)
+
+    failUnlessEqual(cs1, c.getCSAt(0, 125, 125, None))
+    failUnlessEqual(-1, c.getCSAt(0, 225, 125, None))
+    failUnlessEqual(-1, c.getCSAt(0, 175, 125, None))
+
+    c.activate(cs2)
+
+    failUnlessEqual(cs1, c.getCSAt(0, 125, 125, None))
+    failUnlessEqual(cs2, c.getCSAt(0, 225, 125, None))
+    failUnlessEqual(-1, c.getCSAt(0, 175, 125, None))
+
+def testActivateDepth():
+    """Test that depths work right with activation
+    """
+
+    cs1 = c.ortho(0, 50, 100, 100, 100, 100)
+    cs2 = c.ortho(0, 75, 100, 100, 100, 100)
+    cs3 = c.ortho(0, 100, 100, 100, 100, 100)
+
+    failUnlessEqual(-1, c.getCSAt(0, 150, 150, None))
+
+    c.activate(cs2)
+
+    failUnlessEqual(cs2, c.getCSAt(0, 150, 150, None))
+
+    c.activate(cs3)
+
+    failUnlessEqual(cs2, c.getCSAt(0, 150, 150, None))
+
+    c.activate(cs1)
+
+    failUnlessEqual(cs1, c.getCSAt(0, 150, 150, None))
+
+def testBoxSizeActive():
+    """Test that the box size affects the activation correctly.
+    """
+    cs1 = vs.orthoBoxCS(0, "1", 0, 10, 10, 1, 1, 10, 10)
+    cs2 = vs.orthoBoxCS(0, "1", 0, 110, 10, 10, 10, 1, 1)
+    cs3 = vs.orthoBoxCS(0, "1", 0, 110, 110, 5, 5, 5, 5)
+    for i in (cs1, cs2, cs3): vs.activate(i)
+
+    failUnlessEqual(-1, c.getCSAt(0, 9, 11, None))
+    failUnlessEqual(-1, c.getCSAt(0, 11, 9, None))
+    failUnlessEqual(cs1, c.getCSAt(0, 11, 11, None))
+    failUnlessEqual(cs1, c.getCSAt(0, 19, 19, None))
+    failUnlessEqual(-1, c.getCSAt(0, 21, 19, None))
+    failUnlessEqual(-1, c.getCSAt(0, 19, 21, None))
+
+    failUnlessEqual(-1, c.getCSAt(0,  109, 11, None))
+    failUnlessEqual(-1, c.getCSAt(0,  111, 9, None))
+    failUnlessEqual(cs2, c.getCSAt(0, 111, 11, None))
+    failUnlessEqual(cs2, c.getCSAt(0, 119, 19, None))
+    failUnlessEqual(-1, c.getCSAt(0,  121, 19, None))
+    failUnlessEqual(-1, c.getCSAt(0,  119, 21, None))
+
+    failUnlessEqual(-1, c.getCSAt(0,  109, 111, None))
+    failUnlessEqual(-1, c.getCSAt(0,  111, 109, None))
+    failUnlessEqual(cs3, c.getCSAt(0, 111, 111, None))
+    failUnlessEqual(cs3, c.getCSAt(0, 119, 119, None))
+    failUnlessEqual(-1, c.getCSAt(0,  136, 119, None))
+    failUnlessEqual(-1, c.getCSAt(0,  119, 136, None))
+
+def testActiveDepthWithTrans():
+    s = vs.size
+
+    # translate in the center
+    cs1 = vs.translateCS(0, "trans_to_center", s.width/2, s.height/2)
+    # make a box with 1/4 size of screen in the center
+    cs2 = vs.orthoBoxCS(cs1, "box",0, -s.width/4, -s.height/4, 1,1,s.width/2, s.height/2)
+    # activate box
+    vs.activate(cs2)
+
+    # find the box from the center.
+    failUnlessEqual(cs2, c.getCSAt(0, s.width/2, s.height/2, None))
+
+
+def testActivateParents():
+    """Test that parent relationship is used correctly.
+
+    fail: AWT
+    """
+
+    cs1 = c.orthoBox(0, 10, 0, 0, 1, 1, 100, 100)
+    c.activate(cs1)
+    cs2 = c.orthoBox(0, 0, 0, 0, 1, 1, 100, 100)
+    c.activate(cs2)
+    cs3 = c.orthoBox(cs1, -5, 10, 10, 1, 1, 10, 10)
+    c.activate(cs3)
+    cs4 = c.orthoBox(cs2, -5, 10, 10, 1, 1, 10, 10)
+    c.activate(cs4)
+
+    print cs1, cs2, cs3, cs4
+    failUnlessEqual(cs2, c.getCSAt(0, 15, 15, None))
+    failUnlessEqual(cs4, c.getCSAt(cs2, 15, 15, None))
+    failUnlessEqual(cs3, c.getCSAt(cs1, 15, 15, None))
+
+def testBoxes():
+    """Test the box coordinate systems.
+    """
+
+    # Test box and unitSq
+    cs1 = c.box(0, 200, 100)
+    cs2 = c.unitSq(cs1)
+    checkTrans(vs, cs2, [0, 0, 0, 1, 1, 1, 2, 2, 2], 
+			[0, 0, 0, 200, 100, 1, 400, 200, 2])
+
+    # Activation:
+    # cs1 must be active in the area of the box,
+    # but nowhere else
+    c.activate(cs1)
+    failUnlessEqual(cs1, c.getCSAt(0, .5, .5, None))
+    failUnlessEqual(cs1, c.getCSAt(0, 100, 50, None))
+    failUnlessEqual(-1, c.getCSAt(0, 100, 150, None))
+    failUnlessEqual(-1, c.getCSAt(0, 250, 50, None))
+
+    # Test orthoBox and unitSq
+    cs1 = c.orthoBox(0, -5, 250, 150, 2, 2, 10, 10)
+    cs2 = c.unitSq(cs1)
+    checkTrans(vs, cs2, [0, 0, 0, 1, 1, 1], [250, 150, -5, 270, 170, -4])
+
+    # Activation: cs1 is now on top.
+    c.activate(cs1)
+
+    failUnlessEqual(cs1, c.getCSAt(0, 250.5, 150.5, None))
+    failUnlessEqual(cs1, c.getCSAt(0, 265, 165.5, None))
+    failUnlessEqual(-1, c.getCSAt(0, 275, 165.5, None))
+    failUnlessEqual(-1, c.getCSAt(0, 265, 175.5, None))
+
+def testInterpolateHierarchy():
+    """Test that vobs interpolate right in hierarchies.
+
+    fail: AWT
+    """
+    cs1 = vs.translateCS(0, "A", 100, 100, 0)
+    cs1_1 = vs.orthoCS(cs1, "B", 0, 50, 50, 1, 1)
+
+    vs2 = getvs()
+    cs2_dummy = vs2.translateCS(0, "C", 0, 0, 0)
+    cs2 = vs2.translateCS(0, "A", 100, 100, 0)
+    cs2_1 = vs2.orthoCS(cs2, "B", 0, 100, 100, 1, 1)
+
+    interp = vs.matcher.interpList(vs2.matcher, 0)
+    interp[0] = len(interp)
+
+    checkInterp(vs, vs2, interp , .5, cs1_1, [0, 0, 0], [175, 175, 0])
+
+def testInterpolateOutsideHierarchy():
+    """Test that vobs always get interpolated, even when hierarchy changes.
+
+    fail: AWT
+    """
+    cs1 = c.translate(0, 100, 100, 0)
+    cs1_1 = c.translate(cs1, 50, 50, 0)
+    vs.matcher.add(cs1_1, "FOO")
+
+    vs2 = getvs()
+    c2 = vs2.coords
+    cs2 = c2.translate(0, 200, 100, 0)
+    vs2.matcher.add(cs2, "FOO")
+
+    interp = vs.matcher.interpList(vs2.matcher, 0)
+    interp[0] = len(interp)
+    failUnlessEqual(interp[cs1_1], cs2)
+    checkInterp(vs, vs2, interp , .5, cs1_1, [0, 0, 0], [175, 125, 0])
+
+def testInterpolateInverseOutsideHierarchy():
+    """Test that inverse coordsys of pointwise interpolating coordsys work
+    at least for affines.
+
+    !!!
+
+    fail: *
+    """
+
+    cs1 = c.translate(0, 100, 100, 0)
+    cs1_1 = c.translate(cs1, 0, 0, 0)
+    vs.matcher.add(cs1_1, "FOO")
+    cs1_2 = c.invert(cs1_1)
+    vs.matcher.add(cs1_1, cs1_2, "BAR")
+
+    vs2 = getvs()
+    c2 = vs2.coords
+    cs2_1 = c2.rotate(0, 90)
+    vs2.matcher.add(cs2_1, "FOO")
+    cs2_2 = c2.invert(cs2_1)
+    vs2.matcher.add(cs2_1, cs2_2, "BAR")
+
+    interp = vs.matcher.interpList(vs2.matcher, 0)
+    interp[0] = len(interp)
+    failUnlessEqual(interp[cs1_1], cs2_1)
+    failUnlessEqual(interp[cs1_2], cs2_2)
+
+    checkInterp(vs, vs2, interp , .5, cs1_1, [0, 0, 0, 100, 0, 0], [50, 50, 0, 75, 100, 0])
+    checkInterp(vs, vs2, interp , .5, cs1_2, [50, 50, 0, 75, 100, 0], [0, 0, 0, 100, 0, 0])
+    
+
+def testInterpolateKeymap():
+    """Test that vobs get according to keymap.
+
+    fail: AWT
+    """
+    cs1 = vs.translateCS(0, "A", 100, 100, 0)
+    cs1_1 = vs.translateCS(cs1, "B", 50, 50, 0)
+
+    vs2 = getvs()
+    cs2_w = vs2.translateCS(0, "A", 0, 0, 0)
+    cs2_w_1 = vs2.translateCS(cs2_w, "B", 0, 0, 0)
+
+    cs2_r = vs2.translateCS(0, "X", 500,500,0)
+
+    interp = vs.matcher.interpList(vs2.matcher, 0)
+    failUnlessEqual(interp[cs1], cs2_w)
+    failUnlessEqual(interp[cs1_1], cs2_w_1)
+
+    vs.matcher.keymapSingleCoordsys(cs1_1, cs2_r)
+
+    interp = vs.matcher.interpList(vs2.matcher, 0)
+    failUnlessEqual(interp[cs1], cs2_w)
+    failUnlessEqual(interp[cs1_1], cs2_r)
+
+def testConcatSq():
+    """Test that concatenating works with boxes
+
+    fail: AWT
+    """
+    cs1 = vs.orthoBoxCS(0, "A", 1, 2, 3, 4, 5, 6, 7)
+    cs2 = vs.orthoBoxCS(0, "B", 11, 12, 13, 14, 15, 16, 17)
+    conc = vs.concatCS(cs1, "C", cs2)
+
+    checkTrans(vs, conc, [0, 0, 0], [12*4+2, 13*5+3, 12])
+
+    vs.coords.getSqSize(conc, tmpsize)
+    failUnlessEqual(tmpsize[0], 16)
+    failUnlessEqual(tmpsize[1], 17)
+
+def testInvalidCS():
+    """Test that invalid coordinate systems won't crash.
+    """
+    v = vob.vobs.RectBgVob()
+
+    vs = getvs()
+    for i in range(0, 100):
+	cs1 = vs.orthoBoxCS(0, "A", 1, 2, 3, 4, 5, 6, 7)
+	cs2 = vs.orthoBoxCS(0, "B", 11, 12, 13, 14, 15, 16, 17)
+
+    def put(cs):
+	"""Allow any exceptions
+	"""
+	try:
+	    vs.put(v, cs)
+	except :
+	    pass
+    def xcs(meth, par):
+	"""Allow exceptions
+	"""
+	try:
+	    return meth(*par)
+	except: 
+	    return 0
+
+    put(cs1)
+    render(vs)
+    put(cs2)
+    render(vs)
+    put(-1)
+    render(vs)
+    put(cs2 + 100)
+    render(vs)
+    put(cs1 + 1)
+    render(vs)
+
+    for i in range(0, 100):
+	cs1 = xcs(vs.orthoBoxCS, (-1, "A", 1, 2, 3, 4, 5, 6, 7))
+	cs1 = xcs(vs.orthoBoxCS, (-10000, "A", 1, 2, 3, 4, 5, 6, 7))
+	cs1 = xcs(vs.orthoBoxCS, (cs1 + 1, "A", 1, 2, 3, 4, 5, 6, 7))
+	cs2 = xcs(vs.orthoBoxCS, (cs2 + 10000, "B", 11, 12, 13, 14, 15, 16, 17))
+    render(vs)
+
+  
+# : vim: set syntax=python :

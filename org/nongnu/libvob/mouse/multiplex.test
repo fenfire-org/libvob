@@ -1,0 +1,99 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+
+
+import vob
+
+
+def testCrash1():
+    """This used to crash multiplexer.
+    """
+    mul = vob.mouse.MouseMultiplexer()
+
+    mul.deliverEvent(vob.VobMouseEvent(
+	    vob.VobMouseEvent.MOUSE_RELEASED,
+	    0, 0, 0, 0, 0))
+    mul.deliverEvent(vob.VobMouseEvent(
+	    vob.VobMouseEvent.MOUSE_PRESSED,
+	    0, 0, 0, vob.VobMouseEvent.CONTROL_MASK, 1))
+
+
+
+def testClearClickAndDrag():
+    class ListenerAndDrag(vob.mouse.MousePressListener, vob.mouse.MouseDragListener):
+        def __init__(self, test):
+            self.test = test
+        def pressed(self, x,y): return self
+        def startDrag(self, x,y):
+            pass
+        def drag(self, x,y):
+            self.test.chg()
+        def endDrag(self, x,y):
+            self.test.chg()
+    class Click(vob.mouse.MouseClickListener):
+        def __init__(self, test): self.test = test
+        def clicked(self, x,y): self.test.chg()
+
+    class Object:
+        def __init__(self): self.done = 0
+        def chg(self): self.done = 1
+
+    press = vob.VobMouseEvent(
+	    vob.VobMouseEvent.MOUSE_PRESSED,
+	    0, 0, 0, 0, 1)
+    drag = vob.VobMouseEvent(
+	    vob.VobMouseEvent.MOUSE_DRAGGED,
+	    0, 0, 0, 0, 1)
+    click = vob.VobMouseEvent(
+	    vob.VobMouseEvent.MOUSE_CLICKED,
+	    0, 0, 0, 0, 1)
+    released = vob.VobMouseEvent(
+	    vob.VobMouseEvent.MOUSE_RELEASED,
+	    0, 0, 0, 0, 1)
+ 
+   # no drag - test
+    clickTest = Object()
+    dragTest = Object()
+    mul = vob.mouse.MouseMultiplexer()
+    mul.setListener(1,0, 'click', Click(clickTest))
+    mul.setListener(1,0, 'drag', ListenerAndDrag(dragTest))
+
+    mul.deliverEvent(press)
+    mul.deliverEvent(released)
+    assert clickTest.done == 0
+    mul.deliverEvent(click)
+    assert clickTest.done == 1
+    assert dragTest.done == 0
+
+    # no click - test
+    clickTest = Object()
+    dragTest = Object()
+    mul = vob.mouse.MouseMultiplexer()
+    mul.setListener(1,0, 'click', Click(clickTest))
+    mul.setListener(1,0, 'drag', ListenerAndDrag(dragTest))
+    
+    mul.deliverEvent(press)
+    assert dragTest.done == 0
+    mul.deliverEvent(drag)
+    assert dragTest.done == 1
+    mul.deliverEvent(released)
+    assert dragTest.done == 1
+    assert clickTest.done == 0
+    

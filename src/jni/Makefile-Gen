@@ -1,0 +1,67 @@
+include ../../rules.mk
+include Modules
+
+VOB_OBJS = $(VOBS:%=%.vobgenobj)
+TRANS_OBJS = $(TRANS:%=%.transgenobj)
+
+CALLGL=../../../callgl
+CALLGLOBJS=$(CALLGL)/src/glwrapper/GL_wrapper.o $(CALLGL)/src/callgl.o
+
+
+%.vobgenobj: 
+	$(CXX) -c $(CXXFLAGS) "-DC_OUTPUT_FILE=src/jni/$*.vobgenjni" "-DHEADER_FILE=<vob/vobs/$*.hxx>" -o $@ Generator.cxx
+
+%.vobdep: 
+	$(SHELL) -ec '$(CXX) -M $(CPPFLAGS) "-DC_OUTPUT_FILE=src/jni/$*.vobgenjni" "-DHEADER_FILE=<vob/vobs/$*.hxx>" Generator.cxx \
+                      | sed '\''s/Generator.o[ :]*/$*.vobgenobj $@ : /g'\'' > $@; \
+                      [ -s $@ ] || rm -f $@'
+
+
+%.transgenobj: 
+	$(CXX) -c $(CXXFLAGS) "-DC_OUTPUT_FILE=src/jni/$*.transgenjni" "-DHEADER_FILE=<vob/trans/$*.hxx>" -o $@ Generator.cxx
+
+%.transdep: 
+	$(SHELL) -ec '$(CXX) -M $(CPPFLAGS) -D "C_OUTPUT_FILE=src/jni/$*.transgenjni" -D "HEADER_FILE=<vob/trans/$*.hxx>" Generator.cxx \
+                      | sed '\''s/Generator.o[ :]*/$*.transgenobj $@ : /g'\'' > $@; \
+                      [ -s $@ ] || rm -f $@'
+
+
+
+LIBS=-lGL -lGLU -lstdc++ -lfreetype `gdk-pixbuf-config --libs`
+
+all: TransFactory.gen.hxx
+	for i in $(VOBS); do \
+	    cmp $$i.vobgenjni $$i.vobgenjninew || cp $$i.vobgenjninew $$i.vobgenjni ;\
+	done
+	for i in $(TRANS); do \
+	    cmp $$i.transgenjni $$i.transgenjninew || cp $$i.transgenjninew $$i.transgenjni ;\
+	done
+
+
+TransFactory.gen.hxx: Generator GLRen.template.java GLVobCoorder_Gen.template.java
+	(cd ../..; src/jni/Generator)
+
+ifeq ($(JAVAHOME),)
+    $(error JAVAHOME undefined in src/jni/Makefile-Gen (Please see README for info))
+endif
+EXTRAINCLUDE=-I${JAVAHOME}/include -I${JAVAHOME}/include/linux -I${JAVAHOME}/include/kaffe
+
+
+Generator: GeneratorMain.o $(VOB_OBJS) $(TRANS_OBJS)
+	$(CXX) -o Generator $(CXXFLAGS) $(EXTRAINCLUDE) GeneratorMain.cxx $(VOB_OBJS) $(TRANS_OBJS) ../util/Debug.o ../util/intersect.o ../trans/Transform.o ../main/Renderer.o $(CALLGLOBJS) $(LIBS)
+
+.PHONY: javahs
+
+javahs: made_org_nongnu_libvob_gl_GL.h made_org_nongnu_libvob_gl_GLRen.h made_org_nongnu_libvob_gl_Paper.h
+
+JAVAH=$(JAVAHOME)/bin/javah
+
+made_org_nongnu_libvob_gl_GL.h: ../../CLASSES/org/nongnu/libvob/gl/GL.class
+	$(JAVAH) -classpath $(CLASSPATH):../../CLASSES org.nongnu.libvob.gl.GL && touch made_org_nongnu_libvob_gl_GL.h
+made_org_nongnu_libvob_gl_GLRen.h: ../../CLASSES/org/nongnu/libvob/gl/GLRen.class
+	$(JAVAH) -classpath $(CLASSPATH):../../CLASSES org.nongnu.libvob.gl.GLRen && touch made_org_nongnu_libvob_gl_GLRen.h
+made_org_nongnu_libvob_gl_Paper.h: ../../CLASSES/org/nongnu/libvob/gl/Paper.class 
+	$(JAVAH) -classpath $(CLASSPATH):../../CLASSES org.nongnu.libvob.gl.Paper && touch made_org_nongnu_libvob_gl_Paper.h
+
+include $(VOBS:%=%.vobdep)
+include $(TRANS:%=%.transdep)

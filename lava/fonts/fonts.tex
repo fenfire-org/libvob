@@ -1,0 +1,128 @@
+\documentclass{article}
+\usepackage{concmath}
+\usepackage{euler}
+\usepackage{bbm}
+\begin{document}
+
+\section{Ad hoc Ideas}
+
+
+\subsection{Darkening}
+
+Using "twice the ink", i.e.~doubling the alpha from an alpha text 
+texture or calculating $1-2(1-x)$ for intensity makes
+letters look crisper and better.
+
+Assumes trilinear filtering is used.
+
+Status: In use; helps somewhat.
+
+\subsection{Subpixel rendering by texture accesses}
+
+Status: Works.
+
+
+\subsection{Distance filtering}
+
+For bi-level functions, let the texture value be the minimum
+distance (in texture space) to a texel of different color.
+Filter using nearest-neighbour texture access mode and comparing
+the distance to the pixel size.
+
+Status: Seems to work if parameters chosen carefully.
+
+\subsection{Distance and direction filtering}
+
+In addition to the distance, store its gradient direction
+(or access the texture to find out). Use to antialias
+oblique ($45^o$) edges more than nearly horizontal or vertical ones.
+
+Status: unknown
+
+\subsection{LOD bias}
+
+(A commonly used texture, trading temporal aliasing for spatial crispness)
+
+Status: unknown for text
+
+\subsection{Background whitening}
+
+Adjust the background texture's color according
+to a blurred sample from the foreground texture. Makes the text
+stand out clearer.
+
+Status: tested, ambiguous results
+
+\subsection{Background blurring}
+
+Adjust the background texture's bias or derivatives according
+to a blurred sample from the foreground texture. Makes the background
+"move away" from interfering with the foreground.
+
+Status: unknown
+
+%------------------------------------------
+\section{Rigorous treatment}
+
+Notation: Original function: $f(x) : \mathbbmss{R}^2 \rightarrow [0,1]$.  
+Pixellated function: $g(p) : \mathbbmss{N}^2 \rightarrow [0,1]$.
+
+Goal: Given $f$, choose $g$ to minimize $d(g, f)$ where $d$ 
+is a distance function between a pixellated and normal function.
+Then, choose $g$ \emph{efficiently} and \emph{locally}.
+
+Two types of $f$: continuous an bi-level functions, both with
+some intrinsic frequency distribution and feature width constraints.
+Correlation functions??
+
+Tasks:
+\begin{itemize}
+\item Define rigorously some distributions of unfiltered $f$ functions.
+\item Define rigorously a good set of $d$ functions. To include: 
+    simple integrals, 
+\item Calculate each $d$ for each $f$ for mipmaps and summed-area tables (how many accesses!!!) and
+    for various distributions of transformations.
+\item Examine distance-based filtering for bi-level functions.
+\end{itemize}
+
+\subsection{Sets of unfiltered functions}
+
+Can be defined through fourier transforms (bad) or various
+correlation statistics.
+
+\subsection{Distance functions}
+
+Simple squared distance of area integrals.
+
+Various frequency measure / correlation statistics. ?? !!!
+
+Perceptual issues
+
+For example, a vertical line of one pixel width should always remain $(0,0,0,1,0,0,0)$
+and never $(0,0,0,.55,.45,0,0)$ by shifting the line away from being
+in the middle of the pixels.
+However, when the line is sloping, the jaggies will have to be dealt with in that way.
+
+\subsection{Calculations}
+
+Lots of integrals of distance function distributions.
+Analytic or \emph{Monte Carlo}. For Monte Carlo, could use 
+GPU for integrations!!
+
+\subsection{Research questions / goals}
+
+First: focus on bi-level functions; start with lines and curves.
+
+Can distance filtering be useful?
+
+Can we measure filtering performance satisfactorily efficiently?
+
+Can precalculation of correlation statistics be used advantageously in
+filtering font-like shapes, for decreasing global error metrics? 
+
+Is aliasing easier to understand and control through correlation functions
+than fourier transforms?!?!
+
+\end{document}
+
+

@@ -1,0 +1,82 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka and Asko Soukka
+# 
+# This file is part of Gzz.
+# 
+# Gzz is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Gzz is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Gzz; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+# 
+
+
+needGL()
+
+from java.awt import Color
+
+from test.tools.gfx import *
+
+import vob
+
+def testBgTriangle():
+    vs = getvs()
+    vs.map.put(vob.vobs.SolidBackdropVob(Color.red))
+    vs.map.put(vob.gl.GLCache.getCallList("""
+	Color 0 1 0
+	Disable TEXTURE_2D
+	Begin TRIANGLES
+	Vertex 100 100
+	Vertex 100 200
+	Vertex 200 100
+	End
+    """))
+    render(vs)
+    checkAvgColor(10, 10, 2, 2, (255, 0, 0), 2)
+    checkAvgColor(110, 110, 2, 2, (0, 255, 0), 2)
+
+def testGLCalls():
+    """Check that immediate GL calls with and without
+    windows work.
+    """
+    vs = getvs()
+    # Don't use Solidbackdrop as it sets Color.
+    vs.map.put(vob.gl.GLCache.getCallList("""
+	ClearColor 0 0 0 0
+	Clear COLOR_BUFFER_BIT DEPTH_BUFFER_BIT
+	Disable TEXTURE_2D
+	Begin TRIANGLES
+	Vertex 100 100
+	Vertex 100 200
+	Vertex 200 100
+	End
+    """))
+    vob.gl.GL.call("Color 1 1 0\n", vob.putil.demowindow.w.getRenderingSurface())
+    render(vs)
+    checkAvgColor(110, 110, 2, 2, (255, 255, 0), 2)
+    vob.gl.GL.call("Color 0 0 1\n", vob.putil.demowindow.w.getRenderingSurface())
+    render(vs)
+    checkAvgColor(110, 110, 2, 2, (0, 0, 255), 2)
+
+    # This should, in principle, work ,
+    # but it appears not to - the current colors
+    # appear not to be saved across windows in NV drivers 44.96.
+    ####
+    # vob.gl.GL.call("Color 1 1 0\n")
+    # render(vs)
+    # checkAvgColor(110, 110, 2, 2, (255, 255, 0), 2)
+    # vob.gl.GL.call("Color 0 0 1\n")
+    # render(vs)
+    # checkAvgColor(110, 110, 2, 2, (0, 0, 255), 2)
+
+# : vim: set syntax=python :

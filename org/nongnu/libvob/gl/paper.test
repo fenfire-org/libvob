@@ -1,0 +1,133 @@
+# 
+# Copyright (c) 2003, Tuomas J. Lukka
+# 
+# This file is part of Libvob.
+# 
+# Libvob is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# Libvob is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
+# 
+# You should have received a copy of the GNU General
+# Public License along with Libvob; if not, write to the Free
+# Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+# MA  02111-1307  USA
+# 
+# 
+
+
+needGL()
+
+from org.nongnu import libvob as vob
+from org.nongnu.libvob.vobs import *
+from java.awt import Color
+import java
+from org.nongnu.libvob.gl import GL, GLRen, GLCache, PaperMill
+
+from test.tools.gfx import *
+
+#def testPaperBasisTexture():
+#    tex = vob.paper.textures.init(3, "RGB")["RGB2"]
+# 
+#    for t in tex:
+#        vs = getvs()
+#        vs.map.put(SolidBackdropVob(Color.black))
+#	vs.put(vob.gl.GLCache.getCallList("""
+#		Color 1 1 1
+#		PushAttrib ENABLE_BIT
+#		BindTexture TEXTURE_2D %s
+#		Enable TEXTURE_2D
+#		Begin QUAD_STRIP3
+#		TexCoord 0 0
+#		Vertex 0 0
+#		TexCoord 1 0
+#		Vertex 200 0
+#		TexCoord 0 1
+#		Vertex 0 200
+#		TexCoord 1 1
+#		Vertex 200 200
+#		End
+#		PopAttrib
+#	""" % t.getTexId()))
+#        render(vs)
+
+def testPaperAnythingJava():
+    """Test that libpaper, when called through
+    the Java API, renders anything.
+    """
+    vs = getvs()
+    vs.put(SolidBackdropVob(Color.black))
+    render(vs)
+    checkAvgColor(100, 100, 2, 2, (0, 0, 0))
+
+    paper = PaperMill.getInstance().getPaper(42)
+    pq = GLRen.createPaperQuad(paper, 0, 0, 1, 1, 1)
+    cs1 = vs.orthoCS(0, "1", 0, 100, 100, 200, 200)
+    vs.map.put(pq, cs1, 0)
+    render(vs)
+    checkAvgColor(50, 50, 2, 2, (0, 0, 0))
+    checkAvgColor(150, 50, 2, 2, (0, 0, 0))
+    checkAvgColor(150, 350, 2, 2, (0, 0, 0))
+    checkAvgColor(350, 150, 2, 2, (0, 0, 0))
+
+    # And now, the crucial tests
+    checkNotAvgColor(150, 150, 2, 2, (0,0,0), 30)
+    checkNotAvgColor(250, 250, 2, 2, (0,0,0), 30)
+
+def testDicing():
+    """Dicing paper a LOT - there have been some
+    too short allocated arrays.
+
+    fail: GL
+    """
+    paper = PaperMill.getInstance().getPaper(57)
+    for df in (0, .1, .5, 1, 5, 10, 20, 37, 50):
+	vs = getvs()
+	vs.map.put(SolidBackdropVob(Color.black))
+	pq = GLRen.createPaperQuad(paper, 0, 0, 1, 1, df)
+	cs1 = vs.coords.distort(0, 0, 0, .5, .5, 800, 40)
+	vs.map.put(pq, cs1, 0)
+	vs.map.put(pq, cs1, 0)
+	vs.map.put(pq, cs1, 0)
+	vs.map.put(pq, cs1, 0)
+	render(vs)
+	checkNotAvgColor(50, 50, 20, 20, (0,0,0), 30)
+
+def testOptimizedPaper():
+    """See that optimized paper really is same as
+    original.
+    """
+    for i in range(0,5):
+	p1 = PaperMill.getInstance().getPaper(i)
+	p2 = PaperMill.getInstance().getOptimizedPaper(i)
+
+	pq1 = GLRen.createFixedPaperQuad(p1, 0, 0, 150, 300, 0, 1, 1, 1)
+	pq2 = GLRen.createFixedPaperQuad(p2, 0, 0, 150, 300, 0, 1, 1, 1)
+
+	vs = getvs()
+	vs.map.put(SolidBackdropVob(Color.blue))
+
+	cs1 = vs.orthoCS(0, "1", 0, 0, 0, 1, 1)
+	cs2 = vs.orthoCS(0, "2", 0, 150, 0, 1, 1)
+
+	vs.map.put(pq1, cs1)
+	vs.map.put(pq2, cs2)
+
+	render(vs)
+
+	for x, y, w, h in [
+	    (10, 10, 5, 5),
+	    (50, 20, 10, 5),
+	    (100, 200, 10, 30),
+	    ]:
+	    checkAvgColor(x+150, y, w, h,
+		getAvgColor(x, y, w, h), delta=20)
+
+
+
+# : vim: set syntax=python :

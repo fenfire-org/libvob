@@ -1,0 +1,7 @@
+A replacement for the "java" program that starts 
+a JVM using the Java invocation API and installs the
+GL methods. 
+
+For use when the JVM is unable to load libGL dynamically.
+
+Currently not maintained.
