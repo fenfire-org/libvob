@@ -100,22 +100,37 @@ public class Lobs {
 	return ClipLob.newInstance(l);
     }
 
+    public static Lob nullLob() {
+	return NullLob.instance;
+    }
+
     public static Lob glue(Axis axis, float min, float nat, float max) {
-	return Glue.newInstance(axis, min, nat, max);
+	return request(axis, nullLob(), min, nat, max);
     }
 
     public static Lob glue(float minW, float natW, float maxW,
 			   float minH, float natH, float maxH) {
-	return Glue.newInstance(minW, natW, maxW, minH, natH, maxH);
+	return request(nullLob(), minW, natW, maxW, minH, natH, maxH);
     }
 
     public static Lob align(Lob content, float x, float y) {
-	return AlignLob.newInstance(content, x, y, x, y);
+	return align(content, x, y, x, y);
     }
 
-    public static Lob align(Lob content, float childX, float childY, 
+    public static Lob align(Lob delegate, float childX, float childY, 
 			    float parentX, float parentY) {
-	return AlignLob.newInstance(content, childX, childY, parentX, parentY);
+	return new @realtime AbstractPositionLob(@set Lob delegate, float childX, float childY, float parentX, float parentY) {
+	    public Lob layout(float width, float height) {
+		SizeRequest s = delegate.getSizeRequest();
+		
+		float x = parentX*width  - childX*s.natW;
+		float y = parentY*height - childY*s.natH;
+		
+		Lob l = delegate.layout(s.natW, s.natH);
+		l = TranslateLob.newInstance(l, x, y, 0);
+		return l.layout(width, height);
+	    }
+	};
     }
 
     public static Lob between(Lob back, Lob middle, Lob front) {

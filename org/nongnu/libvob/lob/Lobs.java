@@ -103,22 +103,26 @@ public class Lobs {
 	return ClipLob.newInstance(l);
     }
 
+    public static Lob nullLob() {
+	return NullLob.instance;
+    }
+
     public static Lob glue(Axis axis, float min, float nat, float max) {
-	return Glue.newInstance(axis, min, nat, max);
+	return request(axis, nullLob(), min, nat, max);
     }
 
     public static Lob glue(float minW, float natW, float maxW,
 			   float minH, float natH, float maxH) {
-	return Glue.newInstance(minW, natW, maxW, minH, natH, maxH);
+	return request(nullLob(), minW, natW, maxW, minH, natH, maxH);
     }
 
     public static Lob align(Lob content, float x, float y) {
-	return AlignLob.newInstance(content, x, y, x, y);
+	return align(content, x, y, x, y);
     }
 
-    public static Lob align(Lob content, float childX, float childY, 
+    public static Lob align(Lob delegate, float childX, float childY, 
 			    float parentX, float parentY) {
-	return AlignLob.newInstance(content, childX, childY, parentX, parentY);
+	return new_AbstractPositionLob_1(delegate,childX,childY,parentX,parentY);
     }
 
     public static Lob between(Lob back, Lob middle, Lob front) {
@@ -149,7 +153,7 @@ public class Lobs {
     }
 
     public static List keyList(List lobs, Object key) {
-	return new_RealtimeList_1(lobs,key);
+	return new_RealtimeList_2(lobs,key);
     }
 
     public static Lob frame(Lob content, Color bg, Color border, 
@@ -270,9 +274,52 @@ public class Lobs {
 	WINDOW_ANIMATION.setValue(value);
     }
 
-        private static class _RealtimeList_1 extends RealtimeList {
+        private static class _AbstractPositionLob_1 extends AbstractPositionLob {
 
-            private _RealtimeList_1() {}
+            private _AbstractPositionLob_1() {}
+
+             float childX; float childY; float parentX; float parentY;
+
+            
+	    public Lob layout(float width, float height) {
+		SizeRequest s = delegate.getSizeRequest();
+		
+		float x = parentX*width  - childX*s.natW;
+		float y = parentY*height - childY*s.natH;
+		
+		Lob l = delegate.layout(s.natW, s.natH);
+		l = TranslateLob.newInstance(l, x, y, 0);
+		return l.layout(width, height);
+	    }
+	
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    if(((Object)delegate) instanceof Realtime) ((Realtime)((Object)delegate)).move(os); 
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private static final RealtimeObject.Factory _AbstractPositionLob_1_FACTORY =
+            new RealtimeObject.Factory() {
+                protected Object create() { return new _AbstractPositionLob_1(); }
+            };
+
+        private static _AbstractPositionLob_1 new_AbstractPositionLob_1(Lob delegate, float childX, float childY, float parentX, float parentY) {
+            _AbstractPositionLob_1 the_new_AbstractPositionLob_1 = (_AbstractPositionLob_1)_AbstractPositionLob_1_FACTORY.object();
+            the_new_AbstractPositionLob_1.delegate = delegate;
+the_new_AbstractPositionLob_1.childX = childX;
+the_new_AbstractPositionLob_1.childY = childY;
+the_new_AbstractPositionLob_1.parentX = parentX;
+the_new_AbstractPositionLob_1.parentY = parentY;
+            return the_new_AbstractPositionLob_1;
+        }
+    
+        private static class _RealtimeList_2 extends RealtimeList {
+
+            private _RealtimeList_2() {}
 
             List lobs; Object key;
 
@@ -293,15 +340,15 @@ public class Lobs {
             }
         }
 
-        private static final RealtimeObject.Factory _RealtimeList_1_FACTORY =
+        private static final RealtimeObject.Factory _RealtimeList_2_FACTORY =
             new RealtimeObject.Factory() {
-                protected Object create() { return new _RealtimeList_1(); }
+                protected Object create() { return new _RealtimeList_2(); }
             };
 
-        private static _RealtimeList_1 new_RealtimeList_1(List lobs, Object key) {
-            _RealtimeList_1 the_new_RealtimeList_1 = (_RealtimeList_1)_RealtimeList_1_FACTORY.object();
-            the_new_RealtimeList_1.lobs = lobs;
-the_new_RealtimeList_1.key = key;
-            return the_new_RealtimeList_1;
+        private static _RealtimeList_2 new_RealtimeList_2(List lobs, Object key) {
+            _RealtimeList_2 the_new_RealtimeList_2 = (_RealtimeList_2)_RealtimeList_2_FACTORY.object();
+            the_new_RealtimeList_2.lobs = lobs;
+the_new_RealtimeList_2.key = key;
+            return the_new_RealtimeList_2;
         }
     }
