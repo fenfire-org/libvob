@@ -159,6 +159,14 @@ public class LobFont extends AbstractHashtable {
 	    this.color = color;
 	}
 
+	/** Text lobs never change size and they are used by many parents:
+	 *  they mustn't store large numbers of obs that are never triggered
+	 */
+	public void addObs(Obs obs) {
+	}
+	public void removeObs(Obs obs) {
+	}
+
 	protected Replaceable[] getParams() { return NO_PARAMS; }
 	protected Object clone(Object[] params) {
 	    return this;
