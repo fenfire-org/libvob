@@ -39,7 +39,7 @@ public class Between extends AbstractLob {
 
     private Between() {}
 
-    public Between newInstance(Lob back, Lob middle, Lob front) {
+    public static Between newInstance(Lob back, Lob middle, Lob front) {
 	Between b = (Between)LOB_FACTORY.object();
 	
 	b.back   = (back == null) ?   NullLob.instance : back;

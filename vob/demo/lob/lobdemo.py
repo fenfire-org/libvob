@@ -36,8 +36,12 @@ class Table(TableLob.Table):
         #return Lobs.rect(Color.red, 2)
 
 def render(scene, layout, x, y):
-        cs = scene.coords.translate(0, x, y)
-        layout.render(scene, cs, 0, 1, 1)
+    cs = scene.coords.translate(0, x, y)
+    layout.render(scene, cs, 0, 1, 1)
+
+def renderLob(scene, lob, x, y):
+    size = lob.getSizeRequest()
+    render(scene, lob.layout(size.natW, size.natH), x, y)
 
 class Scene:
     def key(self, k):
@@ -52,13 +56,9 @@ class Scene:
         layout = lob.layout(400, 300)
         render(scene, layout, 100, 100)
 
-        font = SimpleLobFont.newInstance("serif", 0, 16, Color.blue)
-        text = Text.valueOf("Hello, World!")
-        lob = BoxLob.newInstance(Axis.X, TextLobList.newInstance(font, text))
-
+        lob = Lobs.text("Hello world!")
         size = lob.getSizeRequest()
-        layout = lob.layout(size.natW, size.natH)
-        render(scene, layout, 300-size.natW/2, 50)
+        renderLob(scene, lob.layout(size.natW, size.natH), 300-size.natW/2, 50)
 
         print 'scene rendered'
         

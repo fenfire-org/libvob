@@ -37,16 +37,16 @@ public class Margin extends AbstractDelegateLob {
 
     private Margin() {}
 
-    public Margin newInstance(Lob content, float margin) {
+    public static Margin newInstance(Lob content, float margin) {
 	return newInstance(content, margin, margin, margin, margin);
     }
 
-    public Margin newInstance(Lob content, float x, float y) {
+    public static Margin newInstance(Lob content, float x, float y) {
 	return newInstance(content, x, x, y, y);
     }
 
-    public Margin newInstance(Lob content, float left, float right, 
-			      float top, float bottom) {
+    public static Margin newInstance(Lob content, float left, float right, 
+				     float top, float bottom) {
 	Margin m = (Margin)FACTORY.object();
 	m.delegate = content;
 

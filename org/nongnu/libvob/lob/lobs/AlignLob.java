@@ -45,8 +45,9 @@ public class AlignLob extends AbstractDelegateLob {
 
     private AlignLob() {}
 
-    public AlignLob newInstance(Lob delegate, float childX, float childY, 
-				float parentX, float parentY) {
+    public static AlignLob newInstance(Lob delegate, 
+				       float childX, float childY, 
+				       float parentX, float parentY) {
 	AlignLob l = (AlignLob)FACTORY.object();
 
 	l.delegate = delegate;

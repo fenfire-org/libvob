@@ -40,11 +40,11 @@ public class ClipLob extends AbstractDelegateLob {
 
     private ClipLob() {};
 
-    public ClipLob newInstance(Lob content) {
+    public static ClipLob newInstance(Lob content) {
 	return newInstance(content, null);
     }
 
-    public ClipLob newInstance(Lob content, Object key) {
+    public static ClipLob newInstance(Lob content, Object key) {
 	ClipLob l = (ClipLob)FACTORY.object();
 	l.delegate = content;
 	l.key = key;
