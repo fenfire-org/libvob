@@ -120,10 +120,28 @@ public class Linebreaker extends RealtimeObject implements LobList {
 	if(line >= lineCount)
 	    throw new IndexOutOfBoundsException(line+" >= "+lineCount);
 
-	int start = breaks[line]+1, end = breaks[line+1]+1;
+	int start = breaks[line]+1, end = breaks[line+1];
 	if(end > items.getLobCount()) end = items.getLobCount();
 
 	LobList lobs = SubLobList.newInstance(items, start, end);
+
+	if(breaks[line] >= 0) {
+	    Breakable br = (Breakable)items.getLob(breaks[line]);
+	    Lob before = br.getPostBreakLob(lineAxis);
+	    if(before != null) {
+		LobList singleton = SingletonLobList.newInstance(before);
+		lobs = ConcatLobList.newInstance(singleton, lobs);
+	    }
+	}
+
+	if(breaks[line+1] < items.getLobCount()) {
+	    Breakable br = (Breakable)items.getLob(breaks[line+1]);
+	    Lob after = br.getPreBreakLob(lineAxis);
+	    if(after != null) {
+		LobList singleton = SingletonLobList.newInstance(after);
+		lobs = ConcatLobList.newInstance(lobs, singleton);
+	    }
+	}
 
 	Lob l = BoxLob.newInstance(lineAxis, lobs);
 	//l = Lobs.frame(l, null, java.awt.Color.red, 1, 0, false); // debug
