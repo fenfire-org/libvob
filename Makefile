@@ -73,6 +73,8 @@ run_java:
 
 run_lobdemo:
 	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.LobDemo
+run_bossbuzzle:
+	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.BossBuzzle
 
 
 # Have to use params for find for it not to descend into the {arch} dirs.
