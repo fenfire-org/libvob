@@ -737,7 +737,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     float[] tmprect = new float[5];
     
     public abstract class Trans {
-	int cs[] = new int[20];
+	int cs[] = new int[64];
 	int csInd = 0;
 	void push(int cs) { 
 	    if (dbg) {
