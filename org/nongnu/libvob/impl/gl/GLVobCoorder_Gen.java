@@ -42,7 +42,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setRational1D22Params(int ind, float p0, float p1, float p2, float p3, float p4, float p5) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -59,7 +61,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setPower1DParams(int ind, float p0, float p1) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 }
 public int power1D2(int d0 , float p0 , float p1 , float p2 , float p3 ) {
@@ -74,7 +78,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setPower1D2Params(int ind, float p0, float p1, float p2, float p3) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -95,7 +101,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setDistortParams(int ind, float p0, float p1, float p2, float p3, float p4, float p5) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -144,7 +152,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setTranslateParams(int ind, float p0, float p1, float p2) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 }
@@ -159,7 +169,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setScaleParams(int ind, float p0, float p1, float p2) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 }
@@ -172,7 +184,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setRotateParams(int ind, float p0) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 }
 public int nadirUnitSq(int d0 , int d1 ) {
 int i = nfloats; 
@@ -199,7 +213,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setBoxParams(int ind, float p0, float p1) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 }
 public int rotateXYZ(int d0 , float p0 , float p1 , float p2 , float p3 ) {
@@ -214,7 +230,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setRotateXYZParams(int ind, float p0, float p1, float p2, float p3) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -231,7 +249,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setRotateQuaternionParams(int ind, float p0, float p1, float p2, float p3) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -251,7 +271,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setAffineParams(int ind, float p0, float p1, float p2, float p3, float p4, float p5, float p6) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -272,7 +294,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setOrthoParams(int ind, float p0, float p1, float p2, float p3, float p4) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -293,7 +317,9 @@ inds[j+2] = d1;
 inds[j+3] = i;
  return j;}
 public void setBuoyOnCircle1Params(int ind, float p0, float p1, float p2, float p3, float p4, float p5) {
-int i = inds[ind+3];floats[i+0] = p0;
+int i = inds[ind+3];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -311,7 +337,9 @@ inds[j+2] = d1;
 inds[j+3] = i;
  return j;}
 public void setBuoyOnCircle2Params(int ind, float p0, float p1) {
-int i = inds[ind+3];floats[i+0] = p0;
+int i = inds[ind+3];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 }
 public int orthoBox(int d0 , float p0 , float p1 , float p2 , float p3 , float p4 , float p5 , float p6 ) {
@@ -329,7 +357,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setOrthoBoxParams(int ind, float p0, float p1, float p2, float p3, float p4, float p5, float p6) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 floats[i+2] = p2;
 floats[i+3] = p3;
@@ -362,7 +392,9 @@ inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
 public void setTranslatePolarParams(int ind, float p0, float p1) {
-int i = inds[ind+2];floats[i+0] = p0;
+int i = inds[ind+2];
+updateCoords(i);
+floats[i+0] = p0;
 floats[i+1] = p1;
 }
 

@@ -48,6 +48,9 @@ public abstract class GLVobCoorderBase extends AffineVobCoorder {
     protected final void addFloats(int n) { nfloats += n; }
     protected final void addInds(int n) { ninds += n; }
 
+    protected final void updateCoords(int cs) {};
+
+
     public void clear() {
 	nfloats = 0;
 	ninds = 1;

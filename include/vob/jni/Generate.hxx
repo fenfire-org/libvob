@@ -242,7 +242,8 @@ namespace JNI {
 		    VOB_TRANSJAVASTREAM << ", float p"<<i;
 		VOB_TRANSJAVASTREAM<<") {\n";
 		VOB_TRANSJAVASTREAM<<"int i = inds[ind+"<<
-			(hier.getNDepends()+1)<<"];";
+			(hier.getNDepends()+1)<<"];\n";
+		VOB_TRANSJAVASTREAM << "updateCoords(i);\n";
 		VOB_TRANSJAVASTREAM << passignCode.str() << "}\n";
 	    }
 	}

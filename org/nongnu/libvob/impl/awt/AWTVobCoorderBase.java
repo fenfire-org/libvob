@@ -271,6 +271,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    inds = ni; children = nc;
 	}
     }
+    
+    protected final void updateCoords(int cs) {
+	coordinates.maxcs = 0; //cs-1;
+    }
 
 
     static float i(float a, float b, float fract)
