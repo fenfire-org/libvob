@@ -28,7 +28,7 @@ SizeRequest.java
 package org.nongnu.libvob.lob;
 import javolution.realtime.*;
 
-public final class SizeRequest {
+public final class SizeRequest extends RealtimeObject {
 
     /** "Infinity". Can be used as the maximum size request of lobs
      *  that can be used at arbitrarily large sizes.
@@ -41,7 +41,7 @@ public final class SizeRequest {
     public static final float INF = (float)Math.pow(2, 1024);
 
 
-    private SizeRequest() {}
+    public SizeRequest() {}
 
     public float minW, natW, maxW;
     public float minH, natH, maxH;
@@ -58,7 +58,7 @@ public final class SizeRequest {
 	return r;
     }
 
-    private static ObjectFactory FACTORY = new ObjectFactory() {
+    private static final Factory FACTORY = new Factory() {
 	    protected Object create() {
 		return new SizeRequest();
 	    }

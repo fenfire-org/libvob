@@ -33,13 +33,15 @@ import javolution.realtime.*;
 import java.util.*;
 
 /** A lob that renders a table of lobs, one in each cell.
- *
- *  XXX need to Javolution-cache instances!!!
  */
 public class TableLob extends AbstractLob {
     private static void p(String s) { System.out.println("TableLob:: "+s); }
 
-    public interface Table { // XXX make use of new functional system
+    public static int MAXSIZE = (1 << 14);
+
+    public interface Table extends Realtime { 
+	// XXX make use of new functional system
+
 	int getRowCount();
 	int getColumnCount();
 
@@ -48,28 +50,42 @@ public class TableLob extends AbstractLob {
 
     protected Table table;
 
-    protected float[] rowMinH, rowNatH, rowMaxH;
-    protected float[] colMinW, colNatW, colMaxW;
+    protected float[] rowMinH = new float[MAXSIZE];
+    protected float[] rowNatH = new float[MAXSIZE];
+    protected float[] rowMaxH = new float[MAXSIZE];
 
-    protected SizeRequest size;
+    protected float[] colMinW = new float[MAXSIZE];
+    protected float[] colNatW = new float[MAXSIZE];
+    protected float[] colMaxW = new float[MAXSIZE];
 
-    public SizeRequest getSizeRequest() {
-	return size;
+    protected SizeRequest size = new SizeRequest();
+
+    private TableLob() {}
+
+    public static TableLob newInstance(Table table) {
+	TableLob tl = (TableLob)LOB_FACTORY.object();
+	tl.init(table);
+	return tl;
     }
 
-    public TableLob(Table table) {
+    private void init(Table table) {
 	this.table = table;
 
 	int rows = table.getRowCount();
 	int cols = table.getColumnCount();
 
-	rowMinH = new float[rows]; 
-	rowNatH = new float[rows]; 
-	rowMaxH = new float[rows]; 
+	if(rows > MAXSIZE-1 || cols > MAXSIZE-1)
+	    throw new IllegalArgumentException("Table too large: "+rows+" "+
+					       cols+" (max size "+(MAXSIZE-1)+
+					       " on each axis)");
 
-	colMinW = new float[cols]; 
-	colNatW = new float[cols]; 
-	colMaxW = new float[cols]; 
+	rowMinH = FloatArray.newInstance(rows); 
+	rowNatH = FloatArray.newInstance(rows); 
+	rowMaxH = FloatArray.newInstance(rows); 
+
+	colMinW = FloatArray.newInstance(cols); 
+	colNatW = FloatArray.newInstance(cols); 
+	colMaxW = FloatArray.newInstance(cols); 
 	
 	for(int r=0; r<rows; r++) {
 	    rowMinH[r] = rowNatH[r] = 0;
@@ -118,23 +134,32 @@ public class TableLob extends AbstractLob {
 	}
     }
 
+    public SizeRequest getSizeRequest() {
+	return size;
+    }
+
     public Layout layout(float width, float height) {
+	TableLayout tl = (TableLayout)LAYOUT_FACTORY.object();
+	tl.init(table);
+
+	int rows = table.getRowCount();
+	int cols = table.getColumnCount();
+
 	// positions of the rows and columns
-	float[] posX = new float[table.getColumnCount() + 1];
-	float[] posY = new float[table.getRowCount()    + 1];
+	float[] posX = tl.posX, posY = tl.posY;
 
 	doLayout(posY, rowMinH, rowNatH, rowMaxH, 
-		 size.minH, size.natH, size.maxH, height);
+		 size.minH, size.natH, size.maxH, height, rows);
 
 	doLayout(posX, colMinW, colNatW, colMaxW, 
-		 size.minW, size.natW, size.maxW, width);
+		 size.minW, size.natW, size.maxW, width, cols);
 	       
-	return new TableLayout(table, posX, posY);
+	return tl;
     }
 
     private void doLayout(float[] pos, float[] min, float[] nat, float[] max, 
 			  float totalMin, float totalNat, float totalMax,
-			  float totalSize) {
+			  float totalSize, int nitems) {
 
 	float totalStretch = totalMax - totalNat;
 	float totalShrink  = totalNat - totalMin;
@@ -144,7 +169,7 @@ public class TableLob extends AbstractLob {
 
 	float cur = 0;
 
-	for(int i=0; i<pos.length; i++) {
+	for(int i=0; i<nitems; i++) {
 	    pos[i] = cur;
 
 	    float diff = 0;
@@ -164,22 +189,30 @@ public class TableLob extends AbstractLob {
 	    cur += nat[i] + diff;
 	}
 
-	pos[pos.length] = totalSize;
+	pos[nitems] = totalSize;
+    }
+
+    public boolean move(ObjectSpace os) {
+	if(super.move(os)) {
+	    table.move(os);
+	    return true;
+	}
+	return false;
     }
 
     private static final class TableLayout extends AbstractLayout {
 	private Table table;
-	private float[] posX, posY;
+	private float[] posX = new float[MAXSIZE], posY = new float[MAXSIZE];
 
-	private TableLayout(Table table, float[] posX, float[] posY) {
+	private TableLayout() {}
+
+	private void init(Table table) {
 	    this.table = table;
-	    this.posX = posX;
-	    this.posY = posY;
 	}
 
 	public Size getSize() {
-	    return Size.newInstance(posX[posX.length - 1],
-				    posY[posY.length - 1]);
+	    int rows = table.getRowCount(), cols = table.getColumnCount();
+	    return Size.newInstance(posX[rows], posY[cols]);
 	}
 
 	public void render(VobScene scene, int into, int matchingParent,
@@ -229,5 +262,25 @@ public class TableLob extends AbstractLob {
 		}
 	    }
 	}
+
+	public boolean move(ObjectSpace os) {
+	    if(super.move(os)) {
+		table.move(os);
+		return true;
+	    }
+	    return false;
+	}
     }
+
+    private static final Factory LAYOUT_FACTORY = new Factory() {
+	    public Object create() {
+		return new TableLayout();
+	    }
+	};
+
+    private static final Factory LOB_FACTORY = new Factory() {
+	    public Object create() {
+		return new TableLob();
+	    }
+	};
 }

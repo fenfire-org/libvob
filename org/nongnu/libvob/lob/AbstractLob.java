@@ -26,12 +26,10 @@ AbstractLob.java
  * Written by Benja Fallenstein
  */
 package org.nongnu.libvob.lob;
-import org.nongnu.libvob.*;
-import org.nongnu.libvob.util.*;
-import org.nongnu.navidoc.util.Obs;
+import javolution.realtime.*;
 import java.util.*;
 
-public abstract class AbstractLob implements Lob {
+public abstract class AbstractLob extends RealtimeObject implements Lob {
 
     public Axis getLayoutableAxis() {
 	return null;

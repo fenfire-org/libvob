@@ -30,9 +30,9 @@ import javolution.realtime.*;
 
 /** The size of a thing -- like java.awt.Dimension, but with floats.
  */
-public final class Size {
+public final class Size extends RealtimeObject {
 
-    private Size() {}
+    public Size() {}
 
     public float width, height;
 
@@ -42,7 +42,7 @@ public final class Size {
 	return s;
     }
 
-    private static ObjectFactory FACTORY = new ObjectFactory() {
+    private static final Factory FACTORY = new Factory() {
 	    protected Object create() {
 		return new Size();
 	    }
