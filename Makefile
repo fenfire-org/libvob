@@ -41,7 +41,7 @@ tags::
 
 DEPENDS = ../depends
 
-CLASSPATH := $(CLASSDIR):../navidoc/CLASSES:$(DEPENDS)/jython.jar:$(DEPENDS)/png.jar:$CLASSPATH
+CLASSPATH := $(CLASSDIR):../navidoc/CLASSES:$(DEPENDS)/jython.jar:$(DEPENDS)/png.jar:$(CLASSPATH)
 export CLASSPATH
 
 ifeq (,$(JYTHONPATH))
