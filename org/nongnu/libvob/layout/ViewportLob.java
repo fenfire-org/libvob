@@ -34,22 +34,34 @@ public class ViewportLob extends AbstractMonoLob {
 
     protected Axis axis;
     protected Model positionModel;
+    protected Model alignWhenAllShown;
+
     protected float width, height;
 
     protected Model visibleFractionModel;
 
     public ViewportLob(Axis axis, Lob content, Model positionModel) {
+	this(axis, content, positionModel, null);
+    }
+
+    /**
+     *  alignWhenAllShown: where to show the content when its smaller than
+     *  the visible box; ranges from 0 to 1 (fraction inside the visible box).
+     */
+    public ViewportLob(Axis axis, Lob content, Model positionModel,
+		       Model alignWhenAllShown) {
 	super(content);
 	this.axis = axis;
 	this.positionModel = positionModel;
+	this.alignWhenAllShown = alignWhenAllShown;
 	this.visibleFractionModel = new FloatModel();
     }
 
     protected Replaceable[] getParams() { 
-	return new Replaceable[] { content, positionModel };
+	return new Replaceable[] { content, positionModel, alignWhenAllShown };
     }
     protected Object clone(Object[] params) {
-	ViewportLob ret =  new ViewportLob(axis, (Lob)params[0], (Model)params[1]);
+	ViewportLob ret =  new ViewportLob(axis, (Lob)params[0], (Model)params[1], (Model)params[2]);
 	ret.visibleFractionModel = this.visibleFractionModel;
 	return ret;
     }
@@ -81,9 +93,12 @@ public class ViewportLob extends AbstractMonoLob {
 	float viewportSize = (axis==X) ? width : height;
 	
 	float scroll;
-	if(lobSize < viewportSize)
-	    scroll = 0;
-	else if(pos < viewportSize/2)
+	if(lobSize < viewportSize) {
+	    if(alignWhenAllShown != null)
+		scroll = alignWhenAllShown.getFloat()*viewportSize - pos;
+	    else
+		scroll = 0;
+	} else if(pos < viewportSize/2)
 	    scroll = 0;
 	else if(pos > lobSize-(viewportSize/2))
 	    scroll = viewportSize - lobSize;
