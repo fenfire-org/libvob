@@ -80,6 +80,10 @@ public abstract class AbstractDelegateLob extends AbstractLob {
 	return delegate.mouse(e, scene, cs, x, y);
     }
 
+    public List getFocusableLobs() {
+	return delegate.getFocusableLobs();
+    }
+
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
 	    delegate.move(os);

@@ -29,6 +29,7 @@ package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.*;
+import java.util.*;
 
 /** A key controller implementing simple text editing.
  */
@@ -98,6 +99,10 @@ public class TextKeyController extends AbstractDelegateLob {
 	} else {
 	    return delegate.key(key);
 	}
+    }
+
+    public List getFocusableLobs() {
+	return Lists.list(this);
     }
 
     private static final Factory FACTORY = new Factory() {

@@ -35,16 +35,16 @@ import java.util.*;
 
 /** A lob that renders an hbox or vbox of lobs.
  */
-public class BoxLob extends AbstractLob {
+public class BoxLob extends AbstractSequence {
     private static void p(String s) { System.out.println("BoxLob:: "+s); }
 
     private class BoxTable extends RealtimeObject implements TableLob.Table {
 	
 	public int getRowCount() {
-	    return (axis == Axis.Y) ? items.size() : 1;
+	    return (axis == Axis.Y) ? lobs.size() : 1;
 	}
 	public int getColumnCount() {
-	    return (axis == Axis.X) ? items.size() : 1;
+	    return (axis == Axis.X) ? lobs.size() : 1;
 	}
 
 	public Lob getLob(int row, int column) {
@@ -52,7 +52,7 @@ public class BoxLob extends AbstractLob {
 	       (axis == Axis.Y && column != 0))
 		throw new IndexOutOfBoundsException(row+" "+column);
 
-	    Lob lob = (Lob)items.get((axis == Axis.X) ? column : row);
+	    Lob lob = (Lob)lobs.get((axis == Axis.X) ? column : row);
 
 	    if(otherAxisSize < 0 || axis.other() != lob.getLayoutableAxis())
 		return lob;
@@ -62,7 +62,6 @@ public class BoxLob extends AbstractLob {
     }
 
     private Axis axis;
-    private List items;
 
     private float otherAxisSize; // size along the other axis; -1 if unknown
 
@@ -70,14 +69,14 @@ public class BoxLob extends AbstractLob {
 
     private BoxLob() {}
 
-    public static BoxLob newInstance(Axis axis, List items) {
-	return newInstance(axis, items, -1);
+    public static BoxLob newInstance(Axis axis, List lobs) {
+	return newInstance(axis, lobs, -1);
     }
 
-    private static BoxLob newInstance(Axis axis, List items, 
+    private static BoxLob newInstance(Axis axis, List lobs, 
 				      float otherAxisSize) {
 	BoxLob bl = (BoxLob)FACTORY.object();
-	bl.axis = axis; bl.items = items; bl.otherAxisSize = otherAxisSize;
+	bl.axis = axis; bl.lobs = lobs; bl.otherAxisSize = otherAxisSize;
 	return bl;
     }
 
@@ -85,12 +84,6 @@ public class BoxLob extends AbstractLob {
 	// XXX should cache the TableLob between getSizeRequest() and layout()
 	// but I'm not sure how to make that work with Javolution
 	return TableLob.newInstance(table).getSizeRequest();
-    }
-
-    public boolean key(String key) {
-	for(int i=0; i<items.size(); i++)
-	    if(((Lob)items.get(i)).key(key)) return true;
-	return false;
     }
 
     public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
@@ -107,7 +100,7 @@ public class BoxLob extends AbstractLob {
     }
 
     public Lob layoutOneAxis(float size) {
-	return newInstance(axis, items, size);
+	return newInstance(axis, lobs, size);
     }
 
     public void render(VobScene scene, int into, int matchingParent, 

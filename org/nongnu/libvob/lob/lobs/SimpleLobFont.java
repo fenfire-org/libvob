@@ -88,7 +88,7 @@ public class SimpleLobFont extends RealtimeObject implements LobFont {
     }
 
 
-    protected static class Glyph extends AbstractLayout {
+    protected static class Glyph extends AbstractLeafLayout {
 	protected char character;
 	protected TextStyle style;
 	protected Color color;
@@ -98,12 +98,6 @@ public class SimpleLobFont extends RealtimeObject implements LobFont {
 	protected void setSize(float w, float h) { super.setSize(w, h); }
 	
 	protected TextVob textvob;
-
-	public boolean key(String key) { return false; }
-	public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
-			     float x, float y) { 
-	    return false; 
-	}
 
 	public Lob layout(float w, float h) { // plaaah...
 	    Glyph g = (Glyph)GLYPH_FACTORY.object();

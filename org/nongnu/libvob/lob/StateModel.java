@@ -36,12 +36,12 @@ public class StateModel extends RealtimeObject implements Model {
 	new LocalContext.Variable(new HashMap());
 
 
-    public static void enterSubState(String name) {
+    public static void enterSubState(Object key) {
 	Map state = (Map)STATE.getValue();
-	Map nstate = (Map)state.get(name);
+	Map nstate = (Map)state.get(key);
 	if(nstate == null) {
 	    nstate = new HashMap();
-	    state.put(name, nstate);
+	    state.put(key, nstate);
 	}
 	STATE.setValue(nstate);
     }
@@ -49,6 +49,7 @@ public class StateModel extends RealtimeObject implements Model {
 
     private String name;
     private Object _default;
+    private Map state;
 
     private StateModel() {}
 
@@ -66,11 +67,12 @@ public class StateModel extends RealtimeObject implements Model {
 	StateModel m = (StateModel)FACTORY.object();
 	m.name = name;
 	m._default = _default;
+	m.state = (Map)STATE.getValue();
 	return m;
     }
 
     public Object get() {
-	Map state = (Map)STATE.getValue();
+	//Map state = (Map)STATE.getValue();
 	if(state.get(name) == null) return _default;
 	return state.get(name);
     }
@@ -84,7 +86,7 @@ public class StateModel extends RealtimeObject implements Model {
 	    ((Realtime)value).move(ObjectSpace.HEAP);
 	}
 
-	Map state = (Map)STATE.getValue();
+	//Map state = (Map)STATE.getValue();
 	state.put(name, value);
     }
 

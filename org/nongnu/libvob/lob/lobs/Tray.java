@@ -34,9 +34,8 @@ import java.util.*;
 /** A sequence that stacks the lobs it contains, i.e., places them
  *  over each other.
  */
-public class Tray extends AbstractLob {
+public class Tray extends AbstractSequence {
 
-    private List lobs;
     private boolean sendEventsOnlyToFrontLob;
 
     private float width, height;
@@ -80,21 +79,10 @@ public class Tray extends AbstractLob {
     }
 
     public boolean key(String key) {
-	if(sendEventsOnlyToFrontLob) {
+	if(sendEventsOnlyToFrontLob)
 	    return ((Lob)lobs.get(0)).key(key);
-	} else {
-	    for(int i=0; i<lobs.size(); i++) {
-		PoolContext.enter();
-		try {
-		    if(((Lob)lobs.get(i)).key(key))
-			return true;
-		} finally {
-		    PoolContext.exit();
-		}
-	    }
-	}
-
-	return false;
+	else
+	    return super.key(key);
     }
 
     public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 

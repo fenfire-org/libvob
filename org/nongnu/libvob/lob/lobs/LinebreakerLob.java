@@ -35,17 +35,16 @@ import java.util.*;
 
 /** A lob that renders an hbox or vbox of lobs.
  */
-public class LinebreakerLob extends AbstractLob {
+public class LinebreakerLob extends AbstractSequence {
     private static void p(String s) { System.out.println("LinebreakerLob:: "+s); }
 
     private Axis lineAxis;
-    private List items;
 
     private LinebreakerLob() {}
 
-    public static LinebreakerLob newInstance(Axis lineAxis, List items) {
+    public static LinebreakerLob newInstance(Axis lineAxis, List lobs) {
 	LinebreakerLob bl = (LinebreakerLob)FACTORY.object();
-	bl.lineAxis = lineAxis; bl.items = items;
+	bl.lineAxis = lineAxis; bl.lobs = lobs;
 	return bl;
     }
 
@@ -54,7 +53,7 @@ public class LinebreakerLob extends AbstractLob {
     }
 
     public Lob layoutOneAxis(float size) {
-	List lines = LinebreakerLobList.newInstance(lineAxis, items, size);
+	List lines = LinebreakerLobList.newInstance(lineAxis, lobs, size);
 	return BoxLob.newInstance(lineAxis.other(), lines);
     }
 
@@ -69,8 +68,8 @@ public class LinebreakerLob extends AbstractLob {
     }
 
     public boolean key(String key) {
-	for(int i=0; i<items.size(); i++)
-	    if(((Lob)items.get(i)).key(key)) return true;
+	for(int i=0; i<lobs.size(); i++)
+	    if(((Lob)lobs.get(i)).key(key)) return true;
 	return false;
     }
 
@@ -86,7 +85,7 @@ public class LinebreakerLob extends AbstractLob {
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
-	    if(items instanceof Realtime) ((Realtime)items).move(os);
+	    if(lobs instanceof Realtime) ((Realtime)lobs).move(os);
 	    return true;
 	}
 	return false;

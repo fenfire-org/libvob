@@ -30,10 +30,12 @@ package org.nongnu.libvob.impl;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.layout.IndexedVobMatcher;
 import org.nongnu.libvob.lob.*;
+import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.vobs.SolidBackdropVob;
 import javolution.realtime.*;
 import java.awt.Dimension;
 import java.awt.Color;
+import java.util.*;
 
 public abstract class NewLobMain extends Main {
     protected VobScene lastScene, scene2, scene3;
@@ -42,6 +44,9 @@ public abstract class NewLobMain extends Main {
     private boolean initialized = false;
 
     protected Color bgColor;
+
+    protected Model focusModel = SimpleModel.newInstance();
+    protected int focusIndex = 0; // XXX
 
     public NewLobMain(Color bgColor) {
 	this.bgColor = bgColor;
@@ -53,7 +58,15 @@ public abstract class NewLobMain extends Main {
 	run(new LobBinder(), new LobShower());
 
 	backgroundVob = new SolidBackdropVob(bgColor);
-
+	
+	PoolContext.enter();
+	try {
+	    Lob lob = createLob();
+	    List focusable = lob.getFocusableLobs();
+	    if(focusable.size() > 0) focusModel.set(focusable.get(0));
+	} finally {
+	    PoolContext.exit();
+	}
 
 	lastScene = makeScene();
 	scene2 = makeScene();
@@ -74,7 +87,10 @@ public abstract class NewLobMain extends Main {
 	    scene.map.put(backgroundVob);
 
 	    PoolContext.enter();
+	    LocalContext.enter();
 	    try {
+		Lobs.setFocusModel(focusModel);
+
 		long m0 = System.currentTimeMillis();
 		
 		Lob layout = createLob().layout(size.width, size.height);
@@ -87,6 +103,7 @@ public abstract class NewLobMain extends Main {
 
 		//System.out.println("Gen scene: "+(m1-m0)+"+"+(m2-m1));
 	    } finally {
+		LocalContext.exit();
 		PoolContext.exit();
 	    }
 	    
@@ -97,14 +114,31 @@ public abstract class NewLobMain extends Main {
 
     protected class LobBinder extends AbstractBinder {
 	public void keystroke(String key) {
+	    if(!initialized) return;
+
 	    PoolContext.enter();
 	    LocalContext.enter();
 	    try {
+		Lobs.setFocusModel(focusModel);
 		Lobs.setWindowAnimation(windowAnim);
 
-		if (initialized && createLob().key(key)) {
-		    if(!windowAnim.hasSceneReplacementPending())
-			windowAnim.animate();
+		if(!key.equals("Tab")) {
+		    Lob l = (Lob)focusModel.get();
+		    if(l != null && l.key(key)) {
+			if(!windowAnim.hasSceneReplacementPending())
+			    windowAnim.animate();
+		    }
+		} else {
+		    Lob lob = createLob();
+		    List focusable = lob.getFocusableLobs();
+		    if(focusable.size() == 0) {
+			focusModel.set(null);
+		    } else {
+			focusIndex++;
+			if(focusIndex >= focusable.size()) focusIndex = 0;
+			focusModel.set(focusable.get(focusIndex));
+		    }
+		    
 		}
 	    } finally {
 		LocalContext.exit();
@@ -123,14 +157,14 @@ public abstract class NewLobMain extends Main {
 		*/
 
 		VobScene sc = windowAnim.getCurrentVS();
+		Dimension size = ((Screen)windowAnim).window.getSize();
 
 		PoolContext.enter();
 		LocalContext.enter();
 		try {
+		    Lobs.setFocusModel(focusModel);
 		    Lobs.setWindowAnimation(windowAnim);
 		    
-		    Dimension size = ((Screen)windowAnim).window.getSize();
-
 		    Lob lob = createLob();
 		    lob = lob.layout(size.width, size.height);
 

@@ -206,6 +206,10 @@ public class TableLob extends AbstractLob {
 	throw new UnsupportedOperationException("not layouted");
     }
 
+    public List getFocusableLobs() {
+	return getFocusableLobsImpl(table);
+    }
+
     protected static boolean keyImpl(Table table, String key) {
 	for(int r=0; r<table.getRowCount(); r++) {
 	    for(int c=0; c<table.getColumnCount(); c++) {
@@ -220,6 +224,21 @@ public class TableLob extends AbstractLob {
 	}
 
 	return false;
+    }
+
+    protected static List getFocusableLobsImpl(Table table) {
+	List result = Lists.list();
+	for(int r=0; r<table.getRowCount(); r++) {
+	    for(int c=0; c<table.getColumnCount(); c++) {
+		PoolContext.enter();
+		try {
+		    result.addAll(table.getLob(r, c).getFocusableLobs());
+		} finally {
+		    PoolContext.exit();
+		}
+	    }
+	}
+	return result;
     }
 
     private static final class TableLayout extends AbstractLayout {
@@ -316,6 +335,10 @@ public class TableLob extends AbstractLob {
 	    lob = lob.layout(posX[col+1]-posX[col], posY[row+1]-posY[row]);
 
 	    return lob.mouse(e, scene, cs, x, y);
+	}
+
+	public List getFocusableLobs() {
+	    return getFocusableLobsImpl(table);
 	}
     }
 

@@ -99,21 +99,41 @@ public class Notebook extends NewLobMain {
 
 	List vbox = Lists.list();
 
-	Model titleModel = new_Model_5(selectedNote);
+	Lob titleLob;
 
-	Lob titleLob = Components.textBox(titleModel, Maps.map());
+	LocalContext.enter(); 
+	try {
+	    StateModel.enterSubState("title");
+
+	    Model titleModel = new_Model_5(selectedNote);
+
+	    titleLob = Components.textBox(titleModel, Maps.map());
+	} finally {
+	    LocalContext.exit();
+	}
+
 	titleLob = Lobs.key(titleLob, "title");
 	vbox.add(titleLob);
 
 	vbox.add(Lobs.glue(Axis.Y, 5, 5, 5));
 
-	Model bodyModel = new_Model_6(selectedNote);
+	Lob bodyLob;
 
-	Lob bodyLob = Components.textArea(bodyModel, Maps.map());
-	bodyLob = Lobs.request(Axis.Y, bodyLob, 30, 100, SizeRequest.INF);
+	LocalContext.enter(); 
+	try {
+	    StateModel.enterSubState("body");
+
+	    Model bodyModel = new_Model_6(selectedNote);
+	    
+	    bodyLob = Components.textArea(bodyModel, Maps.map());
+	    bodyLob = Lobs.request(Axis.Y, bodyLob, 30, 100, SizeRequest.INF);
+	} finally {
+	    LocalContext.exit();
+	}
+
 	bodyLob = Lobs.key(bodyLob, "body");
 	vbox.add(bodyLob);
-
+	    
 	hbox.add(Lobs.vbox(vbox));
 
 	hbox.add(Lobs.glue(Axis.X, 5, 5, 5));
@@ -278,17 +298,17 @@ the_new_Action_3.selectedNote = selectedNote;
             Model selectedNote;
 
             
-	    public Object get() { 
-		Note note = (Note)selectedNote.get();
-		return note.title;
-	    }
-	    public void set(Object o) {
-		Note note = (Note)selectedNote.get();
-		note.title = (String)o;
-	    }
-	    public int getInt() { throw new Error(); }
-	    public void set(int value) { throw new Error(); }
-	
+		public Object get() { 
+		    Note note = (Note)selectedNote.get();
+		    return note.title;
+		}
+		public void set(Object o) {
+		    Note note = (Note)selectedNote.get();
+		    note.title = (String)o;
+		}
+		public int getInt() { throw new Error(); }
+		public void set(int value) { throw new Error(); }
+	    
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
@@ -317,17 +337,17 @@ the_new_Action_3.selectedNote = selectedNote;
             Model selectedNote;
 
             
-	    public Object get() { 
-		Note note = (Note)selectedNote.get();
-		return note.body;
-	    }
-	    public void set(Object o) {
-		Note note = (Note)selectedNote.get();
-		note.body = (String)o;
-	    }
-	    public int getInt() { throw new Error(); }
-	    public void set(int value) { throw new Error(); }
-	
+		public Object get() { 
+		    Note note = (Note)selectedNote.get();
+		    return note.body;
+		}
+		public void set(Object o) {
+		    Note note = (Note)selectedNote.get();
+		    note.body = (String)o;
+		}
+		public int getInt() { throw new Error(); }
+		public void set(int value) { throw new Error(); }
+	    
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {

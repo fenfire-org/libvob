@@ -27,6 +27,7 @@ Lob.java
  */
 package org.nongnu.libvob.lob;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.util.*;
 import org.nongnu.navidoc.util.Obs;
 import javolution.realtime.*;
@@ -118,9 +119,5 @@ public interface Lob extends Realtime {
 
 
     // List of decendants that can receive the focus.
-    // XXX should be Model, I guess? or perhaps the list should always reflect
-    // the current state -- but then we don't have Obs
-    //List getFocusableLobs(); 
-
-    //void setFocusModel(Model m);
+    List getFocusableLobs();
 }

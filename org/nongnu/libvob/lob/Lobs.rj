@@ -27,6 +27,7 @@ Lobs.java
  */
 package org.nongnu.libvob.lob;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.lob.lobs.*;
 import org.nongnu.libvob.vobs.*;
 import org.nongnu.libvob.util.*;
@@ -39,8 +40,11 @@ import java.util.*;
  */
 public class Lobs {
 
-    private static final LocalContext.Variable WINDOW_ANIMATION =
-	new LocalContext.Variable(null);
+    private static final LocalContext.Variable 
+	WINDOW_ANIMATION = new LocalContext.Variable(null),
+	FOCUS_MODEL = new LocalContext.Variable(null);
+    
+
 
     public static Lob rect(Color color, float lineWidth) {
 	return VobLob.newInstance(RectVob.newInstance(color, lineWidth));
@@ -211,6 +215,14 @@ public class Lobs {
 
     public static List text(LobFont font, Text text) {
 	return TextLobList.newInstance(font, text);
+    }
+
+    public static Model getFocusModel() {
+	return (Model)FOCUS_MODEL.getValue();
+    }
+
+    public static void setFocusModel(Model value) {
+	FOCUS_MODEL.setValue(value);
     }
 
     public static WindowAnimation getWindowAnimation() {

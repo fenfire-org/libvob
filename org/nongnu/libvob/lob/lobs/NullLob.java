@@ -31,7 +31,7 @@ import org.nongnu.libvob.*;
 
 /** An infinitely stretchable lob with zero natural size that draws nothing.
  */
-public class NullLob extends AbstractLob {
+public class NullLob extends AbstractLeafLob {
     public static final NullLob instance = new NullLob();
 
     protected NullLob() {}
@@ -52,29 +52,11 @@ public class NullLob extends AbstractLob {
 	throw new UnsupportedOperationException("not layouted");
     }
 
-    public boolean key(String key) {
-	return false;
-    }
-
-    public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
-			 float x, float y) { 
-	return false; 
-    }
-
-    private static class NullLayout extends AbstractLayout {
+    private static class NullLayout extends AbstractLeafLayout {
 	protected void setSize(float w, float h) { super.setSize(w, h); }
 
 	public void render(VobScene scene, int into, int matchingParent, 
 			   float d, boolean visible) {
-	}
-
-	public boolean key(String key) {
-	    return false;
-	}
-
-	public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
-			     float x, float y) { 
-	    return false; 
 	}
     }
 

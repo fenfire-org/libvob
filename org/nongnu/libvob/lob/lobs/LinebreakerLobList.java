@@ -120,12 +120,15 @@ public class LinebreakerLobList extends RealtimeList {
     }
 
     public int size() {
-	return lineCount;
+	return lineCount+1;
     }
 
     public Object get(int line) {
-	if(line >= lineCount)
+	if(line > lineCount)
 	    throw new IndexOutOfBoundsException(line+" >= "+lineCount);
+
+	if(line == lineCount)
+	    return Lobs.glue(lineAxis.other(), 0, 0, SizeRequest.INF);
 
 	int start = breaks[line]+1, end = breaks[line+1];
 	if(end > items.size()) end = items.size();
