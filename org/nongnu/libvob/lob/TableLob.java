@@ -79,14 +79,6 @@ public class TableLob extends AbstractLob {
 					       cols+" (max size "+(MAXSIZE-1)+
 					       " on each axis)");
 
-	rowMinH = FloatArray.newInstance(rows); 
-	rowNatH = FloatArray.newInstance(rows); 
-	rowMaxH = FloatArray.newInstance(rows); 
-
-	colMinW = FloatArray.newInstance(cols); 
-	colNatW = FloatArray.newInstance(cols); 
-	colMaxW = FloatArray.newInstance(cols); 
-	
 	for(int r=0; r<rows; r++) {
 	    rowMinH[r] = rowNatH[r] = 0;
 	    rowMaxH[r] = SizeRequest.INF;
