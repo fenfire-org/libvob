@@ -86,8 +86,21 @@ public class TextEditController extends LobSequence {
 	int length = textModel.size() - 1;
 	int textCursor = textCursorModel.getInt();
 	
-	if(textCursor < 0 || textCursor > length) 
+	if(textCursor > length) 
 	    textCursor = length;
+
+	if(textCursor < 0) {
+	    if(key.equals("Left") || key.equals("Alt-Left") ||
+	       key.equals("Up") || key.equals("Alt-Up")) {
+		textCursorModel.setInt(0);
+		return true;
+	    } else if(key.equals("Down") || key.equals("Alt-Down")) {
+		textCursorModel.setInt(length);
+		return true;
+	    } else {
+		textCursor = length;
+	    }
+	}
 	
 	if(key.length() == 1) {
 	    if(key.charAt(0) == 65535) {
@@ -119,12 +132,8 @@ public class TextEditController extends LobSequence {
 	    textCursorModel.setInt(textCursor);
 	    //AbstractUpdateManager.setNoAnimation();
 	} else if(key.equals("Left") || key.equals("Alt-Left")) {
-	    if(textCursorModel.getInt() < 0) {
-		textCursor = 0;
-	    } else {
-		textCursor--;
-		if(textCursor < 0) textCursor = 0;
-	    }
+	    textCursor--;
+	    if(textCursor < 0) textCursor = 0;
 	    textCursorModel.setInt(textCursor);
 	} else if(key.equals("Right") || key.equals("Alt-Right")) {
 	    textCursor++;
