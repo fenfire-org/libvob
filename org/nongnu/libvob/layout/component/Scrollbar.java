@@ -89,7 +89,19 @@ public class Scrollbar extends LobLob {
 	// knob and glue together fill the whole bar
 	Model glueSizeModel = (new FloatModel(1)).minus(knobFractionModel);
 
-	this.fract1 = positionModel.divide(maximumModel, 0);
+	// XXX we assume knobFraction is the visible fraction
+	// XXX we assume elements are of equal size
+	Model visiblePositions = knobFractionModel.times(maximumModel);
+
+	// scrollPosition is 0 until something above is not visible
+	Model scrollPosition = positionModel.minus(visiblePositions
+						   .divide(new IntModel(2)));
+	scrollPosition = Models.max(scrollPosition, new IntModel(0));
+	Model scrollMaximum = maximumModel.minus(visiblePositions);
+	// scrollPosition is scrollMaximum after nothing below is invisible
+	scrollPosition = Models.min(scrollPosition, scrollMaximum);
+
+	this.fract1 = scrollPosition.divide(scrollMaximum, 0);
 	this.fract2 = (new FloatModel(1)).minus(fract1);
 
 	// glueSize is divided between fract1 and fract2
