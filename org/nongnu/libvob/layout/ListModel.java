@@ -368,8 +368,11 @@ public interface ListModel extends CollectionModel, List {
 	    model.remove(index);
 	    return old;
 	}
-	
+
+	boolean updateInProgress = false;
 	public void chg() {
+	    if(updateInProgress) throw new Error("recursive update");
+	    updateInProgress = true;
 	    Map params = new HashMap();
 	    
 	    cache.clear();
@@ -385,6 +388,7 @@ public interface ListModel extends CollectionModel, List {
 		cache.add(template.instantiateTemplate(params));
 	    }
 
+	    updateInProgress = false;
 	    obses.trigger();
 	}
 
