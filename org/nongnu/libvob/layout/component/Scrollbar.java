@@ -37,15 +37,17 @@ public class Scrollbar extends LobLob {
 
     public static final String 
 	POSITION_MODEL = "http://fenfire.org/2004/07/layout/scrollbarPosModel",
-	MAXIMUM_MODEL = "http://fenfire.org/2004/07/layout/scrollbarMaxModel";
+	MAXIMUM_MODEL = "http://fenfire.org/2004/07/layout/scrollbarMaxModel",
+	KNOBFRACTION_MODEL = "http://fenfire.org/2004/07/layout/scrollbarKnobFractionModel";
 
     protected static final float LARGE = 1000000000f;
 
     protected Axis axis;
     protected Model positionModel;
     protected Model maximumModel;
+    protected Model knobFractionModel;
 
-    protected Model fract1, fract2;
+    protected Model fract1, fract2, knobFract;
 
     public void chg() {
 	// do NOT propagate events! we know we never change our
@@ -57,23 +59,40 @@ public class Scrollbar extends LobLob {
     }
 
     public Scrollbar(Axis axis, Model positionModel, Model maximumModel) {
+	this(axis, positionModel, maximumModel, null);
+    }
+
+    public Scrollbar(Axis axis, Model positionModel, Model maximumModel, 
+		     Model knobFractionModel) {
 	float nan = Float.NaN, inf = Float.POSITIVE_INFINITY;
+
+	if (knobFractionModel == null)
+	    knobFractionModel = new FloatModel(0.05f); 
 
 	positionModel = Parameter.model(POSITION_MODEL, positionModel);
 	maximumModel = Parameter.model(MAXIMUM_MODEL, maximumModel);
+	knobFractionModel = Parameter.model(KNOBFRACTION_MODEL, knobFractionModel);
 
 	positionModel = Models.max(positionModel, new IntModel(0));
 
 	this.axis = axis;
 	this.positionModel = positionModel;
 	this.maximumModel = maximumModel;
+	this.knobFractionModel = knobFractionModel;
 
 	positionModel.addObs(this);
 	maximumModel.addObs(this);
+	knobFractionModel.addObs(this);
+
+	Model glueSizeModel = (new FloatModel(1)).minus(knobFractionModel);
 
 	this.fract1 = positionModel.divide(maximumModel, 0);
 	this.fract2 = (new FloatModel(1)).minus(fract1);
 
+	this.fract1 = this.fract1.times(glueSizeModel);
+	this.fract2 = this.fract2.times(glueSizeModel);
+
+	this.knobFract = knobFractionModel;
 
 	Box box = new Box(axis);
 	Frame frame = new Frame(Theme.darkColor, Theme.darkColor, 1, 0, 
@@ -120,7 +139,9 @@ public class Scrollbar extends LobLob {
     }
 
     private Lob middle() {
-	return buttonRect(10, 10, 10);
+	Model zero = new FloatModel(0);
+	Lob buttonRect = buttonRect(10, 10, 10);
+	return new RequestChangeLob(axis, buttonRect, zero, zero, knobFract);
     }
 	
     private Lob rect(float min, float nat, float max) {
