@@ -38,7 +38,8 @@ public class Scrollbar extends LobLob {
     public static final String 
 	POSITION_MODEL = "http://fenfire.org/2004/07/layout/scrollbarPosModel",
 	MAXIMUM_MODEL = "http://fenfire.org/2004/07/layout/scrollbarMaxModel",
-	KNOBFRACTION_MODEL = "http://fenfire.org/2004/07/layout/scrollbarKnobFractionModel";
+	KNOBFRACTION_MODEL = "http://fenfire.org/2004/07/layout/scrollbarKnobFractionModel",
+	MIN_KNOB_SIZE_MODEL = "http://fenfire.org/2004/07/layout/scrollbarMinKnobSizeModel";
 
     protected static final float LARGE = 1000000000f;
 
@@ -58,9 +59,17 @@ public class Scrollbar extends LobLob {
 	// achieving that behavior by hand. XXX)
     }
 
+    /**
+     * @param value the value model giving the minimum size of the 
+     *              scrolling knob in pixels
+     */
+    public void setMinKnobSize(Model value) {
+	delegate.setTemplateParameter(MIN_KNOB_SIZE_MODEL, value);
+    }
+
     public Scrollbar(Axis axis, Model positionModel, Model maximumModel) {
 	this(axis, positionModel, maximumModel, 
-	     new FloatModel(0.0f)); // minimum size knob
+	     new FloatModel(0.0f)); // constantly minimum size knob
     }
 
     /**
@@ -142,9 +151,9 @@ public class Scrollbar extends LobLob {
     }
 
     private Lob middle() {
-	Model nan = new FloatModel(Float.NaN);
-	Lob buttonRect = buttonRect(15, 15, 15);
-	return new RequestChangeLob(axis, buttonRect, nan, nan, 
+	Model min = Parameter.model(MIN_KNOB_SIZE_MODEL, new FloatModel(15));
+	Lob buttonRect = buttonRect(Float.NaN, Float.NaN, Float.NaN);
+	return new RequestChangeLob(axis, buttonRect, min, min, 
 				    knobFract.times(LARGE));
     }
 	
