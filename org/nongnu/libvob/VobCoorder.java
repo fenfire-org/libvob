@@ -167,6 +167,8 @@ public abstract class VobCoorder {
     abstract public int between(int a, int b);
     abstract public int translatePolar(int parent, float distance, float angle);
 
+    abstract public int buoyOnCircle2(int circle, int anchor, float dir, float XXX);
+
     /** Get the size of the "unit square" of the given coordinate
      * system. This is the size that the unit square of unitSqCS() 
      * would be in the given coordinate system.
