@@ -58,21 +58,26 @@ public class TextKeyController extends AbstractDelegateLob {
 	if(tc > text.length()) 
 	    tc = text.length();
 
+	WindowAnimation winAnim = Lobs.getWindowAnimation();
+
 	if(key.length() == 1) {
 	    if(tc < 0) tc = text.length();
 	    textModel.set(text.substring(0, tc) + key + text.substring(tc));
 	    cursorModel.set(tc+1);
+	    winAnim.switchVS();
 	    return true;
 	} else if(key.equals("Enter")) {
 	    if(tc < 0) tc = text.length();
 	    textModel.set(text.substring(0, tc) + '\n' + text.substring(tc));
 	    cursorModel.set(tc+1);
+	    winAnim.switchVS();
 	    return true;
 	} else if(key.toLowerCase().equals("backspace")) {
 	    if(tc == 0) return true;
 	    if(tc < 0) tc = text.length();
 	    textModel.set(text.substring(0, tc-1) + text.substring(tc));
 	    cursorModel.set(tc-1);
+	    winAnim.switchVS();
 	    return true;
 	} else if(key.equals("Left")) {
 	    if(tc < 0) {
@@ -81,6 +86,7 @@ public class TextKeyController extends AbstractDelegateLob {
 		if(tc == 0) return true;
 		cursorModel.set(tc-1);
 	    }
+	    winAnim.animate();
 	    return true;
 	} else if(key.equals("Right")) {
 	    if(tc < 0) {
@@ -89,6 +95,7 @@ public class TextKeyController extends AbstractDelegateLob {
 		if(tc == text.length()) return true;
 		cursorModel.set(tc+1);
 	    }
+	    winAnim.animate();
 	    return true;
 	} else {
 	    return delegate.key(key);

@@ -39,6 +39,9 @@ import java.util.*;
  */
 public class Lobs {
 
+    private static final LocalContext.Variable WINDOW_ANIMATION =
+	new LocalContext.Variable(null);
+
     public static Lob rect(Color color, float lineWidth) {
 	return VobLob.newInstance(RectVob.newInstance(color, lineWidth));
     }
@@ -194,5 +197,13 @@ public class Lobs {
 
     public static LobList text(LobFont font, Text text) {
 	return TextLobList.newInstance(font, text);
+    }
+
+    public static WindowAnimation getWindowAnimation() {
+	return (WindowAnimation)WINDOW_ANIMATION.getValue();
+    }
+
+    public static void setWindowAnimation(WindowAnimation value) {
+	WINDOW_ANIMATION.setValue(value);
     }
 }

@@ -98,12 +98,16 @@ public abstract class NewLobMain extends Main {
     protected class LobBinder extends AbstractBinder {
 	public void keystroke(String key) {
 	    PoolContext.enter();
+	    LocalContext.enter();
 	    try {
+		Lobs.setWindowAnimation(windowAnim);
+
 		if (initialized && createLob().key(key)) {
-		    //if(!windowAnim.hasSceneReplacementPending())
-		    windowAnim.animate();
+		    if(!windowAnim.hasSceneReplacementPending())
+			windowAnim.animate();
 		}
 	    } finally {
+		LocalContext.exit();
 		PoolContext.exit();
 	    }
 	}
