@@ -38,6 +38,9 @@ public class TranslationLob extends AbstractMonoLob {
     private VobScene scene = null;
     private int cs = -1;
 
+    public TranslationLob(Lob content, float x, float y) {
+	this(content, new FloatModel(x), new FloatModel(y));
+    }
     public TranslationLob(Lob content, Model x, Model y) {
 	super(content);
 	this.x = x; this.y = y;

@@ -59,6 +59,7 @@ public class SampleLob extends AbstractDelegateLob {
 
 		new Between(new Image(new java.io.File("testdata/libvob.png"))
 			    , content, new NullLob()),
+		*/
 
 		new Between(new Label("Try zooming with button 3 and panning with button 1."),
 			    new DragController(
@@ -79,8 +80,7 @@ public class SampleLob extends AbstractDelegateLob {
 					}
 				    }), new NullLob())
 		,
-		*/
-		mgr.getLob()
+		//mgr.getLob()
 	    };
 	} catch (Exception e) { e.printStackTrace(); }
 

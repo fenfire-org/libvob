@@ -56,9 +56,9 @@ public class RectBgVob extends AbstractColorableVob {
     public boolean isSquare = false;
 
     /** Constructor shorthands */
-    public RectBgVob() { this(Color.white, true, null); }
-    public RectBgVob(Color bgColor) { this(bgColor, true, null); }
-    public RectBgVob(Color bgColor, boolean drawBorder) { this(bgColor, drawBorder, null); }
+    public RectBgVob() { this(Color.white); }
+    public RectBgVob(Color bgColor) { this(bgColor, true); }
+    public RectBgVob(Color bgColor, boolean drawBorder) { this(bgColor, drawBorder, java.awt.Color.black); }
   
     /** Construct RectBgVob.
      * @param bgColor Background color.
