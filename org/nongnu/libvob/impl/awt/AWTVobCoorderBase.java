@@ -29,6 +29,7 @@ package org.nongnu.libvob.impl.awt;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.*;
 import org.nongnu.libvob.gl.GL;
+import org.nongnu.libvob.util.math.Vect;
 import java.util.*;
 
 /** This is an internal base class for AWTVobCoorder.
@@ -362,7 +363,111 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    }
 	}, 
 	noOp, // 17 buoyOnCircle1
-	noOp, // 18 buoyOnCircle2
+	new Trans() { // 18 buoyOnCircle2
+	    public String toString() { return "buoyOnCircle2"; }
+
+	    /** copied from include/vob/geom/Quadrics.hxx
+	     *  coded by Tuomas J. Lukka
+	     */
+	    Vect project2circle(Vect pt, Vect p, Vect ctr, 
+				float rad
+				/*boolean *success = 0*/) {
+		int ansdir = 1;
+
+		//p("pt: "+pt+", p: "+p+", ctr: "+ctr);
+
+		Vect ao = pt.neg(ctr);
+		Vect ap = pt.neg(p);
+
+		//p("ao: "+ao);
+		//p("ap: "+ap);
+
+		// Coefficients of the 2nd degree equation
+		float a = ap.scalar(ap);
+		float b = 2*ap.scalar(ao);
+		float c = ao.scalar(ao) - rad * rad;
+
+		// determinant of the equation
+		float det = b*b - 4*a*c;
+
+		float ans = (float) (det > 0 ? (-b + ansdir * Math.sqrt(det)) / (2*a) : 0);
+		//if(success) *success = (det > 0);
+
+		//p("a: "+a+", b: "+b+", c: "+c+", det: "+det+", ans: "+ans);
+
+		return pt.sum(ap.mul(ans));
+	    }
+
+	    /** copied from include/vob/trans/LinearPrimitives.hxx 
+	     *  coded by Tuomas J. Lukka
+	     */
+	    void doTransformRect(float[] rect_, boolean useInterp) {
+		float [] rect = new float[rect_.length];
+
+		int areaCS = inds[cs()+1];
+		int anchorCS = inds[cs()+2];
+
+		// get absolutely area
+		getAbsoluteRect(areaCS, rect, 
+				new float[]{1,1},useInterp);
+		float[] areaF = new float[rect.length];
+		System.arraycopy(rect,0,areaF,0,rect.length);
+
+		// compute sq of the area
+		getSqSize(areaCS, rect);
+		float[] sqF = new float[2];
+		System.arraycopy(rect,0,sqF,0,2);
+
+		// get anchor
+		getAbsoluteRect(anchorCS, rect, 
+				new float[]{1,1},useInterp);
+		float[] anchorF = new float[rect.length];
+		System.arraycopy(rect,0,anchorF,0,rect.length);
+
+		Vect anchor = new Vect((anchorF[0]-areaF[0]) / sqF[0], 
+				       (anchorF[1]-areaF[1]) / sqF[1]); 
+		//p("anchor sqd: "+anchor);
+		
+		float shift = floats[inds[cs()+3]+1] / sqF[0];
+		float direction = floats[inds[cs()+3]];
+		int dir = direction > 0 ? 1 : -1;
+
+		Vect shifted = new Vect((float) anchor.x() + dir * shift, anchor.y());
+		Vect ctr = new Vect(.5f, .5f);
+		Vect buoy;
+
+		if(shifted.neg(ctr).abs() >= .5) {
+		    buoy = shifted;
+		} else {
+		    if(anchor.neg(ctr).abs() >= .5) {
+			buoy = anchor;
+		    } else {
+			buoy = project2circle(
+			    anchor, 
+			    ctr.sum((new Vect(.5f,0)).mul(-dir)),
+			    ctr, .5f);
+		    }
+		}
+
+		//p("final: "+buoy);
+
+		float scale = 1 - (anchor.neg(ctr)).abs() / .5f;
+		if(scale < shift) scale = shift;
+		rect_[4] += -scale; // depth
+		rect_[0] = buoy.x() * sqF[0] + areaF[0] + 2f*scale*rect_[0]/2f;
+		rect_[1] = buoy.y() * sqF[1] + areaF[1] + 2f*scale*rect_[1]/2f;
+		rect_[2] *= scale;
+		rect_[3] *= scale;
+
+	    }
+	    void doInverseTransformRect(float[] rect, boolean useInterp) { 
+		int parent = inds[cs()+1];
+		int anchor = inds[cs()+2];
+		inverseTransformRect(parent, rect, useInterp);
+		p("inverse parent: "+rect);
+		throw new Error("not impl.");
+	    }
+	},
 	new Trans() {   // 19 orthoBox
 	    public String toString() { return "orthoBox"; }
 	    void doTransformRect(float[] rect, boolean useInterp) { 

@@ -88,7 +88,7 @@ public class Vect {
 
 	Vect ret = new Vect(new float[vector.length]);
 	for (int i=0; i<vector.length; i++)
-	    ret.vector[i] = a.vector[i] - this.vector[i];
+	    ret.vector[i] = this.vector[i] - a.vector[i];
 	return ret;
     }
 

@@ -51,10 +51,11 @@ endif
 JAVA ?= java -Xincgc -Xnoclassgc
 # JAVA = src/jwrapper/build/jwrapper -Xincgc -Xnoclassgc
 
+API?="gl"
 
 ifeq (,$(JYTHON))
 # python.verbose can be: "error", "warning", "message", "comment", "debug"
- JYTHON=$(JAVA) $(JVMFLAGS) -Dpython.cachedir=. -Dpython.path=$(JYTHONPATH) -Dpython.verbose=message $(EDITOR_OPTION) org.python.util.jython
+ JYTHON=$(JAVA) $(JVMFLAGS) -Dvob.api=$(API) -Dpython.cachedir=. -Dpython.path=$(JYTHONPATH) -Dpython.verbose=message $(EDITOR_OPTION) org.python.util.jython
 endif
 
 lobsample:

@@ -39,7 +39,8 @@ __do_not_delete__ = 1
 import sys
 import os
 from java.lang import System,Runnable,Throwable
-System.setProperty("vob.api", "gl")
+if System.getProperty("vob.api") == None:
+    System.setProperty("vob.api", "gl")
 
 sys.path.insert(0, ".")
 
