@@ -310,7 +310,7 @@ the_new_Action_3.selectedNote = selectedNote;
             
 		public Object transform(Object o) {
 		    Note note = (Note)o;
-		    return Lobs.hbox(Lobs.text(note.title));
+		    return Components.label(note.title);
 		}
 	    
 

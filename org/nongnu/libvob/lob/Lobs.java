@@ -47,8 +47,6 @@ public class Lobs {
 	WINDOW_ANIMATION = new LocalContext.Variable(null),
 	FOCUS_MODEL = new LocalContext.Variable(null);
 
-    private static LobFont defaultFont;
-
 
 
     public static Lob rect(Color color, float lineWidth) {
@@ -68,14 +66,6 @@ public class Lobs {
 			   float x2, float y2) {
 	Vob conn = SimpleConnection.newInstance(x1, y1, x2, y2, color);
 	return VobLob.newInstance(conn);
-    }
-
-    public static Lob label(Text t) {
-	return hbox(text(t));
-    }
-
-    public static Lob label(String s) {
-	return hbox(text(s));
     }
 
     public static Lob translate(Lob l, float x, float y) {
@@ -240,29 +230,8 @@ public class Lobs {
 	return Tray.newInstance(lobs, sendEventsOnlyToFrontLob);
     }
 
-    public static LobFont font(Color color) {
-	LobFont font = SimpleLobFont.newInstance("serif", 0, 16, color);
-	return FilterLobFont.newInstance(font);
-    }
-
-    public static LobFont font() {
-	if(defaultFont == null) {
-	    defaultFont = font(Color.black);
-	    defaultFont.move(Realtime.ObjectSpace.HEAP);
-	}
-	return defaultFont;
-    }
-
-    public static List text(String s) {
-	return text(font(), s);
-    }
-
     public static List text(LobFont font, String s) {
 	return text(font, Text.valueOf(s));
-    }
-
-    public static List text(Text text) {
-	return text(font(), text);
     }
 
     public static List text(LobFont font, Text text) {

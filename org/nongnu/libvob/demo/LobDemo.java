@@ -64,7 +64,7 @@ public class LobDemo extends NewLobMain {
         lob = Lobs.key(lob, "table");
         tray.add(lob);
 
-        lob = Lobs.hbox(Lobs.text(Lobs.font(Color.blue), "Hello world!"));
+        lob = Lobs.hbox(Lobs.text(Components.font(Color.blue), "Hello world!"));
         lob = Lobs.frame3d(lob, null, Color.red, 1, 5, false, true);
         lob = Lobs.align(lob, .5f, .5f);
         lob = Lobs.request(lob, 400, 400, 400, 100, 100, 100);

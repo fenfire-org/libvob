@@ -66,6 +66,30 @@ public class Components {
 	lightColor = new java.awt.Color(1, 1, .9f),
 	darkColor = new java.awt.Color(.7f, .5f, .5f);
 
+    private static LobFont defaultFont;
+
+
+
+    public static LobFont font(Color color) {
+	LobFont font = SimpleLobFont.newInstance("serif", 0, 16, color);
+	return FilterLobFont.newInstance(font);
+    }
+
+    public static LobFont font() {
+	if(defaultFont == null) {
+	    defaultFont = font(Color.black);
+	    defaultFont.move(Realtime.ObjectSpace.HEAP);
+	}
+	return defaultFont;
+    }
+
+    public static Lob label(Text t) {
+	return Lobs.hbox(Lobs.text(font(), t));
+    }
+
+    public static Lob label(String s) {
+	return Lobs.hbox(Lobs.text(font(), s));
+    }
 
 
 
@@ -137,7 +161,7 @@ public class Components {
     public static Lob textComponent(Model text, Map params) {
 
 	Model cursor = (Model)getModel(params, "cursor", -1);
-	LobFont font = (LobFont)getParam(params, "font", Lobs.font());
+	LobFont font = (LobFont)getParam(params, "font", font());
 
 	Boolean multilineB = (Boolean)getParam(params, "multiline", null);
 	boolean multiline = multilineB.booleanValue();
@@ -157,7 +181,7 @@ public class Components {
     }
     
     public static Lob menuitem(String s, Action action) {
-	return menuitem(Lobs.hbox(Lobs.text(s)), action);
+	return menuitem(label(s), action);
     }
 
     public static Lob menuitem(Lob lob, Action action) {
@@ -168,7 +192,7 @@ public class Components {
     }
 
     public static Lob menuitem(String s, Lob submenu) {
-	return menuitem(Lobs.hbox(Lobs.text(s)), submenu);
+	return menuitem(label(s), submenu);
     }
 
     public static Lob menuitem(Lob lob, Lob submenu) {
@@ -217,9 +241,9 @@ public class Components {
 	return new @realtime-i Transform() {
 	    public Object transform(Object o) {
 		if(o instanceof Realtime)
-		    return Lobs.hbox(Lobs.text(((Realtime)o).toText()));
+		    return label(((Realtime)o).toText());
 		else
-		    return Lobs.hbox(Lobs.text(o.toString()));
+		    return label(o.toString());
 	    }
 	};
     }

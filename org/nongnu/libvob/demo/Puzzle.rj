@@ -57,7 +57,7 @@ public class Puzzle extends NewLobMain {
 	    TextBuilder builder = TextBuilder.newInstance();
 	    builder.append(i);
 
-	    l = Lobs.label(builder.toText());
+	    l = Components.label(builder.toText());
 	    l = Lobs.align(l, .5f, .5f);
 	    l = Lobs.request(l, 30, 30, 30, 30, 30, 30);
 	    l = Components.frame(l);

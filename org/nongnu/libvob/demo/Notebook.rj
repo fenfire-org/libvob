@@ -157,7 +157,7 @@ public class Notebook extends NewLobMain {
 	    "transform", new @realtime-i Transform() {
 		public Object transform(Object o) {
 		    Note note = (Note)o;
-		    return Lobs.hbox(Lobs.text(note.title));
+		    return Components.label(note.title);
 		}
 	    }));
 
