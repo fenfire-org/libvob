@@ -43,6 +43,10 @@ public class PanZoomLob extends AbstractMonoLob {
     public PanZoomLob(Lob content, Model zoom) {
 	this(content, new FloatModel(), new FloatModel(), zoom);
     }
+    public PanZoomLob(Lob content, float panX, float panY, float zoom) {
+	this(content, new FloatModel(panX), new FloatModel(panY),
+	     new FloatModel(zoom));
+    }
     public PanZoomLob(Lob content, Model panX, Model panY, Model zoom) {
 	super(content);
 	this.panX = panX; this.panY = panY;
@@ -52,6 +56,11 @@ public class PanZoomLob extends AbstractMonoLob {
 
 	content.setSize(content.getNatSize(X),
 			content.getNatSize(Y));
+    }
+
+    public void setParams(float panX, float panY, float zoom) {
+	this.panX.setFloat(panX); this.panY.setFloat(panY);
+	this.zoom.setFloat(zoom);
     }
 
     protected Replaceable[] getParams() {
