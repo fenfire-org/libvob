@@ -59,15 +59,13 @@ public class Scrollbar extends LobLob {
     }
 
     public Scrollbar(Axis axis, Model positionModel, Model maximumModel) {
-	this(axis, positionModel, maximumModel, null);
+	this(axis, positionModel, maximumModel, 
+	     new FloatModel(0.05f));
     }
 
     public Scrollbar(Axis axis, Model positionModel, Model maximumModel, 
 		     Model knobFractionModel) {
 	float nan = Float.NaN, inf = Float.POSITIVE_INFINITY;
-
-	if (knobFractionModel == null)
-	    knobFractionModel = new FloatModel(0.05f); 
 
 	positionModel = Parameter.model(POSITION_MODEL, positionModel);
 	maximumModel = Parameter.model(MAXIMUM_MODEL, maximumModel);
@@ -139,9 +137,9 @@ public class Scrollbar extends LobLob {
     }
 
     private Lob middle() {
-	Model zero = new FloatModel(0);
+	Model min = new FloatModel(10);
 	Lob buttonRect = buttonRect(10, 10, 10);
-	return new RequestChangeLob(axis, buttonRect, zero, zero, knobFract);
+	return new RequestChangeLob(axis, buttonRect, min, min, knobFract);
     }
 	
     private Lob rect(float min, float nat, float max) {
