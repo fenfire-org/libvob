@@ -108,7 +108,7 @@ public interface TextModel extends SequenceModel {
 
 	public StringTextModel(Model stringModel, Model fontModel) {
 	    super(stringModel, fontModel);
-	    this.keyModel = new ObjectModel(SIMPLE_TEXT_MODEL_KEY);
+	    this.keyModel = new ObjectModel(null);
 	}
 
 	public StringTextModel(Model stringModel, Model fontModel,
