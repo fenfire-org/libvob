@@ -67,8 +67,8 @@ public class TextCursorLob extends LobSequence {
 	if(!showModel.getBool()) return;
 
 	int i = textCursorModel.getInt();
+	if(i < 0) return; // don't show cursor
 	if(i >= delegate.length()) i = delegate.length()-1;
-	if(i < 0) i = 0;
 
 	float x2 = delegate.getPosition(X, i), y2 = delegate.getPosition(Y, i);
 	float h2 = delegate.getLob(i).getNatSize(Lob.Y);

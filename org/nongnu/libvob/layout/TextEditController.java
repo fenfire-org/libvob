@@ -86,8 +86,8 @@ public class TextEditController extends LobSequence {
 	int length = textModel.size() - 1;
 	int textCursor = textCursorModel.getInt();
 	
-	if(textCursor < 0) textCursor = 0;
-	if(textCursor > length) textCursor = length;
+	if(textCursor < 0 || textCursor > length) 
+	    textCursor = length;
 	
 	if(key.length() == 1) {
 	    if(key.charAt(0) == 65535) {
@@ -118,18 +118,18 @@ public class TextEditController extends LobSequence {
 	    textCursor += clipboardText.length();
 	    textCursorModel.setInt(textCursor);
 	    //AbstractUpdateManager.setNoAnimation();
-	} else if(key.equals("Left")) {
+	} else if(key.equals("Left") || key.equals("Alt-Left")) {
 	    textCursor--;
 	    if(textCursor < 0) textCursor = 0;
 	    textCursorModel.setInt(textCursor);
-	} else if(key.equals("Right")) {
+	} else if(key.equals("Right") || key.equals("Alt-Right")) {
 	    textCursor++;
 	    if(textCursor > length) textCursor = length;
 	    textCursorModel.setInt(textCursor);
-	} else if(key.equals("Down")) {
+	} else if(key.equals("Down") || key.equals("Alt-Down")) {
 	    if(lineModel != null)
 		lineModel.setInt(lineModel.getInt() + 1);
-	} else if(key.equals("Up")) {
+	} else if(key.equals("Up") || key.equals("Alt-Up")) {
 	    if(lineModel != null)
 		lineModel.setInt(lineModel.getInt() - 1);
 	} else if(key.equals("Shift-Left")) {

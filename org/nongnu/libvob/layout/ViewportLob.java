@@ -94,10 +94,10 @@ public class ViewportLob extends AbstractMonoLob {
 	
 	float scroll;
 	if(lobSize < viewportSize) {
-	    if(alignWhenAllShown != null)
-		scroll = alignWhenAllShown.getFloat()*viewportSize - pos;
-	    else
-		scroll = 0;
+	    float align = 0;
+	    if(alignWhenAllShown != null) align = alignWhenAllShown.getFloat();
+
+	    scroll = align*viewportSize - align*lobSize;
 	} else if(pos < viewportSize/2)
 	    scroll = 0;
 	else if(pos > lobSize-(viewportSize/2))
