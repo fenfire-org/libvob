@@ -39,7 +39,7 @@ public class BrowserLob extends AbstractDelegateLob {
 
     public interface View {
 	Set getTypes();
-	Lob getViewLob(Model state, Model viewState);
+	Lob getViewLob(Model state);
     }
 
     public static Type ALL = new Type() {
@@ -49,7 +49,6 @@ public class BrowserLob extends AbstractDelegateLob {
 	};
 
     protected Model state;
-    protected Model viewState;
 
     protected Set views;
 
@@ -59,9 +58,8 @@ public class BrowserLob extends AbstractDelegateLob {
 
     protected Lob delegate;
 
-    public BrowserLob(Model state, Model viewState, Set views) {
+    public BrowserLob(Model state, Set views) {
 	this.state = state;
-	this.viewState = viewState;
 	this.views = views;
 
 	this.types = new ArrayList();
@@ -99,10 +97,10 @@ public class BrowserLob extends AbstractDelegateLob {
     }
 
     protected Replaceable[] getParams() {
-	return new Replaceable[] { state, viewState };
+	return new Replaceable[] { state };
     }
     protected Object clone(Object[] params) {
-	return new BrowserLob((Model)params[0], (Model)params[1], views);
+	return new BrowserLob((Model)params[0], views);
     }
 
     protected View getView() {
@@ -122,7 +120,7 @@ public class BrowserLob extends AbstractDelegateLob {
 
 	    View view = getView();
 	    if(view != null)
-		delegate = view.getViewLob(state, viewState);
+		delegate = view.getViewLob(state);
 	    else
 		delegate = new AlignLob(new org.nongnu.libvob.layout.component.Label("No matching view found!"), .5f, .5f, .5f, .5f);
 
