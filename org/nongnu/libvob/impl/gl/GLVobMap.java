@@ -64,6 +64,8 @@ public class GLVobMap implements VobMap {
 	for(int i=0; i<nvobs; i++) {
 	    cs[i] = 0;
 
+	    if(vobs[i] == null) continue;
+
 	    // decrement Javolution reference counter
 	    ((Vob)vobs[i]).move(Realtime.ObjectSpace.LOCAL);
 

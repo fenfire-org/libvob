@@ -297,6 +297,8 @@ public class DefaultVobMap implements VobMap {
 
     public void clear() {
 	for(int i=0; i<nvobs; i++) {
+	    if(vobs[i] == null) continue;
+
 	    // decrement Javolution reference counter
 	    vobs[i].move(Realtime.ObjectSpace.LOCAL);
 
