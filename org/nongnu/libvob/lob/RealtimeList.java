@@ -177,12 +177,12 @@ public abstract class RealtimeList extends RealtimeCollection implements List {
 
         private static class _ListIterator_1 extends RealtimeObject implements ListIterator {
 
-                private _ListIterator_1() {}
+            private _ListIterator_1() {}
 
-                RealtimeList list; int index; 
+            RealtimeList list; int index; 
 					    int lastIndex; int lastModCount;
 
-                
+            
 	    public boolean hasNext() { return index < list.size(); }
 	    public boolean hasPrevious() { return index > 0; }
 
@@ -224,6 +224,14 @@ public abstract class RealtimeList extends RealtimeCollection implements List {
 		list.modCount++; lastModCount = list.modCount;
 	    }
 	
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    if(list instanceof Realtime) ((Realtime)list).move(os); 
+                    return true;
+                }
+                return false;
+            }
         }
 
         private static final RealtimeObject.Factory _ListIterator_1_FACTORY =
@@ -243,12 +251,12 @@ the_new_ListIterator_1.lastModCount = lastModCount;
     
         private static class _RealtimeList_2 extends RealtimeList {
 
-                private _RealtimeList_2() {}
+            private _RealtimeList_2() {}
 
-                RealtimeList list; 
+            RealtimeList list; 
 					  int from; int to;
 
-                
+            
 	    public Object get(int i) {
 		if(i > to-from) throw new IndexOutOfBoundsException(""+i);
 		return list.get(from+i);
@@ -286,6 +294,14 @@ the_new_ListIterator_1.lastModCount = lastModCount;
 		to -= (rto - rfrom);
 	    }
 	
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    if(list instanceof Realtime) ((Realtime)list).move(os); 
+                    return true;
+                }
+                return false;
+            }
         }
 
         private static final RealtimeObject.Factory _RealtimeList_2_FACTORY =

@@ -13,8 +13,10 @@ all: subdirs generate java jni
 CLASSDIR=CLASSES/
 
 java:
-	python metacode/rj2java.py org/nongnu/libvob/lob/Components.rj org/nongnu/libvob/lob/Components.java
 	python metacode/rj2java.py org/nongnu/libvob/lob/RealtimeList.rj org/nongnu/libvob/lob/RealtimeList.java
+	python metacode/rj2java.py org/nongnu/libvob/lob/Lists.rj org/nongnu/libvob/lob/Lists.java
+	python metacode/rj2java.py org/nongnu/libvob/lob/Lobs.rj org/nongnu/libvob/lob/Lobs.java
+	python metacode/rj2java.py org/nongnu/libvob/lob/Components.rj org/nongnu/libvob/lob/Components.java
 	mkdir -p CLASSES
 	$(JAVAC) $(DEBUG) -d $(CLASSDIR) $(RAWSRC) 
 

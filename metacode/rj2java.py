@@ -155,14 +155,33 @@ while True:
     else:
         extends = 'extends %(interface)s' % locals()
 
+    objectSpaceMoves = ''
+    
+    for pstr in parameters:
+        xm = variable.match(pstr)
+        xclazz = xm.group(1)
+        xvar = xm.group(2)
+        if xclazz in ('int', 'float', 'double', 'byte', 'short', 'char',
+                      'long'): continue
+        objectSpaceMoves += \
+            'if(%s instanceof Realtime) ((Realtime)%s).move(os); ' % (xvar,xvar)
+
     code += """
         private static class %(impl)s %(extends)s {
 
-                private %(impl)s() {}
+            private %(impl)s() {}
 
-                %(fields)s
+            %(fields)s
 
-                %(body)s
+            %(body)s
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    %(objectSpaceMoves)s
+                    return true;
+                }
+                return false;
+            }
         }
 
         private static final RealtimeObject.Factory %(impl)s_FACTORY =

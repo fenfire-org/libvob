@@ -80,7 +80,8 @@ public class Components {
 		Lob lob = (Lob)tr.transform(o);
 		lob = Lobs.margin(lob, 1);
 
-		Action select = new @realtime-i Action(Model selected,Object o) {
+		Action select = new @realtime-i Action(Model selected,
+						       Object o) {
 		    public void run() {
 			selected.set(o);
 		    }
@@ -92,8 +93,9 @@ public class Components {
 	    }
 	};
 
-	List lobs = TransformList.newInstance(elements, tr);
-	lobs = ConcatList.newInstance(lobs, SingletonLobList.newInstance(Lobs.glue(axis, 0, 0, SizeRequest.INF)));
+	List lobs = Lists.transform(elements, tr);
+	Lob glue = Lobs.glue(axis, 0, 0, SizeRequest.INF);
+	lobs = Lists.concat(lobs, Lists.list(glue));
 
 	Lob lob = Lobs.box(axis, lobs);
 	
@@ -125,7 +127,7 @@ public class Components {
 
 	Text txt = Text.valueOf((String)text.get());
 	List list = Lobs.text(font, txt);
-	list = KeyLobList.newInstance(list, "text");
+	list = Lobs.keyList(list, "text");
 	Lob lob = multiline ? Lobs.linebreaker(list) : Lobs.hbox(list);
 
         Lob cursor_lob = Lobs.line(java.awt.Color.black, 0, 0, 0, 1);

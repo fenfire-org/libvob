@@ -1,4 +1,4 @@
-/*
+/* -*-java-*-
 Lobs.java
  *    
  *    Copyright (c) 2005, Benja Fallenstein
@@ -124,6 +124,16 @@ public class Lobs {
 
     public static Lob key(Lob content, Object key, int intKey) {
 	return KeyLob.newInstance(content, key, intKey);
+    }
+
+    public static List keyList(List lobs, Object key) {
+	return new @realtime RealtimeList(List lobs, Object key) {
+	    public int size() { return lobs.size(); }
+	    public Object get(int i) {
+		Lob lob = (Lob)lobs.get(i);
+		return key(lob, key, i);
+	    }
+	};
     }
 
     public static Lob frame(Lob content, Color bg, Color border, 

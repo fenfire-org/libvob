@@ -80,8 +80,9 @@ public class Components {
 
 	tr = new_Transform_1(tr,selected);
 
-	List lobs = TransformList.newInstance(elements, tr);
-	lobs = ConcatList.newInstance(lobs, SingletonLobList.newInstance(Lobs.glue(axis, 0, 0, SizeRequest.INF)));
+	List lobs = Lists.transform(elements, tr);
+	Lob glue = Lobs.glue(axis, 0, 0, SizeRequest.INF);
+	lobs = Lists.concat(lobs, Lists.list(glue));
 
 	Lob lob = Lobs.box(axis, lobs);
 	
@@ -113,7 +114,7 @@ public class Components {
 
 	Text txt = Text.valueOf((String)text.get());
 	List list = Lobs.text(font, txt);
-	list = KeyLobList.newInstance(list, "text");
+	list = Lobs.keyList(list, "text");
 	Lob lob = multiline ? Lobs.linebreaker(list) : Lobs.hbox(list);
 
         Lob cursor_lob = Lobs.line(java.awt.Color.black, 0, 0, 0, 1);
@@ -132,11 +133,11 @@ public class Components {
 
         private static class _Transform_1 extends RealtimeObject implements Transform {
 
-                private _Transform_1() {}
+            private _Transform_1() {}
 
-                Transform tr; Model selected;
+            Transform tr; Model selected;
 
-                
+            
 	    public Object transform(Object o) {
 		Lob lob = (Lob)tr.transform(o);
 		lob = Lobs.margin(lob, 1);
@@ -148,6 +149,14 @@ public class Components {
 		return Lobs.key(lob, o);
 	    }
 	
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    if(tr instanceof Realtime) ((Realtime)tr).move(os); if(selected instanceof Realtime) ((Realtime)selected).move(os); 
+                    return true;
+                }
+                return false;
+            }
         }
 
         private static final RealtimeObject.Factory _Transform_1_FACTORY =
@@ -164,11 +173,11 @@ the_new_Transform_1.selected = selected;
     
         private static class _Transform_2 extends RealtimeObject implements Transform {
 
-                private _Transform_2() {}
+            private _Transform_2() {}
 
-                ;
+            ;
 
-                
+            
 	    public Object transform(Object o) {
 		if(o instanceof Realtime)
 		    return Lobs.hbox(Lobs.text(((Realtime)o).toText()));
@@ -176,6 +185,14 @@ the_new_Transform_1.selected = selected;
 		    return Lobs.hbox(Lobs.text(o.toString()));
 	    }
 	
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    
+                    return true;
+                }
+                return false;
+            }
         }
 
         private static final RealtimeObject.Factory _Transform_2_FACTORY =
@@ -191,15 +208,24 @@ the_new_Transform_1.selected = selected;
     
         private static class _Action_3 extends RealtimeObject implements Action {
 
-                private _Action_3() {}
+            private _Action_3() {}
 
-                Model selected;Object o;
+            Model selected;
+						       Object o;
 
-                
+            
 		    public void run() {
 			selected.set(o);
 		    }
 		
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    if(selected instanceof Realtime) ((Realtime)selected).move(os); if(o instanceof Realtime) ((Realtime)o).move(os); 
+                    return true;
+                }
+                return false;
+            }
         }
 
         private static final RealtimeObject.Factory _Action_3_FACTORY =
@@ -207,7 +233,8 @@ the_new_Transform_1.selected = selected;
                 protected Object create() { return new _Action_3(); }
             };
 
-        private static _Action_3 new_Action_3(Model selected,Object o) {
+        private static _Action_3 new_Action_3(Model selected,
+						       Object o) {
             _Action_3 the_new_Action_3 = (_Action_3)_Action_3_FACTORY.object();
             the_new_Action_3.selected = selected;
 the_new_Action_3.o = o;

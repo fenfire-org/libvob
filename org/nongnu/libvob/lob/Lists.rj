@@ -30,9 +30,88 @@ import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.lob.lobs.*;
 import javolution.lang.*;
 import javolution.realtime.*;
+import javolution.util.*;
 import java.awt.Color;
 import java.util.*;
 
 public class Lists {
 
+    public static List list() {
+	List l = FastList.newInstance();
+	return l;
+    }
+
+    public static List list(Object o1) {
+	List l = FastList.newInstance();
+	l.add(o1);
+	return l;
+    }
+
+    public static List list(Object o1, Object o2) {
+	List l = FastList.newInstance();
+	l.add(o1); l.add(o2);
+	return l;
+    }
+
+    public static List list(Object o1, Object o2, Object o3) {
+	List l = FastList.newInstance();
+	l.add(o1); l.add(o2); l.add(o3);
+	return l;
+    }
+
+    public static List list(Object o1, Object o2, Object o3, Object o4) {
+	List l = FastList.newInstance();
+	l.add(o1); l.add(o2); l.add(o3); l.add(o4);
+	return l;
+    }
+
+
+
+    public static List concatElements(List lists) {
+	// stupid linear implementation
+	return new @realtime RealtimeList(List lists) {
+	    public int size() {
+		int result = 0;
+		for(int i=0; i<lists.size(); i++)
+		    result += ((List)lists.get(i)).size();
+		return result;
+	    }
+	    public Object get(int idx0) {
+		int idx = idx0;
+		for(int i=0; i<lists.size(); i++) {
+		    List l = (List)lists.get(i);
+		    if(idx < l.size()) return l.get(idx);
+		    idx -= l.size();
+		}
+		throw new IndexOutOfBoundsException(""+idx0);
+	    }
+	};
+    }
+
+
+
+    public static List concat(List l1, List l2) {
+	return concatElements(list(l1, l2));
+    }
+
+    public static List concat(List l1, List l2, List l3) {
+	return concatElements(list(l1, l2, l3));
+    }
+
+    public static List concat(List l1, List l2, List l3, List l4) {
+	return concatElements(list(l1, l2, l3, l4));
+    }
+
+
+
+
+    public static List transform(List list, Transform transform) {
+	// stupid linear implementation
+	return new @realtime RealtimeList(List list, Transform transform) {
+	    public int size() { return list.size(); }
+	    public Object get(int i) { 
+		return transform.transform(list.get(i)); 
+	    }
+	};
+    }
 }

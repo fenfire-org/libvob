@@ -138,8 +138,7 @@ public class LinebreakerLobList extends RealtimeList {
 
 	    Lob before = br.getPostBreakLob(lineAxis);
 	    if(before != null) {
-		List singleton = SingletonLobList.newInstance(before);
-		lobs = ConcatList.newInstance(singleton, lobs);
+		lobs = Lists.concat(Lists.list(before), lobs);
 	    }
 	}
 
@@ -149,8 +148,7 @@ public class LinebreakerLobList extends RealtimeList {
 
 	    Lob after = br.getPreBreakLob(lineAxis);
 	    if(after != null) {
-		List singleton = SingletonLobList.newInstance(after);
-		lobs = ConcatList.newInstance(lobs, singleton);
+		lobs = Lists.concat(lobs, Lists.list(after));
 	    }
 	}
 
