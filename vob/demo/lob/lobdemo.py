@@ -30,8 +30,8 @@ class Table(TableLob.Table):
     def getColumnCount(self): return 10
 
     def getLob(self, row, col):
-        #return Lobs.filledRect(Color(row*10, 0, col*10))
-        return Lobs.rect(Color.red, 2)
+        return Lobs.filledRect(Color(50 + row*10, 0, 50 + col*10))
+        #return Lobs.rect(Color.red, 2)
 
 class Scene:
     def key(self, k):

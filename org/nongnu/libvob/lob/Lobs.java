@@ -38,15 +38,14 @@ import java.util.*;
 public class Lobs {
 
     public static Lob rect(Color color, float lineWidth) {
-	return VobLob.newInstance(RectVob.newInstance(color, lineWidth));
+	return VobLob.newInstance(new RectVob(color, lineWidth, false, false));
     }
 
     public static Lob rect3d(Color color, float lineWidth, boolean raised) {
-	return VobLob.newInstance(RectVob.newInstance(color, lineWidth, 
-						      raised));
+	return VobLob.newInstance(new RectVob(color, lineWidth, true, raised));
     }
 
     public static Lob filledRect(Color color) {
-	return VobLob.newInstance(FilledRectVob.newInstance(color));
+	return VobLob.newInstance(new FilledRectVob(color));
     }
 }
