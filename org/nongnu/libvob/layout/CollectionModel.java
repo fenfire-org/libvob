@@ -361,6 +361,7 @@ public interface CollectionModel extends Collection, Observable, Replaceable {
 	public ContainsModel(CollectionModel c, Model m) {
 	    this.c = c; this.m = m;
 	    c.addObs(this); m.addObs(this);
+	    chg();
 	}
 
 	protected Replaceable[] getParams() {
@@ -371,8 +372,15 @@ public interface CollectionModel extends Collection, Observable, Replaceable {
 				     (Model)params[1]);
 	}
 
+	protected boolean value;
+
+	public void chg() {
+	    value = c.contains(m.get());
+	    super.chg();
+	}
+
 	public boolean getBool() {
-	    return c.contains(m.get());
+	    return value;
 	}
     }
 }
