@@ -145,6 +145,20 @@ public class VobScene {
     public final GraphicsAPI gfxapi;
     public final GraphicsAPI.RenderingSurface window;
 
+    private int updateCount = 0;
+
+    /** Return how many times clear() has been called.
+     *  VobScene objects are often re-used by clearing and re-filling them.
+     *  Additionally, some objects modify existing VobScene objects.
+     *  This function gives such objects a way to check whether the
+     *  VobScene has been cleared since the object was initialized;
+     *  in this case, modifying the scene would be wrong (as old 
+     *  cs numbers aren't meaningful any longer).
+     */
+    public int getUpdateCount() {
+	return updateCount;
+    }
+
     private final AffineVobCoorder af() {
 	if(coords instanceof AffineVobCoorder)
 	    return (AffineVobCoorder)coords;
@@ -342,6 +356,8 @@ public class VobScene {
 
 
     public void clear(Dimension newSize) {
+	updateCount++;
+
 	this.size = newSize;
 	this.coords.clear();
 	this.matcher.clear();

@@ -1,8 +1,7 @@
 /*
 PanZoomLob.java
  *    
- *    Copyright (c) 2004, Benja Fallenstein
- *                  2004, Matti J. Katila
+ *    Copyright (c) 2004-2005, Benja Fallenstein and Matti J. Katila
  *
  *    This file is part of Libvob.
  *    
@@ -38,7 +37,8 @@ public class PanZoomLob extends AbstractMonoLob {
     protected Model panX, panY, zoom;
 
     private VobScene scene = null;
-    private int cs = -1;
+    private int sceneUpdateCount;
+    private int cs;
 
     public PanZoomLob(Lob content, Model zoom) {
 	this(content, new FloatModel(), new FloatModel(), zoom);
@@ -92,8 +92,12 @@ public class PanZoomLob extends AbstractMonoLob {
 
     protected Obs obs = new Obs() {
 	    public void chg() {
-		if (scene != null)
-		    setZoomPan();
+		if (scene != null) {
+		    if(scene.getUpdateCount() == sceneUpdateCount)
+			setZoomPan();
+		    else
+			scene = null;
+		}
 	    }
 	};
 
@@ -116,6 +120,7 @@ public class PanZoomLob extends AbstractMonoLob {
 		       float w, float h, float d,
 		       boolean visible) {
 	this.scene = scene;
+ 	this.sceneUpdateCount = scene.getUpdateCount();
 	this.w = w;
 	this.h = h;
 	into = scene.coords.box(into, w, h);

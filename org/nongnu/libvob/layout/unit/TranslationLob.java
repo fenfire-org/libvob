@@ -1,8 +1,7 @@
 /*
 TranslationLob.java
  *    
- *    Copyright (c) 2004, Benja Fallenstein
- *                  2004, Matti J. Katila
+ *    Copyright (c) 2004-2005, Benja Fallenstein and Matti J. Katila
  *
  *    This file is part of Libvob.
  *    
@@ -36,7 +35,8 @@ public class TranslationLob extends AbstractMonoLob {
     protected Model x, y;
 
     private VobScene scene = null;
-    private int cs = -1;
+    private int sceneUpdateCount;
+    private int cs;
 
     public TranslationLob(Lob content, float x, float y) {
 	this(content, new FloatModel(x), new FloatModel(y));
@@ -84,10 +84,14 @@ public class TranslationLob extends AbstractMonoLob {
     protected Obs obs = new Obs() {
 	    public void chg() {
 		//p("cs:"+cs+", vs: "+scene);
-		if (scene != null)
-		    scene.coords.setTranslateParams(cs, 
-						    x.getFloat(),
-						    y.getFloat());
+		if (scene != null) {
+		    if(scene.getUpdateCount() == sceneUpdateCount)
+			scene.coords.setTranslateParams(cs, 
+							x.getFloat(),
+							y.getFloat());
+		    else
+			scene = null;
+		}
 	    }
 	};
 
@@ -96,6 +100,7 @@ public class TranslationLob extends AbstractMonoLob {
 		       boolean visible) {
 
 	this.scene = scene;
+ 	this.sceneUpdateCount = scene.getUpdateCount();
 	this.cs = scene.coords.translate(into, 
 					 this.x.getFloat(),
 					 this.y.getFloat());
