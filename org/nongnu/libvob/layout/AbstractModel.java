@@ -194,6 +194,8 @@ public abstract class AbstractModel
 	public EqualsModel(Model a, Model b) {
 	    this.a = a; a.addObs(this);
 	    this.b = b; b.addObs(this);
+
+	    chg();
 	}
 
 	protected Replaceable[] getParams() {
@@ -203,17 +205,29 @@ public abstract class AbstractModel
 	    return new EqualsModel((Model)params[0], (Model)params[1]);
 	}
 
-	public boolean getBool() {
+	protected boolean state;
+
+	public boolean getBool() { return state; }
+
+	public void chg() {
 	    try {
 		// first, try to compute the result without creating objects;
 		// will throw an exception if a or b is an ObjectModel holding
 		// and object that can not be cast to Number
-		return a.getFloat() == b.getFloat();
+
+		// however, throwing an exception takes a LOT of time
+		// due to string creation and stacktrace filling -- 
+		// NOT good XXX!
+		state = (a.getFloat() == b.getFloat());
 	    } catch(ClassCastException e) {
 		Object o = a.get();
-		if(o == null) return b.get() == null;
-		return o.equals(b.get());
+		if(o == null) 
+		    state = (b.get() == null);
+		else
+		    state = o.equals(b.get());
 	    }
+
+	    super.chg();
 	}
     }
 
