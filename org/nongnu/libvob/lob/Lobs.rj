@@ -67,6 +67,14 @@ public class Lobs {
 	return VobLob.newInstance(conn);
     }
 
+    public static Lob label(Text t) {
+	return hbox(text(t));
+    }
+
+    public static Lob label(String s) {
+	return hbox(text(s));
+    }
+
     public static Lob translate(Lob l, float x, float y) {
 	return translate(l, x, y, 0);
     }

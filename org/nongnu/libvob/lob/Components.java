@@ -38,6 +38,13 @@ import java.util.*;
 
 public class Components {
 
+    public static Object getParam(Map params, String name, Object _default) {
+	if(params.get(name) != null)
+	    return params.get(name);
+	else
+	    return _default;
+    }
+
     public static Model getModel(Map params, String name, Object _default) {
 	return (Model)getParam(params, name, 
 			       StateModel.newInstance(name, _default));
@@ -48,11 +55,12 @@ public class Components {
 			       StateModel.newInstance(name, _default));
     }
 
-    public static Object getParam(Map params, String name, Object _default) {
-	if(params.get(name) != null)
-	    return params.get(name);
-	else
-	    return _default;
+    public static Object getState(Map params, String name, Object _default) {
+	return getModel(params, name, _default).get();
+    }
+
+    public static void setState(Map params, String name, Object value) {
+	getModel(params, name, null).set(value);
     }
 
 
@@ -66,10 +74,6 @@ public class Components {
 
     public static Lob frame(Lob lob) {
 	return Lobs.frame(lob, lightColor, darkColor, 1, 3, true);
-    }
-
-    public static Lob label(String s) {
-	return Lobs.hbox(Lobs.text(s));
     }
 
     public static Lob button(Lob content, Action action) {

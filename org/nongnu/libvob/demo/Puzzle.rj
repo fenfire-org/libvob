@@ -32,6 +32,7 @@ import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.lob.lobs.TableLob;
 import org.nongnu.libvob.impl.NewLobMain;
 import javolution.realtime.*;
+import javolution.lang.*;
 import java.awt.Color;
 import java.util.*;
 
@@ -53,7 +54,10 @@ public class Puzzle extends NewLobMain {
 
 	RoleContext.enter(new Integer(i));
 	try {
-	    l = Lobs.hbox(Lobs.text(""+i));
+	    TextBuilder builder = TextBuilder.newInstance();
+	    builder.append(i);
+
+	    l = Lobs.label(builder.toText());
 	    l = Lobs.align(l, .5f, .5f);
 	    l = Lobs.request(l, 30, 30, 30, 30, 30, 30);
 	    l = Components.frame(l);
@@ -82,12 +86,12 @@ public class Puzzle extends NewLobMain {
     }
 
     public static Lob lob(Map params) {
-	Model model = Components.getModel(params, "pieces", null);
-	PuzzleBoard board = (PuzzleBoard)model.get();
+	PuzzleBoard board = 
+	    (PuzzleBoard)Components.getState(params, "board", null);
 	
 	if(board == null) {
 	    board = PuzzleBoard.newInstance();
-	    model.set(board);
+	    Components.setState(params, "board", board);
 	}
 
 	TableLob.Table table = new @realtime-i TableLob.Table(PuzzleBoard board) {
@@ -95,7 +99,15 @@ public class Puzzle extends NewLobMain {
 	    public int getColumnCount() { return 4; }
 
 	    public Lob getLob(int row, int column) {
-		return piece(board.getPiece(row, column));
+		Lob lob = piece(board.getPiece(row, column));
+
+		lob = Lobs.clickController(lob, 1, new @realtime-i Action(PuzzleBoard board, int row, int column) {
+		    public void run() {
+			board.movePiece(row, column);
+		    }
+		});
+
+		return lob;
 	    }
 	};
 
