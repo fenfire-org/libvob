@@ -1,7 +1,7 @@
 /*   
 SetModel.java
  *    
- *    Copyright (c) 2004, Benja Fallenstein
+ *    Copyright (c) 2004-2005, Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -53,18 +53,34 @@ public interface SetModel extends CollectionModel, Set {
 	extends CollectionModel.AbstractCollectionModel implements SetModel {
     }
 
-    class SetCache extends Delegate {
+    abstract class Cached extends Delegate {
+	protected Set cache = new HashSet();
+	protected boolean current = false;
+
+	protected abstract void updateCache();
+
+	protected Collection getDelegate() { 
+	    if(!current) {
+		updateCache();
+		current = true;
+	    }
+
+	    return cache; 
+	}
+
+	public void chg() {
+	    current = false;
+	    super.chg();
+	}
+    }
+
+    class SetCache extends Cached {
 
 	protected CollectionModel model;
-	protected Set cache;
-
-	protected Collection getDelegate() { return cache; }
 
 	public SetCache(CollectionModel model) {
 	    this.model = model;
 	    model.addObs(this);
-
-	    cache = new HashSet(model);
 	}
 
 	protected Replaceable[] getParams() { 
@@ -74,10 +90,38 @@ public interface SetModel extends CollectionModel, Set {
 	    return new SetCache((CollectionModel)params[0]);
 	}
 
-	public void chg() {
+	public void updateCache() {
 	    cache.clear();
 	    cache.addAll(model);
-	    obses.trigger();
+	}
+    }
+
+    /** Set of things that are in a collection A but not in a collection B,
+     *  i.e. A\B.
+     *  XXX changes to the set should propagate to the underlying model
+     *  in the right way...
+     */
+    class Difference extends Cached {
+
+	protected CollectionModel collection, remove;
+
+	public Difference(CollectionModel collection, CollectionModel remove) {
+	    this.collection = collection; this.remove = remove;
+	    collection.addObs(this); remove.addObs(this);
+	}
+
+	protected Replaceable[] getParams() { 
+	    return new Replaceable[] { collection, remove };
+	}
+	protected Object clone(Object[] params) {
+	    return new Difference((CollectionModel)params[0],
+				  (CollectionModel)params[1]);
+	}
+
+	public void updateCache() {
+	    cache.clear();
+	    cache.addAll(collection);
+	    cache.removeAll(remove);
 	}
     }
 }
