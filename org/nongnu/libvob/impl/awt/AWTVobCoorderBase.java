@@ -754,8 +754,12 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		int p1 = inds[cs()+1], p2 = inds[cs()+2];
 		into.setX(cs(), (into.x(p1)+into.x(p2)) / 2);
 		into.setY(cs(), (into.y(p1)+into.y(p2)) / 2);
-		into.setSX(cs(), 1); // XXX
-		into.setSY(cs(), 1); // XXX
+
+		float sx1 = into.sx(p1), sx2 = into.sx(p2);
+		into.setSX(cs(), sx1<sx2 ? sx1 : sx2);
+
+		float sy1 = into.sy(p1), sy2 = into.sy(p2);
+		into.setSY(cs(), sy1<sy2 ? sy1 : sy2);
 
 		float d1 = into.d(p1), d2 = into.d(p2);
 		into.setD(cs(), d1>d2 ? d1 : d2);
