@@ -95,10 +95,9 @@ public class AlignLob extends AbstractDelegateLob {
 			   float d, boolean visible) {
 	    
 	    SizeRequest s = child.getSizeRequest();
-	    float w = s.width(), h = s.height();
 	    
-	    float x = parentX*w - childX*s.width();
-	    float y = parentY*h - childY*s.height();
+	    float x = parentX*width  - childX*s.width();
+	    float y = parentY*height - childY*s.height();
 	    
 	    int cs = scene.coords.translate(into, x, y);
 	    

@@ -30,7 +30,7 @@ import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.*;
 
-/** A lob placing a margin around its contents.
+/** A key controller implementing simple text editing.
  */
 public class TextKeyController extends AbstractDelegateLob {
 

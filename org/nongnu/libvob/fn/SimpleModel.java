@@ -45,7 +45,7 @@ public class SimpleModel extends RealtimeObject implements Model {
 
     public static SimpleModel newInstance(Object value) {
 	SimpleModel m = (SimpleModel)FACTORY.object();
-	m.value = value;
+	m.set(value);
 	return m;
     }
 
@@ -54,10 +54,18 @@ public class SimpleModel extends RealtimeObject implements Model {
     }
 
     public int getInt() {
-	return ((Number)value).intValue();
+	return ((FastInt)value).intValue();
     }
     
     public void set(Object value) {
+	if(this.value instanceof Realtime) {
+	    ((Realtime)this.value).move(ObjectSpace.LOCAL);
+	}
+
+    	if(value instanceof Realtime) {
+	    ((Realtime)value).move(ObjectSpace.HOLD);
+	}
+
 	this.value = value;
     }
 
@@ -65,6 +73,7 @@ public class SimpleModel extends RealtimeObject implements Model {
 	set(FastInt.newInstance(value));
     }
 
+    /*
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
 	    if(value instanceof Realtime) {
@@ -74,6 +83,7 @@ public class SimpleModel extends RealtimeObject implements Model {
 	}
 	return false;
     }
+    */
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {

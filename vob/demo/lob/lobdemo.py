@@ -22,7 +22,9 @@
 from org.nongnu.libvob.fn import *
 from org.nongnu.libvob.lob import *
 from org.nongnu.libvob.lob.lobs import *
+
 from javolution.lang import *
+from javolution.realtime import PoolContext
 
 from java.awt import Color
 
@@ -39,40 +41,45 @@ class Table(TableLob.Table):
         return Lobs.filledRect(Color(50 + row*10, 0, 50 + col*10))
         #return Lobs.rect(Color.red, 2)
 
-def render(scene, layout, key, x, y):
-    cs = scene.coords.translate(0, x, y)
-    scene.matcher.add(0, cs, key)
-    layout.render(scene, cs, cs, 1, 1)
-
-def renderLob(scene, lob, key, x, y):
-    size = lob.getSizeRequest()
-    render(scene, lob.layout(size.natW, size.natH), key, x, y)
-
 class Scene:
     def key(self, k):
         print 'key', k
 
-        if self.textlob().key(k):
-            self.anim.animate()
+        PoolContext.enter()
+        try:
+            if self.lob().key(k):
+                self.anim.animate()
+        finally:
+            PoolContext.exit()
         
     def mouse(self, m): pass
 
-    def textlob(self):
-        t = Text.valueOf(text.get())
-        loblist = Lobs.text(Lobs.font(), t)
-        loblist = KeyLobList.newInstance(loblist, "text")
-        lob = Lobs.linebreaker(loblist)
-        lob = Lobs.frame(lob, None, Color.black, 1, 5, 0)
+    def lob(self):
+        lobs = SimpleLobList.newInstance()
 
-        cursor_lob = Lobs.line(java.awt.Color.black, 0, 0, 0, 1)
-        cursor_lob = Lobs.key(cursor_lob, "textcursor")
-        lob = Lobs.decorate(lob, cursor_lob, "text", textcursor.getInt())
+        lob = TableLob.newInstance(Table())
+        lob = Lobs.request(lob, 400, 400, 400, 300, 300, 300)
+        lob = Lobs.translate(lob, 100, 100)
+        lob = Lobs.key(lob, "table")
+        lobs.add(lob)
 
-        lob = TextKeyController.newInstance(lob, text, textcursor)
-        
-        return lob
+        lob = Lobs.hbox(Lobs.text(Lobs.font(Color.blue), "Hello world!"))
+        lob = Lobs.frame3d(lob, None, Color.red, 1, 5, 0, 1)
+        lob = Lobs.align(lob, .5, .5)
+        lob = Lobs.request(lob, 400, 400, 400, 100, 100, 100)
+        lob = Lobs.translate(lob, 100, 0)
+        lob = Lobs.key(lob, "hello world")
+        lobs.add(lob)
 
-    #foo = 0
+        lob = Components.textArea(text, textcursor, Lobs.font())
+        lob = lob.layoutOneAxis(300)
+        lob = Lobs.translate(lob, 600, 100)
+        lob = Lobs.key(lob, "textbox")
+        lobs.add(lob)
+
+        return Tray.newInstance(lobs, 0)
+
+
     def scene(self, scene):
         _ = scene
         matcher = org.nongnu.libvob.layout.IndexedVobMatcher()
@@ -82,32 +89,13 @@ class Scene:
             
         scene.put(background((1,1,.8)))
 
-        #if self.foo:
-        #    cs1 = scene.coords.box(0, 50, 50, 1, 1)
-        #    cs2 = scene.coords.box(0, 80, 80, 1, 1)
-        #else:
-        #    cs1 = scene.coords.box(0, 80, 50, 1, 1)
-        #    cs2 = scene.coords.box(0, 50, 80, 1, 1)
-        #
-        #self.foo = not self.foo
-        #
-        #scene.matcher.add(0, cs1, "foo")
-        #scene.matcher.add(0, cs2, "bar")
-        #
-        #scene.put(org.nongnu.libvob.vobs.SimpleConnection(0,0,0,0,java.awt.Color.black), cs1, cs2)
-
-        lob = TableLob.newInstance(Table())
-        layout = lob.layout(400, 300)
-        render(scene, layout, "table", 100, 100)
-
-        lob = Lobs.hbox(Lobs.text(Lobs.font(Color.blue), "Hello world!"))
-        lob = Lobs.frame3d(lob, None, Color.red, 1, 5, 0, 1)
-        size = lob.getSizeRequest()
-        render(scene, lob.layout(size.natW, size.natH), "hello world",
-               300-size.natW/2, 50)
-
-        lob = self.textlob().layoutOneAxis(300)
-        renderLob(scene, lob, "textbox", 600, 100)
+        PoolContext.enter()
+        try:
+            lob = self.lob()
+            lob = lob.layout(scene.size.width, scene.size.height)
+            lob.render(scene, 0, 0, 1, 1)
+        finally:
+            PoolContext.exit()
 
         print 'scene rendered'
 

@@ -30,7 +30,7 @@ import javolution.realtime.*;
 
 /** A version of Integer that Javolution can re-use.
  */
-public final class FastInt extends Number implements Comparable {
+public final class FastInt extends RealtimeObject implements Comparable {
 
     private FastInt() {}
     private int value;
@@ -73,7 +73,7 @@ public final class FastInt extends Number implements Comparable {
 	return i;
     }
 
-    private static ObjectFactory FACTORY = new ObjectFactory() {
+    private static Factory FACTORY = new Factory() {
 	    protected Object create() {
 		return new FastInt();
 	    }

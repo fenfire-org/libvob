@@ -91,6 +91,10 @@ public class Lobs {
 	return Glue.newInstance(minW, natW, maxW, minH, natH, maxH);
     }
 
+    public static Lob align(Lob content, float x, float y) {
+	return AlignLob.newInstance(content, x, y, x, y);
+    }
+
     public static Lob align(Lob content, float childX, float childY, 
 			    float parentX, float parentY) {
 	return AlignLob.newInstance(content, childX, childY, parentX, parentY);

@@ -28,125 +28,110 @@ Tray.java
 package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.*;
+import javolution.realtime.*;
 import java.util.*;
 
 /** A sequence that stacks the lobs it contains, i.e., places them
  *  over each other.
  */
-public class Tray /*extends AbstractSequence*/ {
+public class Tray extends AbstractLob {
 
-    /*
-    protected boolean sendEventsOnlyToFrontLob;
+    private LobList lobs;
+    private boolean sendEventsOnlyToFrontLob;
 
-    public Tray(boolean sendEventsOnlyToFrontLob) {
-	this.sendEventsOnlyToFrontLob = sendEventsOnlyToFrontLob;
-    }
+    private float width, height;
 
-    public Tray(SequenceModel model, boolean sendEventsOnlyToFrontLob) {
-	super(model);
-	this.sendEventsOnlyToFrontLob = sendEventsOnlyToFrontLob;
-    }
+    private Tray() {}
 
-    public Object clone(Object[] params) {
-	return new Tray((SequenceModel)params[0], sendEventsOnlyToFrontLob);
-    }
-
-    public void chg() {
-	super.chg();
-	for(int i=0; i<length(); i++)
-	    getLob(i).setSize(width, height);
+    public static Tray newInstance(LobList lobs, 
+				   boolean sendEventsOnlyToFrontLob) {
+	Tray l = (Tray)FACTORY.object();
+	l.lobs = lobs;
+	l.sendEventsOnlyToFrontLob = sendEventsOnlyToFrontLob;
+	l.width = l.height = -1;
+	return l;
     }
 
     private static float min(float a, float b) { return (a<b) ? a : b; }
     private static float max(float a, float b) { return (a>b) ? a : b; }
 
-    public float getMinSize(Lob.Axis axis) {
-	float result = Float.POSITIVE_INFINITY;
-	for(int i=0; i<length(); i++) 
-	    result = min(result, getLob(i).getMinSize(axis));
-	return result;
-    }
+    public SizeRequest getSizeRequest() {
+	SizeRequest r = SizeRequest.newInstance(SizeRequest.INF, 0, 0,
+						SizeRequest.INF, 0, 0);
+	
+	for(int i=0; i<lobs.getLobCount(); i++) {
+	    PoolContext.enter();
+	    try {
+		SizeRequest s = lobs.getLob(i).getSizeRequest();
+		
+		r.minW = min(r.minW, s.minW);
+		r.natW = max(r.natW, s.natW);
+		r.maxW = max(r.maxW, s.maxW);
 
-    public float getNatSize(Lob.Axis axis) {
-	float result = Float.POSITIVE_INFINITY;
-	for(int i=0; i<length(); i++) 
-	    result = min(result, getLob(i).getNatSize(axis));
-	return result;
-    }
-
-    public float getMaxSize(Lob.Axis axis) {
-	float result = Float.POSITIVE_INFINITY;
-	for(int i=0; i<length(); i++) 
-	    result = max(result, getLob(i).getMaxSize(axis));
-	return result;
-    }
-
-    public boolean mouse(VobMouseEvent e, float x0, float y0,
-			 float ox0, float oy0) {
-	if(sendEventsOnlyToFrontLob)
-	    return getLob(length()-1).mouse(e, x0, y0, ox0, oy0);
-	else {
-	    for(int i=length()-1; i>=0; i--) {
-		if(getLob(i).mouse(e, x0, y0, ox0, oy0)) return true;
+		r.minH = min(r.minH, s.minH);
+		r.natH = max(r.natH, s.natH);
+		r.maxH = max(r.maxH, s.maxH);
+	    } finally {
+		PoolContext.exit();
 	    }
-	    return false;
 	}
+
+	return r;
     }
 
     public boolean key(String key) {
-	if(sendEventsOnlyToFrontLob)
-	    return getLob(length()-1).key(key);
-	else
-	    return super.key(key);
+	if(sendEventsOnlyToFrontLob) {
+	    return lobs.getLob(0).key(key);
+	} else {
+	    for(int i=0; i<lobs.getLobCount(); i++) {
+		PoolContext.enter();
+		try {
+		    if(lobs.getLob(i).key(key))
+			return true;
+		} finally {
+		    PoolContext.exit();
+		}
+	    }
+	}
+
+	return false;
     }
 
-    protected float width, height;
-
-    public void setSize(float w, float h) {
-	width = w; height = h;
-
-	for(int i=0; i<length(); i++)
-	    getLob(i).setSize(w, h);
+    public Lob layout(float w, float h) {
+	Tray t = newInstance(lobs, sendEventsOnlyToFrontLob);
+	t.width = w; t.height = h;
+	return t;
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float w, float h, float d,
-		       boolean visible) {
-	float z = d;
-	float dd = d/length();
+		       float d, boolean visible) {
 
-	for(int i=0; i<length(); i++) {
+	if(width < 0 || height < 0)
+	    throw new UnsupportedOperationException("not layouted");
 
-	    z -= dd;
+	int nlobs = lobs.getLobCount();
+
+	float z = 0;
+	float dd = d/nlobs;
+
+	for(int i=0; i<nlobs; i++) {
+
+	    z += dd;
 	    int cs = scene.coords.translate(into, 0, 0, z);
 
-	    if(model.getKey(i) == null) {
-		getLob(i).render(scene, cs, matchingParent, w, h, dd,
-				 visible);
-	    } else {
-		if(scene.matcher instanceof IndexedVobMatcher) {
-		    IndexedVobMatcher m = (IndexedVobMatcher)scene.matcher;
-			m.add(matchingParent, cs, model.getKey(i), 
-			      model.getIntKey(i));
-		} else {
-		    scene.matcher.add(matchingParent, cs, model.getKey(i));
-		}
-		getLob(i).render(scene, cs, cs, w, h, dd, visible);
+	    PoolContext.enter();
+	    try {
+		Lob layout = lobs.getLob(i).layout(width, height);
+		layout.render(scene, cs, matchingParent, dd, visible);
+	    } finally {
+		PoolContext.exit();
 	    }
 	}
     }
 
-    public float getPosition(Axis a, int i) {
-	return 0;
-    }
-
-    public int getLobIndexAt(float x, float y) {
-	if(length() == 0) throw new NoSuchElementException("empty tray");
-	return length()-1;
-    }
-
-    public int getCursorIndexAt(float x, float y) {
-	throw new UnsupportedOperationException("not implemented");
-    }
-    */
+    private static final Factory FACTORY = new Factory() {
+	    public Object create() {
+		return new Tray();
+	    }
+	};
 }
