@@ -61,27 +61,32 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	nfloats = 0;
 	ninds = 1;
 	ncs = 1;
+
+	otherCoorder = null;
+	interpList = null;
+	fract = 0;
+
+	coordinates.dirty = true;
     }
 
 
     /** A set of coordinates for each cs in this coorder -- there's one set
      *  for the coorder by itself, and one set for every interpolation frame.
-     *  (XXX currently only one for the coorder and none per frame)
+     *  (XXX currently only one for the coorder and one per interpolation)
      */
     protected class Coordinates {
 	float[] coords;
-	//boolean[] interpolated;
+	boolean dirty;
+	boolean[] interpolated;
 
-	public void init() {
+	void init() {
 	    p("init!");
 
-	    if(coords == null || ninds*5 > coords.length) {
+	    if(coords == null || ninds*5 > coords.length)
 		coords = new float[ninds*5];
-		//interpolated = new boolean[ninds];
-	    }
 
 	    Arrays.fill(coords, 0);
-	    //Arrays.fill(interpolated, false);
+	    dirty = false;
 
 	    for(int i=0; i<ncs; i++) {
 		Trans t = getTrans(cses[i]);
@@ -89,11 +94,72 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		//p("init "+i+"th ("+cses[i]+", type "+inds[cses[i]]+") to "+coords[5*cses[i]+0]+" "+coords[5*cses[i]+1]+" "+coords[5*cses[i]+2]+" "+coords[5*cses[i]+3]+" "+coords[5*cses[i]+4]);
 		t.pop();
 	    }
+
+	    _interpList = null;
+	}
+
+	int[] _interpList;
+	float _fract;
+
+	void initInterpolation() {
+	    if(coords == null || ninds*5 > coords.length)
+		coords = new float[ninds*5];
+
+	    if(interpolated == null || ninds > interpolated.length)
+		interpolated = new boolean[ninds];
+
+	    coordinates.check();
+	    otherCoorder.coordinates.check();
+
+	    Arrays.fill(coords, 0);
+	    Arrays.fill(interpolated, false);
+
+	    _interpList = interpList;
+	    _fract = fract;
+
+	    for(int i=0; i<ncs; i++) {
+		int cs = cses[i];
+		int ocs;
+
+		if(cs < interpList.length)
+		    ocs = interpList[cs];
+		else
+		    ocs = VobMatcher.SHOW_IN_INTERP;
+
+		if(ocs >= 0) {
+		    Trans t = getTrans(cs);
+		    interpolated[cs] = !t.isDontInterpSet();
+		    t.pop();
+
+		    if(interpolated[cs]) {
+			for(int j=0; j<5; j++) {
+			    coords[5*cs+j] = 
+				i(coordinates.coords[5*cs+j],
+				  otherCoorder.coordinates.coords[5*ocs+j],
+				  fract);
+			}
+		    }
+		} else if(ocs == VobMatcher.DONT_INTERP) {
+		    interpolated[cs] = false;
+		} else if(ocs == VobMatcher.SHOW_IN_INTERP) {
+		    Trans t = getTrans(cses[i]);
+		    t.put(this);
+		    t.pop();
+		    interpolated[cs] = true;
+		} else {
+		    throw new UnsupportedOperationException("Interpolation type: "+ocs);
+		}
+	    }
 	}
 
 	void check() {
-	    if(coords == null || ninds*5 > coords.length)
+	    if(dirty || coords == null || ninds*5 > coords.length)
 		init();
+	}
+
+	void checkInterpolation() {
+	    if(interpList != _interpList || fract != _fract) 
+		initInterpolation();
 	}
 
 	float x(int cs) { return coords[5*cs]; }
@@ -197,7 +263,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		p("info: "+into[i]);
 	}
 
-	coordinates.transform(cs, into);
+	if(!useInterp)
+	    coordinates.transform(cs, into);
+	else
+	    interpCoordinates.transform(cs, into);
 	
 	Trans t = getTrans(cs);
 	try {
@@ -221,6 +290,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     float fract;
 
     Coordinates coordinates = new Coordinates();
+    Coordinates interpCoordinates = new Coordinates();
 
     /**
      *  Return true if the coordinate system should be interpolated,
@@ -230,51 +300,30 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 				 int[] interpList, float fract,
 				 OrthoRenderInfo info) {
 
-	coordinates.check();
+	this.otherCoorder = other;
+	this.interpList = interpList;
+	this.fract = fract;
 
-	int ocs;
-	boolean dontInterp = false;
+	interpCoordinates.checkInterpolation();
+	if(!interpCoordinates.interpolated[cs]) return false;
 
-	if(interpList != null && cs < interpList.length)
-	    ocs = interpList[cs];
-	else
-	    ocs = VobMatcher.SHOW_IN_INTERP;
-
-	getAbsoluteRect(cs, cs1rect, scale, false);
-
-	if(ocs >= 0) {
-	    this.otherCoorder = other;
-	    this.interpList = interpList;
-
-	    Trans t = getTrans(cs);
-	    dontInterp = t.isDontInterpSet();
-	    t.pop();
-
-	    if(!dontInterp) {
-		other.getAbsoluteRect(ocs, cs2rect, scale2, false);
-		
-		interpolate(cs1rect, cs2rect, fract);
-		interpolate(scale, scale2, fract);
-	    }
-	} else if(ocs == VobMatcher.DONT_INTERP) {
-	    dontInterp = true;
-	} else if(ocs == VobMatcher.SHOW_IN_INTERP) {
-	    getAbsoluteRect(cs, cs1rect, scale, false);
-	} else {
-	    throw new UnsupportedOperationException("Interpolation type: "+ocs);
-	}
-
-	//p("set "+cs+": "+cs1rect[0]+" "+cs1rect[1]+" "+cs1rect[2]+" "+cs1rect[3]+" "+cs1rect[4]+" "+scale[0]+" "+scale[1]);
+	getAbsoluteRect(cs, cs1rect, scale, true);
 	    
         info.setCoords(cs1rect[4],// depth
                        cs1rect[0], cs1rect[1], cs1rect[2], cs1rect[3],
                        scale[0], scale[1]);
 
-	return !dontInterp;
+	return true;
     }
 
     public void setInfo(int cs, OrthoRenderInfo info) {
-	setInterpInfo(cs, this, null, 0, info);
+	coordinates.check();
+
+	getAbsoluteRect(cs, cs1rect, scale, false);
+	    
+        info.setCoords(cs1rect[4],// depth
+                       cs1rect[0], cs1rect[1], cs1rect[2], cs1rect[3],
+                       scale[0], scale[1]);
     }
 
 
