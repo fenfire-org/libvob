@@ -83,8 +83,6 @@ clean:
 	find $(FINDSRC) -regex ".+\.[^.]*gen[^.]*" |xargs rm -f
 	find $(FINDSRC) -regex ".+\.[^.]*dep[^.]*" |xargs rm -f
 	rm -f src/jni/Generator
-	rm -f org/nongnu/libvob/gl/GLRen.java
-	rm -f org/nongnu/libvob/impl/gl/GLVobCoorder_Gen.java
 	rm -f src/jni/made*
 	rm -f src/jni/org_nongnu*
 	rm -rf CLASSES
