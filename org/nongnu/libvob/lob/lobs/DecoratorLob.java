@@ -51,8 +51,8 @@ public class DecoratorLob extends AbstractDelegateLob {
 	return l;
     }
 
-    public Lob layout(float w, float h) {
-	return newInstance(delegate.layout(w, h), decoration, key, intKey);
+    public Lob wrap(Lob l) {
+	return newInstance(l, decoration, key, intKey);
     }
 
     public boolean move(ObjectSpace os) {

@@ -39,7 +39,7 @@ public class BoxLob extends AbstractLob {
     private static void p(String s) { System.out.println("BoxLob:: "+s); }
 
     private class BoxTable extends RealtimeObject implements TableLob.Table {
-
+	
 	public int getRowCount() {
 	    return (axis == Axis.Y) ? items.getLobCount() : 1;
 	}
@@ -52,20 +52,32 @@ public class BoxLob extends AbstractLob {
 	       (axis == Axis.Y && column != 0))
 		throw new IndexOutOfBoundsException(row+" "+column);
 
-	    return (axis == Axis.X) ? items.getLob(column) : items.getLob(row);
+	    Lob lob = items.getLob((axis == Axis.X) ? column : row);
+
+	    if(otherAxisSize < 0 || axis.other() != lob.getLayoutableAxis())
+		return lob;
+	    else
+		return lob.layoutOneAxis(otherAxisSize);
 	}
     }
 
     private Axis axis;
     private LobList items;
 
+    private float otherAxisSize; // size along the other axis; -1 if unknown
+
     private BoxTable table = new BoxTable();
 
     private BoxLob() {}
 
     public static BoxLob newInstance(Axis axis, LobList items) {
+	return newInstance(axis, items, -1);
+    }
+
+    private static BoxLob newInstance(Axis axis, LobList items, 
+				      float otherAxisSize) {
 	BoxLob bl = (BoxLob)FACTORY.object();
-	bl.axis = axis; bl.items = items;
+	bl.axis = axis; bl.items = items; bl.otherAxisSize = otherAxisSize;
 	return bl;
     }
 
@@ -77,6 +89,14 @@ public class BoxLob extends AbstractLob {
 
     public Lob layout(float width, float height) {
 	return TableLob.newInstance(table).layout(width, height);
+    }
+
+    public Axis getLayoutableAxis() {
+	return axis.other();
+    }
+
+    public Lob layoutOneAxis(float size) {
+	return newInstance(axis, items, size);
     }
 
     public void render(VobScene scene, int into, int matchingParent, 

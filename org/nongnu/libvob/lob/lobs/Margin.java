@@ -57,6 +57,10 @@ public class Margin extends AbstractDelegateLob {
 	return m;
     }
 
+    protected Lob wrap(Lob l) {
+	return newInstance(l, left, right, top, bottom);
+    }
+
     public SizeRequest getSizeRequest() {
 	float dx = left+right, dy = top+bottom;
 	SizeRequest r = delegate.getSizeRequest();

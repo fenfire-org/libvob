@@ -51,6 +51,10 @@ public class ClipLob extends AbstractDelegateLob {
 	return l;
     }
 
+    protected Lob wrap(Lob l) {
+	return newInstance(l, key);
+    }
+
     public Lob layout(float w, float h) {
 	return newInstance(delegate.layout(w, h), key);
     }

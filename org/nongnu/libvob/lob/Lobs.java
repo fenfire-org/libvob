@@ -147,6 +147,26 @@ public class Lobs {
 	return DecoratorLob.newInstance(child, decoration, key, intKey);
     }
 
+    public static Lob hbox(LobList items) {
+	return box(Axis.X, items);
+    }
+
+    public static Lob vbox(LobList items) {
+	return box(Axis.Y, items);
+    }
+
+    public static Lob box(Axis axis, LobList items) {
+	return BoxLob.newInstance(axis, items);
+    }
+
+    public static Lob linebreaker(LobList items) {
+	return linebreaker(Axis.X, items);
+    }
+
+    public static Lob linebreaker(Axis lineAxis, LobList items) {
+	return LinebreakerLob.newInstance(lineAxis, items);
+    }
+
     public static LobFont font(Color color) {
 	LobFont sf = SimpleLobFont.newInstance("serif", 0, 16, color);
 	return FilterLobFont.newInstance(sf);
@@ -156,19 +176,19 @@ public class Lobs {
 	return font(Color.black);
     }
 
-    public static Lob text(String s) {
+    public static LobList text(String s) {
 	return text(font(), s);
     }
 
-    public static Lob text(LobFont font, String s) {
+    public static LobList text(LobFont font, String s) {
 	return text(font, Text.valueOf(s));
     }
 
-    public static Lob text(Text text) {
+    public static LobList text(Text text) {
 	return text(font(), text);
     }
 
-    public static Lob text(LobFont font, Text text) {
-	return BoxLob.newInstance(Axis.X, TextLobList.newInstance(font, text));
+    public static LobList text(LobFont font, Text text) {
+	return TextLobList.newInstance(font, text);
     }
 }

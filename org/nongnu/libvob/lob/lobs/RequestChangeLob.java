@@ -83,6 +83,10 @@ public class RequestChangeLob extends AbstractDelegateLob {
 	return l;
     }
 
+    public Lob wrap(Lob l) {
+	return newInstance(l, minW, natW, maxW, minH, natH, maxH);
+    }
+
     public SizeRequest getSizeRequest() {
 	return SizeRequest.newInstance(minW, natW, maxW, minH, natH, maxH);
     }

@@ -47,6 +47,10 @@ public class NoGrowLob extends AbstractDelegateLob {
 	return l;
     }
 
+    public Lob wrap(Lob l) {
+	return newInstance(axis, l);
+    }
+
     public SizeRequest getSizeRequest() {
 	SizeRequest r = delegate.getSizeRequest();
 	SizeRequest s = SizeRequest.newInstance(r.minW, r.natW, r.maxW, 

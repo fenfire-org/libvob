@@ -35,6 +35,14 @@ public abstract class AbstractDelegateLob extends AbstractLob {
 
     protected Lob delegate;
 
+    /** Create a lob like this one, but with a different delegate.
+     *  Used in default implementations of layout() and layoutOneAxis().
+     *  Default behavior: just return the new delegate.
+     */
+    protected Lob wrap(Lob l) {
+	return l;
+    }
+
     public Lob getImplementation(Class clazz) {
 	if(clazz.isInstance(this))
 	    return this;
@@ -47,7 +55,15 @@ public abstract class AbstractDelegateLob extends AbstractLob {
     }
 
     public Lob layout(float w, float h) {
-	return delegate.layout(w, h);
+	return wrap(delegate.layout(w, h));
+    }
+
+    public Axis getLayoutableAxis() {
+	return delegate.getLayoutableAxis();
+    }
+
+    public Lob layoutOneAxis(float size) {
+	return wrap(delegate.layoutOneAxis(size));
     }
 
     public void render(VobScene scene, int into,

@@ -53,6 +53,10 @@ public class KeyLob extends AbstractDelegateLob {
 	return m;
     }
 
+    protected Lob wrap(Lob l) {
+	return newInstance(l, key, intKey);
+    }
+
     public Lob layout(float w, float h) {
 	KeyLob l = newInstance(delegate.layout(w, h), key, intKey);
 	l.width = w; l.height = h;

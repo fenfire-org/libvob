@@ -58,6 +58,14 @@ public class TranslateLob extends AbstractDelegateLob {
 	return newInstance(l, x, y, z);
     }
 
+    public Axis getLayoutableAxis() {
+	return null;
+    }
+
+    public Lob layoutOneAxis(float size) {
+	throw new UnsupportedOperationException();
+    }
+
     public void render(VobScene scene, int into, int matchingParent,
 		       float d, boolean visible) {
 	int cs = scene.coords.translate(into, x, y, z);

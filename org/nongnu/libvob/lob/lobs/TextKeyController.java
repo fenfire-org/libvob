@@ -47,8 +47,8 @@ public class TextKeyController extends AbstractDelegateLob {
 	return c;
     }
 
-    public Lob layout(float w, float h) {
-	return newInstance(delegate.layout(w, h), textModel, cursorModel);
+    public Lob wrap(Lob l) {
+	return newInstance(l, textModel, cursorModel);
     }
 
     public boolean key(String key) {

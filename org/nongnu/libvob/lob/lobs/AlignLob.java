@@ -69,6 +69,14 @@ public class AlignLob extends AbstractDelegateLob {
 
 	return l;
     }
+
+    public Axis getLayoutableAxis() {
+	return null;
+    }
+
+    public Lob layoutOneAxis(float size) {
+	throw new UnsupportedOperationException();
+    }
  
     public void render(VobScene scene, int into, int matchingParent, 
 		       float d, boolean visible) {

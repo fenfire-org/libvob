@@ -59,10 +59,9 @@ class Scene:
 
     def textlob(self):
         t = Text.valueOf(text.get())
-        loblist = TextLobList.newInstance(Lobs.font(), t)
+        loblist = Lobs.text(Lobs.font(), t)
         loblist = KeyLobList.newInstance(loblist, "text")
-        loblist = Linebreaker.newInstance(Axis.X, loblist, 300)
-        lob = BoxLob.newInstance(Axis.Y, loblist)
+        lob = Lobs.linebreaker(loblist)
         lob = Lobs.frame(lob, None, Color.black, 1, 5, 0)
 
         cursor_lob = Lobs.line(java.awt.Color.black, 0, 0, 0, 1)
@@ -101,13 +100,14 @@ class Scene:
         layout = lob.layout(400, 300)
         render(scene, layout, "table", 100, 100)
 
-        lob = Lobs.text(Lobs.font(Color.blue), "Hello world!")
+        lob = Lobs.hbox(Lobs.text(Lobs.font(Color.blue), "Hello world!"))
         lob = Lobs.frame3d(lob, None, Color.red, 1, 5, 0, 1)
         size = lob.getSizeRequest()
         render(scene, lob.layout(size.natW, size.natH), "hello world",
                300-size.natW/2, 50)
 
-        renderLob(scene, self.textlob(), "textbox", 600, 100)
+        lob = self.textlob().layoutOneAxis(300)
+        renderLob(scene, lob, "textbox", 600, 100)
 
         print 'scene rendered'
 

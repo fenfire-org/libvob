@@ -54,6 +54,19 @@ public class Between extends AbstractDelegateLob {
 			   front.layout(w, h));
     }
 
+    public Lob layoutOneAxis(float size) {
+	Lob m = delegate.layoutOneAxis(size);
+	Lob b = back, f = front;
+
+	if(back.getLayoutableAxis() == delegate.getLayoutableAxis())
+	    b = back.layoutOneAxis(size);
+
+	if(front.getLayoutableAxis() == delegate.getLayoutableAxis())
+	    f = front.layoutOneAxis(size);
+
+	return newInstance(b, m, f);
+    }
+
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
 	    back.move(os); front.move(os);

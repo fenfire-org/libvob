@@ -65,6 +65,14 @@ public class ScaleLob extends AbstractDelegateLob {
 	return newInstance(l, scaleX, scaleY);
     }
 
+    public Axis getLayoutableAxis() {
+	return null;
+    }
+
+    public Lob layoutOneAxis(float size) {
+	throw new UnsupportedOperationException();
+    }
+
     public void render(VobScene scene, int into, int matchingParent,
 		       float d, boolean visible) {
 	int cs = scene.coords.scale(into, scaleX, scaleY);

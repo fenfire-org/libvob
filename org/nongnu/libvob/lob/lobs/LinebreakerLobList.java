@@ -1,5 +1,5 @@
 /*
-Linebreaker.java
+LinebreakerLobList.java
  *    
  *    Copyright (c) 2003-2005, Benja Fallenstein
  *
@@ -31,8 +31,14 @@ import org.nongnu.libvob.*;
 import javolution.realtime.*;
 import java.util.*;
 
-public class Linebreaker extends RealtimeObject implements LobList {
-    private static void p(String s) { System.out.println("Linebreaker:: "+s); }
+/** A list of "lines" created by line-breaking another lob list.
+ *  The "lines" can be horizontal or vertical since they can be
+ *  hboxes or vboxes. Depending on the lobs in the underlying list,
+ *  they don't need to be lines of characters, either; for example,
+ *  they can be columns, each containing a vbox of text lines.
+ */
+public class LinebreakerLobList extends RealtimeObject implements LobList {
+    private static void p(String s) { System.out.println("LinebreakerLobList:: "+s); }
 
     private static final float INF = Breakable.INF;
 
@@ -45,11 +51,11 @@ public class Linebreaker extends RealtimeObject implements LobList {
     protected int[] breaks = new int[MAXSIZE];
     protected int lineCount;
 
-    private Linebreaker() {}
+    private LinebreakerLobList() {}
 
-    public static Linebreaker newInstance(Axis lineAxis, LobList items,
-					  float lineSize) {
-	Linebreaker br = (Linebreaker)FACTORY.object();
+    public static LinebreakerLobList newInstance(Axis lineAxis, LobList items,
+						float lineSize) {
+	LinebreakerLobList br = (LinebreakerLobList)FACTORY.object();
 	br.init(lineAxis, items, lineSize);
 	return br;
     }
@@ -163,7 +169,7 @@ public class Linebreaker extends RealtimeObject implements LobList {
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
-		return new Linebreaker();
+		return new LinebreakerLobList();
 	    }
 	};
 }
