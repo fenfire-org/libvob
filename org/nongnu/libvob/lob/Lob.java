@@ -62,7 +62,7 @@ public interface Lob {
      *  @throws UnsupportedOperationException if getLayoutableAxis() == null.
      *  @see #getLayoutableAxis()
      */
-    Lob layout(float size) throws UnsupportedOperationException;
+    Lob layoutOneAxis(float size) throws UnsupportedOperationException;
 
 
 

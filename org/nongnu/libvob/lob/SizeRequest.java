@@ -38,13 +38,17 @@ public final class SizeRequest {
      *  to one component and one third to another, we can use 2*INF
      *  as the size request of one and 1*INF as the size request of the other.
      */
-    float INF = (float)Math.pow(2, 1024);
+    public static final float INF = (float)Math.pow(2, 1024);
 
 
     private SizeRequest() {}
 
     public float minW, natW, maxW;
     public float minH, natH, maxH;
+
+    public float min(Axis axis) { return axis.coord(minW, minH); }
+    public float nat(Axis axis) { return axis.coord(natW, natH); }
+    public float max(Axis axis) { return axis.coord(maxW, maxH); }
 
     public static SizeRequest newInstance(float minW, float natW, float maxW,
 					  float minH, float natH, float maxH) {

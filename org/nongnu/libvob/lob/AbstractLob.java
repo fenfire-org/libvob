@@ -1,5 +1,5 @@
 /*
-AbstractLayout.java
+AbstractLob.java
  *    
  *    Copyright (c) 2005, Benja Fallenstein
  *
@@ -31,19 +31,13 @@ import org.nongnu.libvob.util.*;
 import org.nongnu.navidoc.util.Obs;
 import java.util.*;
 
-public abstract class AbstractLayout extends AbstractLob implements Layout {
+public abstract class AbstractLob implements Lob {
 
-    public Layout layout(float width, float height) {
-	Size s = getSize();
-	if(width != s.width || height != s.height)
-	    throw new IllegalArgumentException();
-
-	return this;
+    public Axis getLayoutableAxis() {
+	return null;
     }
 
-    public SizeRequest getSizeRequest() {
-	Size s = getSize();
-	return SizeRequest.newInstance(s.width, s.width, s.width,
-				       s.height, s.height, s.height);
+    public Lob layoutOneAxis(float size) {
+	throw new UnsupportedOperationException();
     }
 }
