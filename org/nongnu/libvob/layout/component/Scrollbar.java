@@ -60,7 +60,7 @@ public class Scrollbar extends LobLob {
 
     public Scrollbar(Axis axis, Model positionModel, Model maximumModel) {
 	this(axis, positionModel, maximumModel, 
-	     new FloatModel(0.05f));
+	     new FloatModel(0.0f)); // minimum size knob
     }
 
     public Scrollbar(Axis axis, Model positionModel, Model maximumModel, 
@@ -69,7 +69,8 @@ public class Scrollbar extends LobLob {
 
 	positionModel = Parameter.model(POSITION_MODEL, positionModel);
 	maximumModel = Parameter.model(MAXIMUM_MODEL, maximumModel);
-	knobFractionModel = Parameter.model(KNOBFRACTION_MODEL, knobFractionModel);
+	knobFractionModel = 
+	    Parameter.model(KNOBFRACTION_MODEL, knobFractionModel);
 
 	positionModel = Models.max(positionModel, new IntModel(0));
 
@@ -77,10 +78,6 @@ public class Scrollbar extends LobLob {
 	this.positionModel = positionModel;
 	this.maximumModel = maximumModel;
 	this.knobFractionModel = knobFractionModel;
-
-	positionModel.addObs(this);
-	maximumModel.addObs(this);
-	knobFractionModel.addObs(this);
 
 	Model glueSizeModel = (new FloatModel(1)).minus(knobFractionModel);
 
@@ -137,9 +134,9 @@ public class Scrollbar extends LobLob {
     }
 
     private Lob middle() {
-	Model min = new FloatModel(15);
+	Model nan = new FloatModel(Float.NaN);
 	Lob buttonRect = buttonRect(15, 15, 15);
-	return new RequestChangeLob(axis, buttonRect, min, min, 
+	return new RequestChangeLob(axis, buttonRect, nan, nan, 
 				    knobFract.times(LARGE));
     }
 	
@@ -187,9 +184,5 @@ public class Scrollbar extends LobLob {
 
     public Lob clone(Lob content) {
 	return new Scrollbar(content);
-    }
-
-    public void setSize(float w, float h) {
-	super.setSize(w, h);
     }
 }
