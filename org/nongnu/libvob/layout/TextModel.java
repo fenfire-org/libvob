@@ -51,9 +51,11 @@ public interface TextModel extends SequenceModel {
 
 	protected LobFont font;   // cached value of fontModel
 
-	public AbstractTextModel(Model stringModel, Model fontModel) {
+	public AbstractTextModel(Model stringModel, Model fontModel,
+				 boolean includeLineEnd) {
 	    this.fontModel = fontModel;
 	    this.stringModel = stringModel;
+	    this.includeLineEnd = includeLineEnd;
 
 	    fontModel.addObs(this); stringModel.addObs(this);
 
@@ -121,13 +123,13 @@ public interface TextModel extends SequenceModel {
 	protected Model keyModel;
 
 	public StringTextModel(Model stringModel, Model fontModel) {
-	    super(stringModel, fontModel);
+	    super(stringModel, fontModel, true);
 	    this.keyModel = new ObjectModel(null);
 	}
 
 	public StringTextModel(Model stringModel, Model fontModel,
 			       Model keyModel) {
-	    super(stringModel, fontModel);
+	    super(stringModel, fontModel, true);
 	    this.keyModel = keyModel;
 	}
 
@@ -139,12 +141,18 @@ public interface TextModel extends SequenceModel {
 	    this("", fontModel);
 	}
 
+	public StringTextModel(Model stringModel, Model fontModel,
+			       Model keyModel, boolean includeLineEnd) {
+	    super(stringModel, fontModel, includeLineEnd);
+	    this.keyModel = keyModel;
+	}
+
 	protected Replaceable[] getParams() {
 	    return new Replaceable[] { stringModel, fontModel, keyModel };
 	}
 	protected Object clone(Object[] params) {
 	    return new StringTextModel((Model)params[0], (Model)params[1],
-				       (Model)params[2]);
+				       (Model)params[2], includeLineEnd);
 	}
 
 	public Object getKey(int index) {

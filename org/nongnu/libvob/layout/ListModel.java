@@ -529,6 +529,48 @@ public interface ListModel extends CollectionModel, List {
     }
 
 
+    /** Join([1,2,3,4,5], X) = [1,X,2,X,3,X,4,X,5].
+     *  Insipired by Python's string.join(); to archieve the same effect
+     *  as string.join(l,s), use TextModel.Concat(ListModel.Join(l,O(s))),
+     *  where l is a list of text models, s is a text model to place
+     *  between the elements of l, and O is an ObjectModel containing s.
+     */
+    class Join extends AbstractListModel {
+
+	protected ListModel model;
+	protected Model inBetween;
+
+	public Join(ListModel model, Model inBetween) {
+	    this.model = model;
+	    this.inBetween = inBetween;
+
+	    model.addObs(this); inBetween.addObs(this);
+	}
+
+	protected Replaceable[] getParams() { 
+	    return new Replaceable[] { model, inBetween };
+	}
+	protected Object clone(Object[] params) {
+	    return new Join((ListModel)params[0], (Model)params[1]);
+	}
+
+	public Object get(int index) {
+	    if(index % 2 == 0)
+		return model.get(index/2);
+	    else
+		return inBetween.get();
+	}
+
+	public int size() {
+	    int s = model.size();
+	    if(s == 0)
+		return 0;
+	    else
+		return 2*s-1;
+	}
+    }
+
+
     class ListCache extends AbstractListModel {
 
 	protected CollectionModel model;

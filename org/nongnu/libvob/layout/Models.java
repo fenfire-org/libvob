@@ -43,10 +43,22 @@ public class Models {
 	return adaptMethods(m, c, "get"+slot, "set"+slot);
     }
 
+    public static Model adaptMethod(Object o, String getMethodName) {
+	return adaptMethod(new ObjectModel(o), o.getClass(),
+			   getMethodName);
+    }
+
     public static Model adaptMethods(Object o, String getMethodName, 
 			      String setMethodName) {
 	return adaptMethods(new ObjectModel(o), o.getClass(),
 			    getMethodName, setMethodName);
+    }
+
+    public static Model adaptMethod(Model m, Class c, String getMethodName) {
+
+	Method getMethod = findMethod(c, getMethodName, 0);
+
+	return cache(new MethodAdapterModel(m, getMethod, null/*XXX*/));
     }
 
     public static Model adaptMethods(Model m, Class c, String getMethodName,
