@@ -56,6 +56,9 @@ public class Parameter extends AbstractModel.AbstractObjectModel {
     public static SequenceModel sequenceModel(Object key) {
 	return sequenceModel(key, new SequenceModel.SimpleModel());
     }
+    public static TextModel textModel(Object key) {
+	return textModel(key, new TextModel.StringTextModel("", org.nongnu.libvob.layout.component.Theme.getFont()));
+    }
     public static ListModel listModel(Object key) {
 	return listModel(key, new ListModel.Simple());
     }
@@ -77,6 +80,9 @@ public class Parameter extends AbstractModel.AbstractObjectModel {
     }
     public static SequenceModel sequenceModel(Object key, SequenceModel value){
 	return new SequenceModel.ModelSequenceModel(new Parameter(key, value));
+    }
+    public static TextModel textModel(Object key, TextModel value) {
+	return new TextModel.ModelTextModel(new Parameter(key, value));
     }
     public static MapModel mapModel(Object key, MapModel value) {
 	return new MapModel.ModelMapModel(new Parameter(key, value));

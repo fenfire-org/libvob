@@ -263,4 +263,23 @@ public interface TextModel extends SequenceModel {
 	}
     }
     
+    class ModelTextModel extends SequenceModel.ModelSequenceModel 
+	implements TextModel {
+
+	public ModelTextModel(Model modelModel) {
+	    super(modelModel);
+	}
+
+	protected Object clone(Object[] params) {
+	    return new ModelTextModel((Model)params[0]);
+	}
+
+	public void insert(int pos, String text) {
+	    ((TextModel)currentModel).insert(pos, text);
+	}
+
+	public void delete(int start, int end) {
+	    ((TextModel)currentModel).delete(start, end);
+	}
+    }
 }

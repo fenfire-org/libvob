@@ -34,7 +34,10 @@ import org.nongnu.libvob.vobs.RectVob;
 import org.nongnu.navidoc.util.Obs;
 import java.awt.Color;
 
-public abstract class TextComponent extends LobLob {
+public abstract class TextComponent extends LobLob implements Component {
+
+    public static final Object TEXT_MODEL =
+	"http://fenfire.org/2004/07/layout/textModel-2004-12-09";
 
     public static final Object TEXT_CURSOR_MODEL =
 	"http://fenfire.org/2004/07/layout/textCursorModel-2004-10-13";
@@ -62,9 +65,31 @@ public abstract class TextComponent extends LobLob {
 	delegate.setTemplateParameter(TEXT_CURSOR_MODEL, model);
     }
 
+    public TextModel getText() {
+	return (TextModel)delegate.getTemplateParameter(TEXT_MODEL);
+    }
+
+    public void setText(TextModel value) {
+	delegate.setTemplateParameter(TEXT_MODEL, value);
+    }
+
+    public Model getKey() {
+	return (Model)delegate.getTemplateParameter(KEY);
+    }
+
+    public void setKey(Object value) {
+	getKey().set(value);
+    }
+
+    public void setKey(Model value) {
+	delegate.setTemplateParameter(KEY, value);
+    }
+
     protected void init(Sequence sequence, TextModel textModel, 
 			Model lineModel, Model lineCountModel, 
 			boolean scrollbar, Model key) {
+
+	textModel = Parameter.textModel(TEXT_MODEL, textModel);
 
 	this.textModel = textModel;
 	this.lineModel = lineModel;
@@ -87,7 +112,7 @@ public abstract class TextComponent extends LobLob {
 	}
 	    
 	lob = frame(lob);
-	lob = new KeyLob(lob, key);
+	lob = new KeyLob(lob, Parameter.model(KEY, key));
 
 	setDelegate(lob);
     }

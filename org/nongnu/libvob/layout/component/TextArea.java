@@ -53,6 +53,11 @@ public class TextArea extends TextComponent {
 	init(breaker, textModel, lineModel, lineCountModel, true, key);
     }
 
+    public TextArea() {
+	this(new TextModel.StringTextModel("", Theme.getFont()), 
+	     new ObjectModel(null));
+    }
+
     protected TextArea(Lob content) {
 	super(content);
     }
