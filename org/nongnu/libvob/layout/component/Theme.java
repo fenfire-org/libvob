@@ -200,15 +200,15 @@ public class Theme {
 	Model lengthModel = new CollectionModel.SizeModel(elements);
 	Model index = new ListModel.IndexModel(elements, selected);
 
-	l = new ViewportLob(Lob.Y, seq, seq.positionModel(Lob.Y, index));
-	l = new ClipLob(l, "VIEWPORT-CLIP");
+	ViewportLob viewl = new ViewportLob(Lob.Y, seq, seq.positionModel(Lob.Y, index));
+	l = new ClipLob(viewl, "VIEWPORT-CLIP");
 	l = new RequestChangeLob(Lob.Y, l, nan, nan, inf);
 	l = new Margin(l, 2);
 
 
 	Box box = new Box(Lob.X);
 	box.add(new RequestChangeLob(Lob.X, l, 0, 20, inf));
-	box.add(new KeyLob(new Scrollbar(Lob.Y, index, lengthModel.minus(1)),
+	box.add(new KeyLob(new Scrollbar(Lob.Y, index, lengthModel.minus(1), viewl.getVisibleFractionModel()),
 			   "SCROLLBAR"));
 
 	l = new Frame(box, Theme.lightColor, Theme.darkColor,
