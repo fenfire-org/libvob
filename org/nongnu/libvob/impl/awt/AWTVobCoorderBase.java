@@ -568,18 +568,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		    float[] areaScale = getarr();
 		    getAbsoluteRect(areaCS, areaF, areaScale, useInterp);
 
-		    /*
-		    // compute sq of the area
 
-		    sqF[0] = areaF[2] - areaF[0];
-		    sqF[1] = areaF[3] - areaF[1];
-
-		    // get anchor
-		    float[] anchorF = new float[5];
-		    getAbsoluteRect(anchorCS, anchorF, 
-		    new float[]{1,1},useInterp);
-		    */
-
+		    // get anchor, compute sq of the area
 
 		    float[] anchorCoords = getarr();
 		    getSqSize(anchorCS, anchorCoords);

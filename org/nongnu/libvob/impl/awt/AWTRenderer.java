@@ -92,45 +92,6 @@ public class AWTRenderer {
 		if(osc != null) {
 		    if(dbg) p("...interpTo != null");
 
-		    /*
-                    if(my == 0) {
-                        if(dbg) p("...my == 0.");
-			try {
-			    ((AWTVobCoorderBase)sc.coords).setInterpInfo(
-			        my, ((AWTVobCoorderBase)osc.coords), 
-				interpList, fract, (OrthoRenderInfo)info);
-			} catch(AWTVobCoorderBase.DoNotInterpolateException e){
-			    // should not be possible
-			    throw new Error(e);
-			}
-                        return true;
-                    }
-                    
-		    try {
-		        other = interpList[my];
-		        if(other == VobMatcher.DONT_INTERP) {
-			    return false;
-			} else if(other == VobMatcher.SHOW_IN_INTERP) {
-			    ((AWTVobCoorderBase)sc.coords).setInfo(
-			        my, (OrthoRenderInfo)info);
-			    return true;
-			} else if(other < 0) {
-			    throw new Error("interpList contains negative "+
-					    "value "+other);
-			}
-		    } catch(ArrayIndexOutOfBoundsException _) {
-		        // Not all coordsys must be in the matcher.
-			// Therefore, it is legal for the matcher
-			// to return an array that is too short.
-			// In this case, assume SHOW_IN_INTERP.
-
-			((AWTVobCoorderBase)sc.coords).setInfo(
-			    my, (OrthoRenderInfo)info);
-
-			return true;
-		    }
-		    */
-
 		    return ((AWTVobCoorderBase)sc.coords).setInterpInfo(
 		        my, ((AWTVobCoorderBase)osc.coords), interpList,
 			fract, (OrthoRenderInfo)info);
