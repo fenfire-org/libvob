@@ -107,7 +107,10 @@ public class Models {
 
 		public void chg() {
 		    String s = (String)m.get();
-		    value = Float.parseFloat(s);
+		    if(s == null || s.equals("")) 
+			value = 0;
+		    else
+			value = Float.parseFloat(s);
 		}
 
 		public float getFloat() {
