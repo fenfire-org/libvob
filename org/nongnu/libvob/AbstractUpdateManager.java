@@ -455,7 +455,7 @@ public abstract class AbstractUpdateManager implements Runnable, org.nongnu.libv
 	}
 	// Handle events.
 
-	// We want this thread to have the lowest priority, since
+	// We want this thread to have (almost) the lowest priority, since
 	// we want all incoming key events to be handled before
 	// this thread gets its moment to run.
 	// This is not very nice and it would be nicer to use
@@ -463,7 +463,7 @@ public abstract class AbstractUpdateManager implements Runnable, org.nongnu.libv
 	// but kaffe doesn't have them.
 	// Sigh.
 	// Maybe we should check at runtime...
-	Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+	Thread.currentThread().setPriority(Thread.MIN_PRIORITY+1);
 
 	int ind = -1;
 	boolean initNeeded = false; // Init outside synch(ord) needed.

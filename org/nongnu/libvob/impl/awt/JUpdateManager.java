@@ -112,13 +112,17 @@ public class JUpdateManager extends AbstractUpdateManager {
 		// what is notified by AbstractUpdateManager.chg()
 		ordering.wait();
 	    } catch(InterruptedException e) {
-		pa("JUpdateManager: interrupted??");
+		if(dbg) pa("JUpdateManager: interrupted");
 	    }
 	    return handleEvents_nohang();
 	}
     }
 
-    protected void interruptEventloop()  { }
+    protected void interruptEventloop()  { 
+	synchronized(ordering) {
+	    ordering.notifyAll();
+	}
+    }
 
     protected void synchronizeToolkit() {
 	Toolkit.getDefaultToolkit().sync();
