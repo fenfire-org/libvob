@@ -17,16 +17,35 @@ Before compiling, you should have:
    * include/kaffe/jni.h
    * include/jni.h
 
-* CVS module libvob-depends checked out as ../libvob-depends
+* The http://himalia.it.jyu.fi/darcs/navidoc/ repository checked out
+  as ../navidoc and compiled
+
+* The http://himalia.it.jyu.fi/darcs/depends/ repository checked out 
+  as ../depends
+
+Alternatively, instead of getting the depends/ package, you can install 
+the dependencies individually and set your classpath to include them.
+
+There is no list of the actual dependencies here because someone would
+certainly forget to add a new one, which would cause headaches to users.
+Instead, search for CLASSPATH in the Makefile, and look for the list
+of jars it imports from the depends directory; you can then head over
+to http://himalia.it.jyu.fi/darcs/depends/ and figure out what these
+jars are and how to install them. Ok, it's not easy, but if you want easy,
+just get the depends/ repository and be done.
+
+In addition to the jars, Libvob needs the stuff in the boost/ directory
+in depends.
 
 
-Compile with command "make".
+Compile with command "make". You can compile only the Java code
+with "make java" (you won't need Boost then).
 
 
 We try to optimize the C++ compilation to the hardware platform. In case of 
 problems, please have a look at the options ARCH and OPTIMIZE in file rules.mk.
 
 
-In the future, you should have the option of compiling only the AWT graphics 
-code or only the C++ OpenGL graphics code, but at the moment the JNI bridge
+In the future, you should have the option of compiling
+only the C++ OpenGL graphics code, but at the moment the JNI bridge
 is built anyway.
