@@ -167,6 +167,7 @@ public final class ScalableFont {
      */
     public float getScale(float height) {
 	int index = (int)height;
+	if(index < 0) index = 0;
 	if(index < scaleByHeight.length && scaleByHeight[index] > 0)
 	    return scaleByHeight[index];
 
