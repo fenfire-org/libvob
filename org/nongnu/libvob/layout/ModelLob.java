@@ -45,15 +45,26 @@ public class ModelLob extends AbstractDelegateLob {
 	return new ModelLob((Model)params[0]);
     }
 
+    float w = -1, h = -1;
+
+    public void setSize(float w, float h) {
+	this.w = w; this.h = h;
+	super.setSize(w, h);
+    }
+
     public void chg() {
-	if(last != null) last.removeObs(this);
-	last = null;
+	if(lobModel.get() != last) {
+	    if(last != null) last.removeObs(this);
+	    last = null;
+	}
 	super.chg();
     }
 
     protected Lob getDelegate() {
 	if(last == null) {
 	    last = (Lob)lobModel.get();
+	    if(w >= 0)
+		last.setSize(w, h);
 	    last.addObs(this);
 	}
 	return last;
