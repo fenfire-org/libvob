@@ -67,6 +67,15 @@ public class KeyLob extends AbstractDelegateLob {
 
 	// the cs must be a box, so someone putting additional decorations
 	// in the vobscene can know how large it is
+	int cs = scene.coords.box(into, width, height);
+
+	if(scene.matcher instanceof IndexedVobMatcher) {
+	    IndexedVobMatcher m = (IndexedVobMatcher)scene.matcher;
+	    m.add(matchingParent, cs, key, intKey);
+	} else {
+	    scene.matcher.add(matchingParent, cs, key);
+	}
+
 	delegate.render(scene, cs, cs, d, visible);
     }
 
