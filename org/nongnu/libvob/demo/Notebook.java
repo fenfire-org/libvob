@@ -67,7 +67,7 @@ public class Notebook extends NewLobMain {
 	Action deleteNote = new_Action_3(notes,selectedNote);
 
 
-	//List outerVBox = Lists.list();
+	Lob outerVBox = Lobs.vbox();
 
 	/*
 	Menu menubar = new Menu(X);
@@ -79,11 +79,11 @@ public class Notebook extends NewLobMain {
 	Menu notemenu = menubar.addMenu("Note");
 	notemenu.add("New note", newNote);
 	notemenu.add("Delete note", deleteNote);
-
-	outerVBox.glue(5, 5, 5);
 	*/
 
-	List hbox = Lists.list();
+	outerVBox.add(Lobs.glue(Axis.Y, 5, 5, 5));
+
+	Lob hbox = Lobs.hbox();
 
 	hbox.add(Lobs.glue(Axis.X, 5, 5, 5));
 
@@ -97,7 +97,7 @@ public class Notebook extends NewLobMain {
 
 	hbox.add(Lobs.glue(Axis.X, 5, 5, 5));
 
-	List vbox = Lists.list();
+	Lob vbox = Lobs.vbox();
 
 	RoleContext.enter("title"); 
 	try {
@@ -124,13 +124,15 @@ public class Notebook extends NewLobMain {
 	    RoleContext.exit();
 	}
 
-	hbox.add(Lobs.vbox(vbox));
+	hbox.add(vbox);
 
 	hbox.add(Lobs.glue(Axis.X, 5, 5, 5));
 
-	//outerVBox.glue(5, 5, 5);
+	outerVBox.add(hbox);
 
-	Lob lob = Lobs.hbox(hbox);
+	outerVBox.add(Lobs.glue(Axis.Y, 5, 5, 5));
+
+	Lob lob = outerVBox;
 
 	/*
 	KeyController k = new KeyController(new FocusLob(outerVBox));

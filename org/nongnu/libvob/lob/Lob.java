@@ -91,6 +91,25 @@ public interface Lob extends Realtime {
 
 
 
+    /** Add a lob to a sequence (hbox, vbox, linebreaker...).
+     *  If this is a sequence, the lob is added to the underlying list
+     *  through its add() method, which may throw an 
+     *  UnsupportedOperationException. If this is a
+     *  delegate lob, add() is called on the child lob.
+     *  If this is neither a sequence nor a delegate lob, an 
+     *  UnsupportedOperationException is thrown.
+     *  <p>
+     *  If no exception is thrown, and the lob caches some information,
+     *  like size information or the positions of line breaks,
+     *  then this information must be re-calculated.
+     *  <p>
+     *  This is a convenience method for building hboxes/vboxes etc. 
+     *  more easily in Java code.
+     */
+    void add(Lob lob) throws UnsupportedOperationException;
+
+
+
     /**
      *  @param visible Whether to put lobs into the coordinate systems.
      *         If false, the tree of coordinate systems is created,

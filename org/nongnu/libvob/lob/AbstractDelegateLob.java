@@ -66,6 +66,16 @@ public abstract class AbstractDelegateLob extends AbstractLob {
 	return wrap(delegate.layoutOneAxis(size));
     }
 
+    /**
+     *  This implementation doesn't re-compute anything, not size etc.
+     *  Note, however, that most classes inheriting from
+     *  AbstractDelegateLob actually don't cache any information
+     *  about their child lobs.
+     */
+    public void add(Lob lob) {
+	delegate.add(lob);
+    }
+
     public void render(VobScene scene, int into,
 			  int matchingParent, float d, boolean visible) {
 	delegate.render(scene, into, matchingParent, d, visible);

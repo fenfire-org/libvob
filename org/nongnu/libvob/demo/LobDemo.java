@@ -56,13 +56,13 @@ public class LobDemo extends NewLobMain {
     }
 
     public Lob createLob() {
-        List lobs = FastList.newInstance();
+        Tray tray = Tray.newInstance(Lists.list(), false);
 
         Lob lob = TableLob.newInstance(table);
         lob = Lobs.request(lob, 400, 400, 400, 300, 300, 300);
         lob = Lobs.translate(lob, 100, 100);
         lob = Lobs.key(lob, "table");
-        lobs.add(lob);
+        tray.add(lob);
 
         lob = Lobs.hbox(Lobs.text(Lobs.font(Color.blue), "Hello world!"));
         lob = Lobs.frame3d(lob, null, Color.red, 1, 5, false, true);
@@ -70,7 +70,7 @@ public class LobDemo extends NewLobMain {
         lob = Lobs.request(lob, 400, 400, 400, 100, 100, 100);
         lob = Lobs.translate(lob, 100, 0);
         lob = Lobs.key(lob, "hello world");
-        lobs.add(lob);
+        tray.add(lob);
 
 	List elements = Lists.list("Alpha", "Beta", "Gamma");
 	lob = Components.listBox(elements, Maps.map());
@@ -78,15 +78,15 @@ public class LobDemo extends NewLobMain {
         lob = Lobs.request(lob, 400, 400, 400, 100, 100, 100);
 	lob = Lobs.translate(lob, 100, 400);
 	lob = Lobs.key(lob, "listbox");
-	lobs.add(lob);
+	tray.add(lob);
 
         lob = Components.textArea(text, Maps.map());
         lob = lob.layoutOneAxis(300);
         lob = Lobs.translate(lob, 600, 100);
         lob = Lobs.key(lob, "textbox");
-        lobs.add(lob);
+        tray.add(lob);
 
-        return Tray.newInstance(lobs, false);
+        return tray;
     }
 
     public static void main(String[] argv) {

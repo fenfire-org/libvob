@@ -63,8 +63,23 @@ public class RequestChangeLob extends AbstractDelegateLob {
 	    float minH, float natH, float maxH) {
 
 	RequestChangeLob l = (RequestChangeLob)FACTORY.object();
-	SizeRequest r = content.getSizeRequest();
 	l.delegate = content;
+	l.minW = minW; l.natW = natW; l.maxW = maxW;
+	l.minH = minH; l.natH = natH; l.maxH = maxH;
+	return l;
+    }
+
+    public Lob wrap(Lob l) {
+	return newInstance(l, minW, natW, maxW, minH, natH, maxH);
+    }
+
+    public Lob layout(float w, float h) {
+	return delegate.layout(w, h);
+    }
+
+    public SizeRequest getSizeRequest() {
+	SizeRequest r = delegate.getSizeRequest();
+	SizeRequest l = SizeRequest.newInstance(0, 0, 0, 0, 0, 0);
 
 	l.minW = (minW >= 0) ? minW : r.minW;
 	l.natW = (natW >= 0) ? natW : r.natW;
@@ -81,24 +96,6 @@ public class RequestChangeLob extends AbstractDelegateLob {
 	if(natH < 0 && maxH < l.natH) l.natH = maxH;
 
 	return l;
-    }
-
-    public Lob wrap(Lob l) {
-	return newInstance(l, minW, natW, maxW, minH, natH, maxH);
-    }
-
-    public Lob layout(float w, float h) {
-	return delegate.layout(w, h);
-    }
-
-    public SizeRequest getSizeRequest() {
-	SizeRequest r = delegate.getSizeRequest();
-	return SizeRequest.newInstance(minW < 0 ? r.minW : minW, 
-				       natW < 0 ? r.natW : natW, 
-				       maxW < 0 ? r.maxW : maxW, 
-				       minH < 0 ? r.minH : minH, 
-				       natH < 0 ? r.natH : natH, 
-				       maxH < 0 ? r.maxH : maxH);
     }
 
     private static Factory FACTORY = new Factory() {

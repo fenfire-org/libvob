@@ -41,6 +41,10 @@ public abstract class AbstractSequence extends AbstractLob {
 	return false;
     }
 
+    public void add(Lob lob) {
+	lobs.add(lob);
+    }
+
     public List getFocusableLobs() {
 	List result = Lists.list();
 

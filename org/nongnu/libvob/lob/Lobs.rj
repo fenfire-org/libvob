@@ -172,12 +172,24 @@ public class Lobs {
 	return ClickController.newInstance(child, button, action);
     }
 
+    public static Lob hbox() {
+	return hbox(Lists.list());
+    }
+
     public static Lob hbox(List items) {
 	return box(Axis.X, items);
     }
 
+    public static Lob vbox() {
+	return vbox(Lists.list());
+    }
+
     public static Lob vbox(List items) {
 	return box(Axis.Y, items);
+    }
+
+    public static Lob box(Axis axis) {
+	return box(axis, Lists.list());
     }
 
     public static Lob box(Axis axis, List items) {

@@ -47,6 +47,10 @@ public abstract class AbstractLob extends RealtimeObject implements Lob {
 	throw new UnsupportedOperationException();
     }
 
+    public void add(Lob lob) {
+	throw new UnsupportedOperationException();
+    }
+
     /* individual lobs MUST implement key&mouse -- else, too many bugs by omission
     public boolean key(String key) {
 	return false;
