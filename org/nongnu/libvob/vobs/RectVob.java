@@ -29,45 +29,36 @@ RectVob.java
 package org.nongnu.libvob.vobs;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.gl.*;
-import org.nongnu.libvob.layout.*;
 import org.nongnu.libvob.util.*;
-import org.nongnu.navidoc.util.Obs;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Graphics;
 
 /** A vob drawing the outline of a rectangle.
  */
-public class RectVob extends AbstractVob implements Obs, Replaceable {
+public class RectVob extends AbstractVob {
     public static boolean dbg = false;
     private static void pa(String s) { System.err.println(s); }
 
-    protected Model colorModel;
+    protected Color color;
     protected float lineWidth;
 
     protected boolean is3d, raised;
 
-    public RectVob(Color color, float lineWidth, boolean is3d,
+    public RectVob(Color color, float lineWidth) {
+	this(color, lineWidth, false, false);
+    }
+
+    public RectVob(Color color, float lineWidth, boolean raised) {
+	this(color, lineWidth, true, raised);
+    }
+
+    public RectVob(Color color, float lineWidth, boolean is3d, 
 		   boolean raised) {
-	this(new ObjectModel(color), lineWidth, is3d, raised);
-    }
-
-    public RectVob(Model colorModel, float lineWidth) {
-	this(colorModel, lineWidth, false, false);
-    }
-
-    public RectVob(Model colorModel, float lineWidth, boolean raised) {
-	this(colorModel, lineWidth, true, raised);
-    }
-
-    public RectVob(Model colorModel, float lineWidth, boolean is3d, 
-		   boolean raised) {
-	this.colorModel = colorModel;
+	this.color = color;
 	this.lineWidth = lineWidth;
 	this.is3d = is3d;
 	this.raised = raised;
-
-	colorModel.addObs(this);
     }
 
     public static RectVob newInstance(Color color, float lineWidth) {
@@ -82,34 +73,11 @@ public class RectVob extends AbstractVob implements Obs, Replaceable {
     public static RectVob newInstance(Color color, float lineWidth,
 				      boolean is3d, boolean raised) {
 	RectVob vob = (RectVob)FACTORY.object();
-	vob.colorModel.set(color);
+	vob.color = color;
 	vob.lineWidth = lineWidth;
 	vob.is3d = is3d;
 	vob.raised = raised;
 	return vob;
-    }
-
-    public Object instantiateTemplate(java.util.Map map) {
-	if(map.get(this) != null) return map.get(this);
-
-	Model newColorModel = (Model)colorModel.instantiateTemplate(map);
-	if(newColorModel == colorModel) {
-	    map.put(this, this);
-	    return this;
-	}
-
-	Vob newThis = new RectVob(newColorModel, lineWidth, is3d, raised);
-	map.put(this, newThis);
-	return newThis;
-    }
-    public java.util.Set getTemplateParameters() {
-	return colorModel.getTemplateParameters();
-    }
-    public Object getTemplateParameter(Object key) {
-	return colorModel.getTemplateParameter(key);
-    }
-    public void setTemplateParameter(Object key, Object value) {
-	colorModel.setTemplateParameter(key, value);
     }
 
 
@@ -118,7 +86,7 @@ public class RectVob extends AbstractVob implements Obs, Replaceable {
     public void render(Graphics g, boolean fast,
 		       Vob.RenderInfo info1, Vob.RenderInfo info2) {
 	Color oldfg = g.getColor();
-	g.setColor(info1.fade((Color)colorModel.get()));
+	g.setColor(info1.fade(color));
 
 	float xlw = lineWidth * info1.scaleX;
 	float ylw = lineWidth * info1.scaleY;
@@ -151,7 +119,6 @@ public class RectVob extends AbstractVob implements Obs, Replaceable {
 
     public int putGL(VobScene vs, int coordsys1) {
 	if(vob == null) {
-	    Color color = (Color)colorModel.get();
 	    Color tlColor, brColor; // top/left, bottom/right colors
 
 	    if(is3d) {
@@ -178,7 +145,7 @@ public class RectVob extends AbstractVob implements Obs, Replaceable {
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() { 
-		return new RectVob(new ObjectModel(), 0);
+		return new RectVob(null, 0);
 	    }
 	};
 }

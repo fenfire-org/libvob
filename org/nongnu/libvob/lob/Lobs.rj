@@ -185,6 +185,10 @@ public class Lobs {
 	return ClickController.newInstance(child, button, action);
     }
 
+    public static Lob keyController(Lob child, Map actions) {
+	return KeyController.newInstance(child, actions);
+    }
+
     public static Lob hbox() {
 	return hbox(Lists.list());
     }
@@ -215,6 +219,14 @@ public class Lobs {
 
     public static Lob linebreaker(Axis lineAxis, List items) {
 	return LinebreakerLob.newInstance(lineAxis, items);
+    }
+
+    public static Lob tray(boolean sendEventsOnlyToFrontLob) {
+	return tray(Lists.list(), sendEventsOnlyToFrontLob);
+    }
+
+    public static Lob tray(List lobs, boolean sendEventsOnlyToFrontLob) {
+	return Tray.newInstance(lobs, sendEventsOnlyToFrontLob);
     }
 
     public static LobFont font(Color color) {

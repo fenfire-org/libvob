@@ -48,6 +48,7 @@ public abstract class Main implements Runnable {
 	
 
 	// static set
+	/*
 	if (GraphicsAPI.getInstance() instanceof org.nongnu.libvob.impl.awt.AWTAPI) {
 	    if (GraphicsAPI.getInstance() instanceof org.nongnu.libvob.impl.applet.APPLETAPI) {
 		;//org.nongnu.libvob.layout.unit.Image.setComponent(applet);
@@ -59,6 +60,7 @@ public abstract class Main implements Runnable {
 	    //org.fenfire.spanimages.gl.PoolManager.getInstance(
 	    //	).setBackgroundProcessUpdate(windowAnim);
 	}
+	*/
 
 	windowAnim = new WindowAnimationImpl(window, binder, shower, false);
 

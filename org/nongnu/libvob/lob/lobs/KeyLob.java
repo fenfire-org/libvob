@@ -28,7 +28,7 @@ KeyLob.java
 package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.*;
-import org.nongnu.libvob.layout.IndexedVobMatcher;
+import org.nongnu.libvob.impl.IndexedVobMatcher;
 import javolution.realtime.*;
 
 /** A lob placing its contents into a translation cs.

@@ -30,7 +30,6 @@ import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.awt.*;
 import org.nongnu.libvob.impl.gl.*;
 import org.nongnu.libvob.linebreaking.*;
-import org.nongnu.libvob.layout.*;
 import org.nongnu.libvob.gl.*;
 import org.nongnu.libvob.util.*;
 import org.nongnu.navidoc.util.Obs;

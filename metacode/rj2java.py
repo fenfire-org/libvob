@@ -163,8 +163,12 @@ while True:
         xvar = xm.group(2)
         if xclazz in ('int', 'float', 'double', 'byte', 'short', 'char',
                       'long'): continue
+
+        # we first cast to Object because otherwise this generates
+        # a compiler error for final classes not implementing Realtime
+        # ("an instance of xyz cannot possibly be an instance of Realtime")
         objectSpaceMoves += \
-            'if(%s instanceof Realtime) ((Realtime)%s).move(os); ' % (xvar,xvar)
+            'if(((Object)%s) instanceof Realtime) ((Realtime)((Object)%s)).move(os); ' % (xvar,xvar)
 
     code += """
         private static class %(impl)s %(extends)s {

@@ -29,63 +29,33 @@ FilledRectVob.java
 package org.nongnu.libvob.vobs;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.gl.*;
-import org.nongnu.libvob.layout.*;
 import org.nongnu.libvob.util.*;
-import org.nongnu.navidoc.util.Obs;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Graphics;
 
 /** A vob drawing a filled rectangle.
  */
-public class FilledRectVob extends AbstractVob implements Obs, Replaceable {
+public class FilledRectVob extends AbstractVob {
     public static boolean dbg = false;
     private static void pa(String s) { System.err.println(s); }
 
-    protected final Model color;
+    protected Color color;
 
     public FilledRectVob(Color color) {
-	this(new ObjectModel(color));
-    }
-
-    public FilledRectVob(Model color) {
 	this.color = color;
-	color.addObs(this);
     }
 
     public static FilledRectVob newInstance(Color color) {
 	FilledRectVob vob = (FilledRectVob)FACTORY.object();
-	vob.color.set(color);
+	vob.color = color;
 	return vob;
-    }
-
-    public Object instantiateTemplate(java.util.Map map) {
-	if(map.get(this) != null) return map.get(this);
-
-	Model newColor = (Model)color.instantiateTemplate(map);
-	if(newColor == color) {
-	    map.put(this, this);
-	    return this;
-	}
-
-	Vob newThis = new FilledRectVob(newColor);
-	map.put(this, newThis);
-	return newThis;
-    }
-    public java.util.Set getTemplateParameters() {
-	return color.getTemplateParameters();
-    }
-    public Object getTemplateParameter(Object key) {
-	return color.getTemplateParameter(key);
-    }
-    public void setTemplateParameter(Object key, Object value) {
-	color.setTemplateParameter(key, value);
     }
 
     public void render(Graphics g, boolean fast,
 		       Vob.RenderInfo info1, Vob.RenderInfo info2) {
 	Color oldfg = g.getColor();
-	g.setColor(info1.fade((Color)color.get()));
+	g.setColor(info1.fade(color));
 
 	g.fillRect((int)info1.x, (int)info1.y, (int)info1.width, (int)info1.height);
 
@@ -111,9 +81,8 @@ public class FilledRectVob extends AbstractVob implements Obs, Replaceable {
 		    );
 	}
 	if(draw == null) {
-	    Color col = (Color)color.get();
 	    String s = (
-			"Color "+ColorUtil.colorGLString(col)+" 1\n" +
+			"Color "+ColorUtil.colorGLString(color)+" 1\n" +
 			"Begin QUAD_STRIP\n"+
 			"Vertex 1 1\nVertex 1 0\n"+
 			"Vertex 0 1\nVertex 0 0\n"+
@@ -130,7 +99,7 @@ public class FilledRectVob extends AbstractVob implements Obs, Replaceable {
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() { 
-		return new FilledRectVob(new ObjectModel());
+		return new FilledRectVob(null);
 	    }
 	};
 }

@@ -28,7 +28,6 @@ NewLobMain.java
  */
 package org.nongnu.libvob.impl;
 import org.nongnu.libvob.*;
-import org.nongnu.libvob.layout.IndexedVobMatcher;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.fn.*;
 import org.nongnu.libvob.vobs.SolidBackdropVob;

@@ -65,6 +65,10 @@ public class Components {
 	return Lobs.frame(lob, lightColor, darkColor, 1, 3, true);
     }
 
+    public static Lob label(String s) {
+	return Lobs.hbox(Lobs.text(s));
+    }
+
     public static Lob button(Lob content, Action action) {
 	Lob lob = content;
 	lob = Lobs.align(content, .5f, .5f);
