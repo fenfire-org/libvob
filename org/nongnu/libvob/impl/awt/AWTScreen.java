@@ -191,6 +191,18 @@ public abstract class AWTScreen
 	return prev.coords.needInterp(next.coords, interplist);
     }
 
+    private void renderMessage(Graphics gr, Dimension d, String message, 
+			       int height) {
+	ScalableFont f = new ScalableFont("SansSerif", Font.PLAIN, 36);
+	FontMetrics fm = f.getFontMetrics(1);
+	int sw = fm.stringWidth(message);
+		
+	gr.setFont(f.getFont(1));
+	gr.drawString(message,
+		      (d.width-sw-10)/2,
+		      (d.height-fm.getHeight())/2);
+    }
+
     /** Renders a frame of the view animation onto Graphics buffer
      */
     void renderAnimImage(VobScene prev, VobScene next, float fract, float lod) {
@@ -237,17 +249,7 @@ public abstract class AWTScreen
 		gr.setColor(Color.white);
 		gr.fillRect(0, 0, d.width, d.height);
 		gr.setColor(Color.red);
-		
-		ScalableFont f = new ScalableFont("SansSerif", Font.PLAIN, 18);
-		FontMetrics fm = f.getFontMetrics(1000);
-		
-		String errstr = "No vobscene to interpolate to";
-		int sw = fm.stringWidth(errstr);
-		
-		gr.setFont(f.getFont(1000));
-		gr.drawString(errstr,
-			      (d.width-sw-10)/2,
-			      (d.height-fm.getHeight())/2);
+		renderMessage(gr, d, "No vobscene to interpolate to", 18);
 	    } else {
 		VobScene sc = prev;
 		VobScene osc = next;
