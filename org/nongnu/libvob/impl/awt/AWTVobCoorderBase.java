@@ -103,7 +103,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 	    for(int i=0; i<ncs; i++) {
 		int cs = cses[i];
-		if(inds[cs] >= 0) {
+		//p("cs: "+cs);
+		//p("cs: "+ (inds[cs] & (~GL.CSFLAGS)));
+
+		if((inds[cs] & (~GL.CSFLAGS)) >= 0) {
 		    Trans t = getTrans(cses[i]);
 		    t.put(this);
 		    //p("init "+i+"th ("+cses[i]+", type "+inds[cses[i]]+") to "+coords[5*cses[i]+0]+" "+coords[5*cses[i]+1]+" "+coords[5*cses[i]+2]+" "+coords[5*cses[i]+3]+" "+coords[5*cses[i]+4]);
@@ -775,8 +778,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    return coords.getTrans(inds[cs+2]);
 	}
 
-	if(inds[cs] < -2)
-	    throw new Error("Help! Wrong coordsys: "+cs);
+	// the code below this should be in somewhere else.
+	// CSFLAGS already make everything negative...
+	//if((inds[cs] & (~GL.CSFLAGS)) < -2)
+	//    throw new Error("Help! Wrong coordsys: "+cs);
 
 	if (dbg) p(", ind: "+inds[cs]+", "+isActive(cs));
 	Trans t = trans[inds[cs] & (~GL.CSFLAGS)];
@@ -1039,14 +1044,24 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 	for(int i=nsorted-1; i>=0; i--) {
 
+	    /*
+	      p("is active? "+isActive(sorted[i]));
+	      p("parent? "+getParent(sorted[i]));
+	    */
 	    if(isActive(sorted[i]) && 
 	       (getParent(sorted[i]) == parent || parent == -1)) {
+
 		Trans t = getTrans(sorted[i]);
 		d[0] = d[1] = 0;
-		d[2] = t.w();
-		d[3] = t.h();
+		d[2] = d[3] = 1;
+
+		if (t.has_own_wh()) {
+		    d[2] = t.w();
+		    d[3] = t.h();
+		}
 		coordinates.transform(sorted[i], d);
 		t.pop();
+
 
 		if (x >= d[0] && y >= d[1] &&
 		    x < d[0]+d[2] && y < d[1]+d[3]) {
