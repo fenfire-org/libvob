@@ -46,37 +46,59 @@ public class Notebook extends NewLobMain {
 	public void setBody(String body) { this.body = body; }
     }
 
-    protected List notes = new ArrayList();
-    protected Model selectedNote = SimpleModel.newInstance();
-
     public Notebook(Color bg) {
 	super(bg);
-
-	selectedNote.set(new Note());
-	notes.add(new Note());
-	notes.add(selectedNote.get());
-	notes.add(new Note());
     }
 
     public Lob createLob() {
+	return lob(Maps.map());
+    }
+
+    public static Lob lob(Map params) {
+	Model notesModel = Components.getModel(params, "notes", null);
+	Model selectedNote = Components.getModel(params, "selectedNote", null);
+
+	List notes = (List)notesModel.get();
+
+	if(notes == null) {
+	    selectedNote.set(new Note());
+
+	    notes = new ArrayList();
+	    notes.add(new Note());
+	    notes.add(selectedNote.get());
+	    notes.add(new Note());
+
+	    notesModel.set(notes);
+	} else if(selectedNote.get() == null && !notes.isEmpty()) {
+	    selectedNote.set(notes.get(0));
+	}
+
 	Action quit = new @realtime-i Action() { 
 	    public void run() {
 		System.exit(0);
 	    }
 	};
-	Action newNote = new @realtime-i Action(List notes, Model selectedNote) { 
+	Action newNote = new @realtime-i Action(Model notesModel, Model selectedNote) { 
 	    public void run() {
+		List notes = new ArrayList((List)notesModel.get());
+
 		Note n = new Note();
 		notes.add(n);
 		selectedNote.set(n);
+
+		notesModel.set(notes);
 	    }
 	};
-	Action deleteNote = new @realtime-i Action(List notes, Model selectedNote) { 
+	Action deleteNote = new @realtime-i Action(Model notesModel, Model selectedNote) { 
 	    public void run() {
+		List notes = new ArrayList((List)notesModel.get());
+
 		notes.remove(selectedNote.get());
 		if(notes.isEmpty())
 		    notes.add(new Note());
 		selectedNote.set(notes.get(0));
+
+		notesModel.set(notes);
 	    }
 	};
 

@@ -49,22 +49,36 @@ public class Notebook extends NewLobMain {
 	public void setBody(String body) { this.body = body; }
     }
 
-    protected List notes = new ArrayList();
-    protected Model selectedNote = SimpleModel.newInstance();
-
     public Notebook(Color bg) {
 	super(bg);
-
-	selectedNote.set(new Note());
-	notes.add(new Note());
-	notes.add(selectedNote.get());
-	notes.add(new Note());
     }
 
     public Lob createLob() {
+	return lob(Maps.map());
+    }
+
+    public static Lob lob(Map params) {
+	Model notesModel = Components.getModel(params, "notes", null);
+	Model selectedNote = Components.getModel(params, "selectedNote", null);
+
+	List notes = (List)notesModel.get();
+
+	if(notes == null) {
+	    selectedNote.set(new Note());
+
+	    notes = new ArrayList();
+	    notes.add(new Note());
+	    notes.add(selectedNote.get());
+	    notes.add(new Note());
+
+	    notesModel.set(notes);
+	} else if(selectedNote.get() == null && !notes.isEmpty()) {
+	    selectedNote.set(notes.get(0));
+	}
+
 	Action quit = new_Action_1();
-	Action newNote = new_Action_2(notes,selectedNote);
-	Action deleteNote = new_Action_3(notes,selectedNote);
+	Action newNote = new_Action_2(notesModel,selectedNote);
+	Action deleteNote = new_Action_3(notesModel,selectedNote);
 
 
 	Lob outerVBox = Lobs.vbox();
@@ -212,19 +226,23 @@ public class Notebook extends NewLobMain {
 
             private _Action_2() {}
 
-            List notes; Model selectedNote;
+            Model notesModel; Model selectedNote;
 
              
 	    public void run() {
+		List notes = new ArrayList((List)notesModel.get());
+
 		Note n = new Note();
 		notes.add(n);
 		selectedNote.set(n);
+
+		notesModel.set(notes);
 	    }
 	
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(((Object)notes) instanceof Realtime) ((Realtime)((Object)notes)).move(os); if(((Object)selectedNote) instanceof Realtime) ((Realtime)((Object)selectedNote)).move(os); 
+                    if(((Object)notesModel) instanceof Realtime) ((Realtime)((Object)notesModel)).move(os); if(((Object)selectedNote) instanceof Realtime) ((Realtime)((Object)selectedNote)).move(os); 
                     return true;
                 }
                 return false;
@@ -236,9 +254,9 @@ public class Notebook extends NewLobMain {
                 protected Object create() { return new _Action_2(); }
             };
 
-        private static _Action_2 new_Action_2(List notes, Model selectedNote) {
+        private static _Action_2 new_Action_2(Model notesModel, Model selectedNote) {
             _Action_2 the_new_Action_2 = (_Action_2)_Action_2_FACTORY.object();
-            the_new_Action_2.notes = notes;
+            the_new_Action_2.notesModel = notesModel;
 the_new_Action_2.selectedNote = selectedNote;
             return the_new_Action_2;
         }
@@ -247,20 +265,24 @@ the_new_Action_2.selectedNote = selectedNote;
 
             private _Action_3() {}
 
-            List notes; Model selectedNote;
+            Model notesModel; Model selectedNote;
 
              
 	    public void run() {
+		List notes = new ArrayList((List)notesModel.get());
+
 		notes.remove(selectedNote.get());
 		if(notes.isEmpty())
 		    notes.add(new Note());
 		selectedNote.set(notes.get(0));
+
+		notesModel.set(notes);
 	    }
 	
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(((Object)notes) instanceof Realtime) ((Realtime)((Object)notes)).move(os); if(((Object)selectedNote) instanceof Realtime) ((Realtime)((Object)selectedNote)).move(os); 
+                    if(((Object)notesModel) instanceof Realtime) ((Realtime)((Object)notesModel)).move(os); if(((Object)selectedNote) instanceof Realtime) ((Realtime)((Object)selectedNote)).move(os); 
                     return true;
                 }
                 return false;
@@ -272,9 +294,9 @@ the_new_Action_2.selectedNote = selectedNote;
                 protected Object create() { return new _Action_3(); }
             };
 
-        private static _Action_3 new_Action_3(List notes, Model selectedNote) {
+        private static _Action_3 new_Action_3(Model notesModel, Model selectedNote) {
             _Action_3 the_new_Action_3 = (_Action_3)_Action_3_FACTORY.object();
-            the_new_Action_3.notes = notes;
+            the_new_Action_3.notesModel = notesModel;
 the_new_Action_3.selectedNote = selectedNote;
             return the_new_Action_3;
         }
