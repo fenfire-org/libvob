@@ -3,6 +3,7 @@ Vob.java
  *    
  *    Copyright (c) 2000-2001, Ted Nelson and Tuomas Lukka
  *    Copyright (c) 2003 Tuomas Lukka
+ *    Copyright (c) 2004-2005 Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -27,6 +28,7 @@ Vob.java
  * Written by Tuomas Lukka
  */
 package org.nongnu.libvob;
+import org.nongnu.libvob.util.ColorFader;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -93,19 +95,25 @@ public interface Vob {
      */
     public static abstract class RenderInfo {
 	public float x=0, y=0, width=0, height=0;
+	public float depth;
 
 	public float scaleX, scaleY;
 
-	/**The background color of the canvas where we're being drawn.
-	 * 		 What about background images?!?
+	/** An object for fading colors into the background appropriately.
 	 */
-	public abstract Color getBgColor();
+	public ColorFader fader;
+
+	/** Fade a color using the fader and the current depth.
+	 */
+	public Color fade(Color c) {
+	    return fader.getColor(c, depth);
+	}
 
 	public abstract int box_x(float px);
 	public abstract int box_y(float py);
 
 	public String toString() { 
-	    return "RenderInfo x: "+x+", y: "+y+", w: "+width+", h: "+height; 
+	    return "RenderInfo x: "+x+", y: "+y+", w: "+width+", h: "+height+" "+super.toString(); 
 	}
     }
 

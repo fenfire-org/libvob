@@ -29,6 +29,7 @@ AWTRenderer.java
 package org.nongnu.libvob.impl.awt;
 import org.nongnu.libvob.impl.*;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.util.ColorFader;
 import org.nongnu.libvob.vobs.SolidBackdropVob;
 import java.awt.Color;
 import java.util.*;
@@ -49,18 +50,23 @@ public class AWTRenderer {
 
 	if(dbg) sc.coords.dump();
         if(dbg) sc.map.dump();
-        Color bg;
-        Vob bgvob = sc.map.getVobByCS(0);
-        if(bgvob instanceof SolidBackdropVob) {
-            bg = ((SolidBackdropVob)bgvob).color;
-            if(dbg) p("Background color: "+bg);
-        } else {
-            bg = Color.white;
-            if(dbg) p("NO SOLIDBG VOB: Fall back on white bg color");
-        }
+
+	ColorFader fader = sc.fader;
+
+	if(fader == null) {
+	    Vob bgvob = sc.map.getVobByCS(0);
+	    if(bgvob instanceof SolidBackdropVob) {
+		fader = new ColorFader(((SolidBackdropVob)bgvob).color);
+		if(dbg) p("Background color: "+fader.getBg());
+	    } else {
+		fader = new ColorFader(Color.white);
+		if(dbg) p("NO SOLIDBG VOB: Fall back on white bg color");
+	    }
+	}
+
         // what is maxdepth?
-	OrthoRenderInfo info = new OrthoRenderInfo(bg, 10000); 
-	OrthoRenderInfo info2 = new OrthoRenderInfo(bg, 10000);
+	OrthoRenderInfo info = new OrthoRenderInfo(fader, 10000); 
+	OrthoRenderInfo info2 = new OrthoRenderInfo(fader, 10000);
 
 	renderImpl(sc, osc, towardsOther, 
 		   fract, g, fg, 

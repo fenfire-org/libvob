@@ -28,26 +28,22 @@ DecoratedVob.java
 
 package org.nongnu.libvob.impl;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.util.ColorFader;
 import java.awt.Point;
 import java.awt.Color;
 import java.awt.Rectangle;
 
 public class OrthoRenderInfo extends Vob.RenderInfo {
 
-    Color bg;
     float maxdepth = -1;
 
-    public OrthoRenderInfo(Color bg, float maxdepth) {
+    public OrthoRenderInfo(ColorFader fader, float maxdepth) {
         this.maxdepth = maxdepth;
-        this.bg = bg;
+        this.fader = fader;
     }
     public OrthoRenderInfo() {
-        bg = null;
+        fader = ColorFader.NULL;
     }
-
-    public Color getBgColor() { return bg; }
-
-    float depth;
 
     public void setCoords(float depth, float x, float y, float w, float h,
 			  float scaleX, float scaleY) {

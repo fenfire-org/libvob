@@ -124,12 +124,12 @@ public class OvalBgVob extends AbstractColorableVob {
 
 	// Draw an oval in the background color, wiping out
 	// the already drawn stuff a little wider than we will draw.
-	g.setColor(info1.getBgColor());
+	g.setColor(info1.fader.getBg());
 	if(mh >= 14) g.fillOval(mx-2, my-2, mw+4, mh+4);
 	else g.fillOval(mx-1, my-1, mw+2, mh+2);
 
 	if(colors == null || colors.length == 0) {
-	    g.setColor(bgColor);
+	    g.setColor(info1.fade(bgColor));
 	    g.fillOval(mx, my, mw, mh);
 	} else {
 	    /** Draws colored stripes. Each stripe is composed of
@@ -143,9 +143,9 @@ public class OvalBgVob extends AbstractColorableVob {
 	     *         \__ second arc
 	     *
 	     */
-	    g.setColor(colors[0]);
+	    g.setColor(info1.fade(colors[0]));
 	    g.fillArc(mx, my, mw, mh, -90, 180);
-	    g.setColor(colors[colors.length-1]);
+	    g.setColor(info1.fade(colors[colors.length-1]));
 	    g.fillArc(mx, my, mw, mh, 90, 180);
 	    int lastColor = colors.length-1;
 	    int colorWidth = mw / colors.length;
@@ -157,14 +157,14 @@ public class OvalBgVob extends AbstractColorableVob {
 		int arc = 90 - (int)((180/Math.PI) * Math.atan2(h*(a/b),w));
 
 		// stripe on the left
-		g.setColor(colors[i]);
+		g.setColor(info1.fade(colors[i]));
 		g.fillRect((int)(mx+(i*colorWidth)), (int)(my+(b-h)),
 			   (int)w, (int)(h*2));
 		g.fillArc(mx, my, mw, mh, 90, arc);
 		g.fillArc(mx, my, mw, mh, -90-arc, arc);
 		
 		// stripe on the right
-		g.setColor(colors[lastColor-1]);
+		g.setColor(info1.fade(colors[lastColor-1]));
 		g.fillRect((int)(mx+a), (int)(my+(b-h)), (int)w, (int)(h*2));
 		g.fillArc(mx, my, mw, mh, 90-arc, arc);
 		g.fillArc(mx, my, mw, mh, -90, arc);
@@ -174,7 +174,7 @@ public class OvalBgVob extends AbstractColorableVob {
 	}
 	
 	if(drawBorder) {
-	    g.setColor(borderColor);
+	    g.setColor(info1.fade(borderColor));
 	    g.drawOval(mx, my, mw, mh);
 	    if(mh >= 14) {
 		/** Heavier border for greter Vobs */

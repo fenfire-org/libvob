@@ -430,7 +430,7 @@ public class DefaultVobMap implements VobMap {
 
 	TextStyle style = textRangeStyle[range];
 	chars[0] = textChar[cs];
-	g.setColor(textRangeColor[range]);
+	g.setColor(info.fade(textRangeColor[range]));
 
 	int myClip = textClipRange[cs];
 	if(myClip != lastClip) {

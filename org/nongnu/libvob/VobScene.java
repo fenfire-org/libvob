@@ -137,6 +137,8 @@ public class VobScene {
     public final VobCoorder coords;
     public final VobMatcher matcher;
 
+    public org.nongnu.libvob.util.ColorFader fader;
+
     public WindowAnimation anim = null;
     public final Actions actions;
 
@@ -344,6 +346,7 @@ public class VobScene {
 	this.coords.clear();
 	this.matcher.clear();
 	this.map.clear();
+	this.fader = null;
     }
 	
 

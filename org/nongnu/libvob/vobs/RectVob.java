@@ -100,7 +100,7 @@ public class RectVob extends AbstractVob implements Obs, Replaceable {
     public void render(Graphics g, boolean fast,
 		       Vob.RenderInfo info1, Vob.RenderInfo info2) {
 	Color oldfg = g.getColor();
-	g.setColor((Color)colorModel.get());
+	g.setColor(info1.fade((Color)colorModel.get()));
 
 	float xlw = lineWidth * info1.scaleX;
 	float ylw = lineWidth * info1.scaleY;

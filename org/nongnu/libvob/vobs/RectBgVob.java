@@ -85,23 +85,23 @@ public class RectBgVob extends AbstractColorableVob {
 
 	// Draw a rectangle in the background color, wiping out
 	// the already drawn stuff a little wider than we will draw.
-	g.setColor(info1.getBgColor());
+	g.setColor(info1.fader.getBg());
 	if (mh > 14) g.fillRect(mx-2, my-2, mw+4, mh+4);
 	else g.fillRect(mx-1, my-1, mw+2, mh+2);
 
 	if(colors == null || colors.length == 0) {
-	    g.setColor(bgColor);
+	    g.setColor(info1.fade(bgColor));
 	    g.fillRect(mx, my, mw, mh);
 	} else {
 	    for(int i=0; i<colors.length; i++) {
-		g.setColor(colors[i]);
+		g.setColor(info1.fade(colors[i]));
 		g.fillRect(mx+(mw*i)/colors.length, my,
 			   mw/colors.length, mh);
 	    }
 	}
 
 	if(drawBorder) {
-	    g.setColor(borderColor);
+	    g.setColor(info1.fade(borderColor));
 	    g.drawRect(mx, my, mw-1, mh-1);
 	    if(mh >= 14) {
 	    	g.drawRect(mx+1, my+1, mw-3, mh-3);

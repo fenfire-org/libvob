@@ -131,7 +131,7 @@ public class TextVob extends HBox.VobHBox {
 		       Vob.RenderInfo info2) {
 	// XXX Needs adjusting to baselined!
 	if(color != null)
-	    g.setColor(color);
+	    g.setColor(info1.fade(color));
 
         float x = info1.x, y = info1.y;
         float w = info1.width, h = info1.height;

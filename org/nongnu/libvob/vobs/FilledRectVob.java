@@ -79,7 +79,7 @@ public class FilledRectVob extends AbstractVob implements Obs, Replaceable {
     public void render(Graphics g, boolean fast,
 		       Vob.RenderInfo info1, Vob.RenderInfo info2) {
 	Color oldfg = g.getColor();
-	g.setColor((Color)color.get());
+	g.setColor(info1.fade((Color)color.get()));
 
 	g.fillRect((int)info1.x, (int)info1.y, (int)info1.width, (int)info1.height);
 
