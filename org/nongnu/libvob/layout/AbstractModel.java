@@ -1,7 +1,7 @@
 /*   
 AbstractModel.java
  *    
- *    Copyright (c) 2004, Benja Fallenstein
+ *    Copyright (c) 2004-2005, Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -96,6 +96,9 @@ public abstract class AbstractModel
     }
     public Model divide(float f, float ifZero) {
 	return new DivideModel(this, new FloatModel(f), ifZero);
+    }
+    public Model not() {
+	return new NotModel(this);
     }
 
     public Model select(Model ifTrue, Model ifFalse) {
@@ -338,6 +341,28 @@ public abstract class AbstractModel
 	}
 	public void setFloat(float value) {
 	    a.setFloat(value * b.getFloat());
+	}
+    }
+
+    public static class NotModel extends AbstractBoolModel {
+	protected Model m;
+
+	public NotModel(Model m) {
+	    this.m = m;
+	}
+
+	protected Replaceable[] getParams() {
+	    return new Replaceable[] { m };
+	}
+	protected Object clone(Object[] params) {
+	    return new NotModel((Model)params[0]);
+	}
+
+	public boolean getBool() {
+	    return !m.getBool();
+	}
+	public void setBool(boolean value) {
+	    m.setBool(!value);
 	}
     }
 

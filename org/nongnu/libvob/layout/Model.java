@@ -1,7 +1,7 @@
 /*   
 Model.java
  *    
- *    Copyright (c) 2004, Benja Fallenstein
+ *    Copyright (c) 2004-2005, Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -59,6 +59,8 @@ public interface Model extends Observable, Replaceable {
 
     Model divide(Model m, float ifZero);
     Model divide(float f, float ifZero);
+
+    Model not();
 
     Model select(Model ifTrue, Model ifFalse);
 
