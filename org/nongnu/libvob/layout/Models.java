@@ -93,6 +93,34 @@ public class Models {
     }
 
 
+    public static Model parseFloat(final Model m) {
+	return new AbstractModel.AbstractFloatModel() {
+		{ m.addObs(this); chg(); }
+		protected Replaceable[] getParams() {
+		    return new Replaceable[] { m };
+		}
+		protected Object clone(Object[] params) {
+		    return parseFloat((Model)params[0]);
+		}
+
+		private float value;
+
+		public void chg() {
+		    String s = (String)m.get();
+		    value = Float.parseFloat(s);
+		}
+
+		public float getFloat() {
+		    return value;
+		}
+		public void setFloat(float value) {
+		    m.set(""+value);
+		}
+	    };
+		
+    }
+
+
     // adaption of an object's methods as a model
     // so from an object foo, you can create a model whose get() method
     // calls foo.getBlah() and whose set method calls foo.setBlah(...).
