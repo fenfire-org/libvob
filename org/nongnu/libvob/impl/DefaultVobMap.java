@@ -388,14 +388,47 @@ public class DefaultVobMap implements VobMap {
 	return lastClip;
     }
 
+    boolean hasClip;
+    float clipx1, clipy1, clipx2, clipy2;
+
+    void computeClip(int clipRange, Vob.RenderInfo info, 
+		     RenderInfoSetter setter) {
+
+	hasClip = false;
+	for(int c=clip[clipRange]; c>=0; c=clipparent[c]) {
+	    if(setter.set(info, clipcs[c])) {
+		float x1 = info.x,   x2 = info.x + info.width;
+		float y1 = info.y,   y2 = info.y + info.height;
+
+		if(!hasClip) {
+		    clipx1 = x1; clipy1 = y1;
+		    clipx2 = x2; clipy2 = y2;
+		    hasClip = true;
+		} else {
+		    if(x1 > clipx1) clipx1 = x1;
+		    if(y1 > clipy1) clipy1 = y1;
+
+		    if(x2 < clipx2) clipx2 = x2;
+		    if(y2 < clipy2) clipy2 = y2;
+		}
+	    }
+	}
+
+	if(clipx2 < clipx1) clipx2 = clipx1; // makes the clip empty
+	if(clipy2 < clipy1) clipy2 = clipy1; // makes the clip empty
+    }
+
     void setClip(Graphics g, int clipRange, Shape noClip, Vob.RenderInfo info,
 		 RenderInfoSetter setter) {
+	computeClip(clipRange, info, setter);
+	setComputedClip(g, noClip);
+    }
+
+    void setComputedClip(Graphics g, Shape noClip) {
 	g.setClip(noClip);
-	
-	for(int c=clip[clipRange]; c>=0; c=clipparent[c])
-	    if(setter.set(info, clipcs[c]))
-		g.clipRect((int)info.x, (int)info.y, 
-			   (int)info.width, (int)info.height);
+	if(hasClip)
+	    g.clipRect((int)clipx1, (int)clipy1, 
+		       (int)(clipx2-clipx1), (int)(clipy2-clipy1));
     }
 
     char[] chars = new char[256];
@@ -436,26 +469,40 @@ public class DefaultVobMap implements VobMap {
 
 	TextStyle style = textRangeStyle[range];
 	chars[0] = textChar[cs];
-	g.setColor(info.fade(textRangeColor[range]));
 
 	int myClip = textClipRange[cs];
+
 	if(myClip != lastClip) {
-	    setClip(g, myClip, noClip, clipInfo, setter);
-	    lastClip = myClip;
+	    computeClip(myClip, clipInfo, setter);
 	}
 
         float x = info.x, y = info.y;
-        //float w = info.width, h = info.height;
-	//float w = info.scaleX, h = info.scaleY;
-
 	float h = info.scaleY * textRangeHeight[range];
 
 	float scale = style.getScaleByHeight(h);
+	float w = style.getWidth(chars, 0, len, scale);
+
+	if(hasClip) {
+	    if(x+w < clipx1 || x > clipx2 || y+h < clipy1 || y > clipy2) {
+		//System.out.println("elided: ("+myClip+" => "+x+" "+y+" "+w+" "+h+" // "+clipx1+" "+clipy1+" "+clipx2+" "+clipy2+") "+new String(chars, 0, len));
+
+		// the whole string we're about to render is outside
+		// the clipped rectangle: don't render it
+		return lastClip;
+	    }
+	}
+
 	float fasc = style.getAscent(scale);
 	float fdsc = style.getDescent(scale);
 	float fh = fasc + fdsc;
 	float ty = y + h/2 + fasc/2;
+
+	if(myClip != lastClip) {
+	    setComputedClip(g, noClip);
+	    lastClip = myClip;
+	}
         
+	g.setColor(info.fade(textRangeColor[range]));
 	((AWTTextStyle)style).render(g, (int)x, (int)ty, chars, 0, len,
 				     scale, info);
 
