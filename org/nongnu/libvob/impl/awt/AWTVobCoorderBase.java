@@ -143,9 +143,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		    interpolated[cs] = false;
 		} else if(ocs == VobMatcher.SHOW_IN_INTERP) {
 		    Trans t = getTrans(cses[i]);
-		    t.put(this);
+		    interpolated[cs] = !t.isDontInterpSet();
+		    if(interpolated[cs])
+			t.put(this);
 		    t.pop();
-		    interpolated[cs] = true;
 		} else {
 		    throw new UnsupportedOperationException("Interpolation type: "+ocs);
 		}
