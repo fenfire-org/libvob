@@ -119,8 +119,12 @@ public class TextEditController extends LobSequence {
 	    textCursorModel.setInt(textCursor);
 	    //AbstractUpdateManager.setNoAnimation();
 	} else if(key.equals("Left") || key.equals("Alt-Left")) {
-	    textCursor--;
-	    if(textCursor < 0) textCursor = 0;
+	    if(textCursorModel.getInt() < 0) {
+		textCursor = 0;
+	    } else {
+		textCursor--;
+		if(textCursor < 0) textCursor = 0;
+	    }
 	    textCursorModel.setInt(textCursor);
 	} else if(key.equals("Right") || key.equals("Alt-Right")) {
 	    textCursor++;

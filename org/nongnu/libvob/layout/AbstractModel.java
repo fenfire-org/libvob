@@ -397,5 +397,30 @@ public abstract class AbstractModel
 	public boolean getBool() {
 	    return m.getBool() ? ifTrue.getBool() : ifFalse.getBool();
 	}
+
+	public void set(Object value) {
+	    if(m.getBool()) 
+		ifTrue.set(value);
+	    else
+		ifFalse.set(value);
+	}
+	public void setInt(int value) {
+	    if(m.getBool()) 
+		ifTrue.setInt(value);
+	    else
+		ifFalse.setInt(value);
+	}
+	public void setFloat(float value) {
+	    if(m.getBool()) 
+		ifTrue.setFloat(value);
+	    else
+		ifFalse.setFloat(value);
+	}
+	public void setBool(boolean value) {
+	    if(m.getBool()) 
+		ifTrue.setBool(value);
+	    else
+		ifFalse.setBool(value);
+	}
     }
 }

@@ -124,6 +124,28 @@ public class Models {
     }
 
 
+    /** A model reading from a different model than it writes to.
+     */
+    public static Model readWrite(final Model read, final Model write) {
+	return new AbstractModel.AbstractObjectModel() {
+		{ read.addObs(this); }
+		protected Replaceable[] getParams() {
+		    return new Replaceable[] { read, write };
+		}
+		protected Object clone(Object[] params) {
+		    return readWrite((Model)params[0], (Model)params[1]);
+		}
+
+		public Object get() {
+		    return read.get();
+		}
+		public void set(Object value) {
+		    write.set(value);
+		}
+	    };
+    }
+
+
     // adaption of an object's methods as a model
     // so from an object foo, you can create a model whose get() method
     // calls foo.getBlah() and whose set method calls foo.setBlah(...).
