@@ -32,6 +32,7 @@ Coorder.cxx
 
 namespace Vob {
 DBGVAR(dbg_coorder, "Coorder");
+DBGVAR(dbg_coorder2, "CoorderInterp");
 
 
 using namespace VecGL;
@@ -84,7 +85,15 @@ struct PointInterpTransform : public Transform {
     }
 
     void getMat() const {
-	if(didGetMat) return;
+	if(didGetMat) {
+	    DBG(dbg_coorder2) << "did get mat";
+
+	    /* After 4 hours of debugging mudyc found that 
+	     * this was the one and only thing that just
+	     * weirdly broke interpolation.
+	     */
+	    //return;
+	}
 
 	GLfloat mat1[16], mat2[16];
 	glPushAttrib(GL_TRANSFORM_BIT);
@@ -108,6 +117,11 @@ struct PointInterpTransform : public Transform {
 	}
 	for(int i=0; i<16; i++) 
 	    ((float *)mat)[i] = lerp(mat1[i], mat2[i], fract);
+
+	if(dbg_coorder2) {
+	    for(int i=0; i<16; i++) DBG(dbg_coorder2) << mat[i] << " ";
+	    DBG(dbg_coorder2) << "\n";
+	}
 
 
 	glPopMatrix();
@@ -239,15 +253,14 @@ void Coorder::setPoints( int ninitCS, Transform **initCS,
 		<< fract << " " 
 		<< show1 << "\n" ;
 #define ASG(x) this->x = x;
+    ASG(ninitCS)
     ASG(ninds)
     ASG(inds1)
     ASG(points1)
     ASG(interpinds)
     ASG(inds2)
     ASG(points2)
-    
-    this->ninitCS = ninitCS;
-
+	
     params.resize(0);
     DBG(dbg_coorder)  << "Resized\n";
     params.reserve(3*ninds);
@@ -261,6 +274,7 @@ void Coorder::setPoints( int ninitCS, Transform **initCS,
     DBG(dbg_coorder)  << "setroot\n";
     int lastIndSize = 1;
 
+    // these have to be created only once.
     DBG(dbg_coorder) << "Removing tmps "<<this<<" "<<cs1_tmp<<" "<<cs2_tmp<<"\n";
     if(cs1_tmp) { delete cs1_tmp; cs1_tmp = 0; }
     if(cs2_tmp) { delete cs2_tmp; cs2_tmp = 0; }
@@ -315,6 +329,7 @@ void Coorder::setPoints( int ninitCS, Transform **initCS,
 
 	int parind = params.size();
 
+	// Point TYPE ála is it buoycs, transcs etc.
 	int tp = inds1[i] & ~CSFLAGS;
 
 	Transform *c = 0;
@@ -334,11 +349,10 @@ void Coorder::setPoints( int ninitCS, Transform **initCS,
 	lastIndSize = nprev + 2; // typecode, prevs and paramind
 
 
-	ind1 = inds1[i+1+nprev];
+	ind1 = inds1[i+1+nprev]; 
 	csind2 = ((interpinds && i < interpinds[0]) ? interpinds[i] : -1);
 	DBG(dbg_coorder) << "inds: "<<parind<<" typ:"<<tp<<" npars:"<<npars<<
 			" ind1:"<<ind1<<" "<<csind2<<"\n";
-
 
 	int t2 = 0;
 	int ind2 = 0;
@@ -401,13 +415,14 @@ void Coorder::setPoints( int ninitCS, Transform **initCS,
 	    tmp_c = 0;
 	} else {
 	interpolatePointwise:
+	    
 	    // Now, the hairy case.
 	    DBG(dbg_coorder) << "It got hairy now: "<<tp<<" "<<t2<<"\n";
 	    if(!cs1_tmp) {
 		cs1_tmp = new Coorder(transformFactory, childVsStorer);
 		cs1_tmp->setPoints(ninitCS, initCS,
-				    ninds, inds1, points1,
-			    0,	0,	0,	0, true);
+				   ninds, inds1, points1,
+				   0,  0,  0,  0, true);
 	    }
 	    if(!cs2_tmp) {
 		int maxind = 0;
@@ -416,8 +431,8 @@ void Coorder::setPoints( int ninitCS, Transform **initCS,
 			maxind = interpinds[k];
 		cs2_tmp = new Coorder(transformFactory, childVsStorer);
 		cs2_tmp->setPoints(ninitCS, initCS,
-				maxind+1, inds2, points2, 0, 0, 0,
-				    0, true);
+				   maxind+1, inds2, points2, 0, 0, 0,
+				   0, true);
 	    }
 	    Transform *cs1_non = cs1_tmp->get(i);
 	    Transform *cs2_non = cs2_tmp->get(csind2);
@@ -425,7 +440,6 @@ void Coorder::setPoints( int ninitCS, Transform **initCS,
 	    if(!cs1_non || !cs2_non) goto nextInd;
 
 	    c = new PointInterpTransform(*cs1_non, *cs2_non, fract);
-
 	}
 	{
 	    cs[i] = c;
