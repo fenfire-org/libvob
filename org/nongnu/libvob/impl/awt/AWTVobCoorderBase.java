@@ -524,6 +524,53 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		throw new Error("unitSq unimplemented");
 	    }
 	},
+	new Trans() {   // 21 between
+	    void doTransformRect(float[] rect, boolean useInterp) { 
+		int a = inds[cs()+1];
+		int b = inds[cs()+2];
+		float[] af = new float[5];
+		float[] bf = new float[5];
+
+		float[] scale = new float[5];
+
+		getAbsoluteRect(a, af, scale, useInterp);
+		getAbsoluteRect(b, bf, scale, useInterp);
+		
+		for (int i=0; i<2; i++)
+		    rect[i] +=  .5*(af[i]+bf[i]);
+
+		rect[4] += (af[4] > bf[4]) ? af[4] : bf[4];
+	    }
+	    void doInverseTransformRect(float[] rect, boolean useInterp) { 
+		throw new Error("between inverse unimplemented");
+	    }
+	},
+	new Trans() {   // 22 translatePolar
+	    void doTransformRect(float[] rect, boolean useInterp) { 
+		int f = inds[cs()+2];
+
+		float dist = floats[f+0];
+		float angle = floats[f+1];
+
+		float sin = (float)Math.sin(angle * Math.PI / 180);
+		float cos = (float)Math.cos(angle * Math.PI / 180);
+
+		rect[0] += dist*cos;
+		rect[1] += dist*sin;
+	    }
+	    void doInverseTransformRect(float[] rect, boolean useInterp) { 
+		int f = inds[cs()+2];
+
+		float dist = floats[f+0];
+		float angle = floats[f+1];
+
+		float sin = (float)Math.sin(angle * Math.PI / 180);
+		float cos = (float)Math.cos(angle * Math.PI / 180);
+
+		rect[0] -= dist*cos;
+		rect[1] -= dist*sin;
+	    }
+	},
     };
     
     Trans getTrans(int cs) {

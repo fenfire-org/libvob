@@ -81,6 +81,8 @@ final class DepthSorter {
 	case 18: return 4;
 	case 19: return 3;
 	case 20: return 3;
+	case 21: return 4;
+	case 22: return 3;
 	}
 	throw new Error("ARgh - no indexed cs "+(sys.inds[i] & (~GL.CSFLAGS)));
     }

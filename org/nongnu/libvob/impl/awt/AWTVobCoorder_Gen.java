@@ -347,6 +347,27 @@ int j = ninds; addInds(3); inds[j+0] = 20;
 inds[j+1] = d0;
 inds[j+2] = i;
  return j;}
+public int between(int d0 , int d1 ) {
+int i = nfloats; 
+addFloats(0);
+int j = ninds; addInds(4); inds[j+0] = 21;
+inds[j+1] = d0;
+inds[j+2] = d1;
+inds[j+3] = i;
+ return j;}
+public int translatePolar(int d0 , float p0 , float p1 ) {
+int i = nfloats; 
+addFloats(2);
+floats[i+0] = p0;
+floats[i+1] = p1;
+int j = ninds; addInds(3); inds[j+0] = 22;
+inds[j+1] = d0;
+inds[j+2] = i;
+ return j;}
+public void setTranslatePolarParams(int ind, float p0, float p1) {
+int i = inds[ind+2];floats[i+0] = p0;
+floats[i+1] = p1;
+}
 
 // <vob/vobs/Texture.hxx>
  

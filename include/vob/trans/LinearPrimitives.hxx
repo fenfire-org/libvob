@@ -36,7 +36,6 @@ LinearPrimitives.hxx
 #include <vob/trans/Primitives.hxx>
 #include <vob/geom/Quadrics.hxx>
 
-
 namespace Vob {
 namespace Primitives {
 
@@ -750,6 +749,91 @@ PREDBGVAR(dbg_buoyoncircle);
 
     VOB_PRIMITIVETRANS_DEFINED(UnitSqBox, "unitSq");
 
+
+
+    /** A coordinate system which is placed in the middle between two other
+     *  coordinate systems.
+     */
+    class Between: 
+        public Ortho,
+	public DependentPrimitiveTransform
+    {
+    public:
+        enum { NDepends = 2 };
+
+        template<class SPtr> void setParams(SPtr depends) {
+	    ZPt a = depends[0]->transform(ZPt(0,0,0));
+	    ZPt b = depends[1]->transform(ZPt(0,0,0));
+	    
+	    x = .5*(a.x+b.x);
+	    y = .5*(a.y+b.y);
+	    z = (a.z > b.z) ? a.z : b.z;
+	  
+	    sx = 1;
+	    sy = 1;
+	}
+    };      
+    VOB_PRIMITIVETRANS_DEFINED(Between, "between");
+
+
+    /** A translation using polar coordinates.
+     *  (The important thing is that it is *interpolated* in polar coordinates, too.)
+     *
+     *  The parameters are distance and angle.
+     *
+     */
+    class TranslatePolar:
+	    public PrimitiveTransform,
+	    public GLPerformablePrimitiveTransform
+    {
+    public:
+        /** Distance.
+	 */
+        float d;
+	/** Angle, degs.
+	 */
+	float a;
+	/** Sine and cosine of angle.
+	 */
+	float s, c;
+
+	void angleWasSet() {
+	    s = sin(a * M_PI / 180);
+	    c = cos(a * M_PI / 180);
+	}
+
+	void tr(const ZPt &from, ZPt &to) const {
+	    to = ZPt( from.x+d*c, from.y+d*s, from.z );
+	}
+        virtual void performGL() const {
+	    glTranslatef(d*c, d*s, 0);
+	}
+	typedef TranslatePolar InverseType;
+	void inverse(InverseType &inv) const {
+	    inv.d = d;
+	    inv.a = 360-a;
+	    inv.angleWasSet();
+	}
+    };
+
+    /** Explicit parametrization of translation in polar coords.
+     * Parameters: distance, angle (in degrees).
+     */
+    class TranslatePolar_Explicit :
+	    public TranslatePolar,
+	    public ParametrizedPrimitiveTransform
+    {
+    public:
+	enum { NParams = 2 };
+	template<class Ptr> void setParams(Ptr p) {
+	    d = p[0];
+	    a = p[1];
+
+	    angleWasSet();
+	}
+    };
+    VOB_PRIMITIVETRANS_DEFINED(TranslatePolar_Explicit, 
+			       "translatePolar");
 
 }
 }
