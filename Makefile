@@ -66,6 +66,9 @@ run_notebook:
 run_java:
 	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) `echo $(CLASS) | sed 's/\//./g;'` $(ARGS)
 
+run_lobdemo:
+	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.LobDemo
+
 
 # Have to use params for find for it not to descend into the {arch} dirs.
 FINDSRC=[a-zA-Z0-9]*
