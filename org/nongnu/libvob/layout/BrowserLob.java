@@ -33,19 +33,50 @@ import java.util.*;
 
 public class BrowserLob extends AbstractDelegateLob {
 
+    public interface Type {
+	boolean contains(Object state);
+    }
+
     public interface View {
-	boolean accepts(Object state);
+	Set getTypes();
 	Lob getViewLob(Model state);
     }
 
+    public Type ALL = new Type() {
+	    public boolean contains(Object state) {
+		return true;
+	    }
+	};
+
     protected Model state;
-    protected ListModel views;
+    protected Set views;
+
+    protected List types; // the current *order* of types
+    protected Map viewByType;
 
     protected Lob delegate;
 
-    public BrowserLob(Model state, ListModel views) {
+    public BrowserLob(Model state, Set views) {
 	this.state = state;
 	this.views = views;
+
+	this.types = new ArrayList();
+	this.viewByType = new HashMap();
+
+	for(Iterator i=views.iterator(); i.hasNext();) {
+	    View v = (View)i.next();
+	    Set typeSet = (Set)v.getTypes();
+
+	    for(Iterator j=typeSet.iterator(); j.hasNext();) {
+		Type t = (Type)j.next();
+
+		if(!types.contains(t)) 
+		    types.add(t);
+
+		if(!viewByType.containsKey(t))
+		    viewByType.put(t, v);
+	    }
+	}
 
 	state.addObs(new Obs() { public void chg() {
 	    if(delegate != null) delegate.removeObs(BrowserLob.this);
@@ -55,19 +86,20 @@ public class BrowserLob extends AbstractDelegateLob {
     }
 
     protected Replaceable[] getParams() {
-	return new Replaceable[] { state, views };
+	return new Replaceable[] { state };
     }
     protected Object clone(Object[] params) {
-	return new BrowserLob((Model)params[0], (ListModel)params[1]);
+	return new BrowserLob((Model)params[0], views);
     }
 
     protected Lob getDelegate() {
 	if(delegate == null) {
 	    Object s = state.get();
 
-	    for(Iterator i=views.iterator(); i.hasNext();) {
-		View view = (View)i.next();
-		if(view.accepts(s)) {
+	    for(Iterator i=types.iterator(); i.hasNext();) {
+		Type type = (Type)i.next();
+		if(type.contains(s)) {
+		    View view = (View)viewByType.get(type);
 		    delegate = view.getViewLob(state);
 		    break;
 		}
