@@ -27,26 +27,59 @@ import java.util.*;
 
 public class FunctionModel extends AbstractModel.AbstractObjectModel {
     
-    public static abstract class Fn {
-	protected abstract Model getModel(Object value);
+    protected Model model;
+    protected FunctionModel function;
+
+    protected Object currentValue;
+
+    protected Object f(Object o, Obs obs) {
+	throw new Error("override this!");
     }
 
+    protected Object inv(Object o, Obs obs) { // inverse
+	throw new UnsupportedOperationException("setting not supported");
+    }
 
-    protected Model model;
-    protected Fn fn;
+    private class WrapperModel extends AbstractModel.AbstractObjectModel {
+	private Replaceable value;
+	private WrapperModel(Replaceable value) {
+	    this.value = value;
+	    if(value instanceof Observable)
+		((Observable)value).addObs(this);
+	}
 
-    protected Model currentModel;
+	public Object get() {
+	    return value;
+	}
 
-    public FunctionModel(final Model model, final Fn fn) {
-	this.fn = fn;
+	protected Replaceable[] getParams() {
+	    return new Replaceable[] { value };
+	}
+	protected Object clone(Object[] params) {
+	    return new WrapperModel((Replaceable)params[0]);
+	}
+    }
+
+    public FunctionModel(Replaceable o) {
+	if(o instanceof Model) {
+	    this.model = (Model)o;
+	} else {
+	    this.model = new WrapperModel(o);
+	}
+
+	this.function = this;
+	init();
+    }
+
+    public FunctionModel(Model model, FunctionModel function) {
 	this.model = model;
+	this.function = function;
+	init();
+    } 
 
+    private void init() {
 	Obs o = new Obs() { public void chg() {
-	    if(currentModel != null)
-		currentModel.removeObs(FunctionModel.this);
-	    currentModel = fn.getModel(model.get());
-	    currentModel.addObs(FunctionModel.this);
-
+	    currentValue = function.f(model.get(), this);
 	    obses.trigger();
 	}};
 
@@ -54,24 +87,19 @@ public class FunctionModel extends AbstractModel.AbstractObjectModel {
 	o.chg();
     }
 
-    public FunctionModel(Object modelKey, Fn fn) {
-	this(Parameter.model(modelKey, null), fn);
-    }
-
-
     public Replaceable[] getParams() {
 	return new Replaceable[] { model };
     }
     public Object clone(Object[] params) {
-	return new FunctionModel((Model)params[0], fn);
+	return new FunctionModel((Model)params[0], function);
     }
 
 
     public Object get() {
-	return currentModel.get();
+	return currentValue;
     }
 
     public void set(Object value) {
-	currentModel.set(value);
+	model.set(function.inv(value, this));
     }
 }
