@@ -84,7 +84,7 @@ public class SimpleLobFont extends RealtimeObject implements LobFont {
 
     public Lob getTextEndLob() {
 	float h = style.getHeight(1);
-	return Glue.newInstance(0, 0, 0, h, h, h);
+	return Lobs.glue(0, 0, 0, h, h, h);
     }
 
 
