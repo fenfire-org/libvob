@@ -17,6 +17,7 @@ java:
 	python metacode/rj2java.py org/nongnu/libvob/lob/Lists.rj org/nongnu/libvob/lob/Lists.java
 	python metacode/rj2java.py org/nongnu/libvob/lob/Lobs.rj org/nongnu/libvob/lob/Lobs.java
 	python metacode/rj2java.py org/nongnu/libvob/lob/Components.rj org/nongnu/libvob/lob/Components.java
+	python metacode/rj2java.py org/nongnu/libvob/lob/lobs/BoxLob.rj org/nongnu/libvob/lob/lobs/BoxLob.java
 	python metacode/rj2java.py org/nongnu/libvob/demo/Notebook.rj org/nongnu/libvob/demo/Notebook.java
 	python metacode/rj2java.py org/nongnu/libvob/demo/Puzzle.rj org/nongnu/libvob/demo/Puzzle.java
 	mkdir -p CLASSES

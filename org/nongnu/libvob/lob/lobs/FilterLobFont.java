@@ -52,6 +52,7 @@ public class FilterLobFont extends RealtimeObject implements LobFont {
 
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
+	    delegate.move(os);
 	    glyphs.move(os);
 	    return true;
 	}

@@ -42,6 +42,7 @@ import javolution.realtime.*;
  *  natural size is the specified maximum size.
  */
 public class RequestChangeLob extends AbstractDelegateLob {
+    private static void p(String s) { System.out.println("RequestChangeLob:: "+s); }
 
     protected float minW, natW, maxW;
     protected float minH, natH, maxH;

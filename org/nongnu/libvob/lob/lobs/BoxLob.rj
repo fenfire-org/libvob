@@ -1,4 +1,4 @@
-/*
+/* -*-java-*-
 BoxLob.java
  *    
  *    Copyright (c) 2003-2005, Benja Fallenstein
@@ -38,34 +38,34 @@ import java.util.*;
 public class BoxLob extends AbstractSequence {
     private static void p(String s) { System.out.println("BoxLob:: "+s); }
 
-    private class BoxTable extends RealtimeObject implements TableLob.Table {
+    protected TableLob.Table getTable() {
+	return new @realtime-i TableLob.Table(Axis axis, float otherAxisSize, List lobs) {
 	
-	public int getRowCount() {
-	    return (axis == Axis.Y) ? lobs.size() : 1;
-	}
-	public int getColumnCount() {
-	    return (axis == Axis.X) ? lobs.size() : 1;
-	}
+	    public int getRowCount() {
+		return (axis == Axis.Y) ? lobs.size() : 1;
+	    }
+	    public int getColumnCount() {
+		return (axis == Axis.X) ? lobs.size() : 1;
+	    }
 
-	public Lob getLob(int row, int column) {
-	    if((axis == Axis.X && row != 0) ||
-	       (axis == Axis.Y && column != 0))
-		throw new IndexOutOfBoundsException(row+" "+column);
-
-	    Lob lob = (Lob)lobs.get((axis == Axis.X) ? column : row);
-
-	    if(otherAxisSize < 0 || axis.other() != lob.getLayoutableAxis())
-		return lob;
-	    else
-		return lob.layoutOneAxis(otherAxisSize);
-	}
+	    public Lob getLob(int row, int column) {
+		if((axis == Axis.X && row != 0) ||
+		   (axis == Axis.Y && column != 0))
+		    throw new IndexOutOfBoundsException(row+" "+column);
+		
+		Lob lob = (Lob)lobs.get((axis == Axis.X) ? column : row);
+		
+		if(otherAxisSize < 0 || axis.other() != lob.getLayoutableAxis())
+		    return lob;
+		else
+		    return lob.layoutOneAxis(otherAxisSize);
+	    }
+	};
     }
 
     private Axis axis;
 
     private float otherAxisSize; // size along the other axis; -1 if unknown
-
-    private BoxTable table = new BoxTable();
 
     private BoxLob() {}
 
@@ -83,7 +83,7 @@ public class BoxLob extends AbstractSequence {
     public SizeRequest getSizeRequest() {
 	// XXX should cache the TableLob between getSizeRequest() and layout()
 	// but I'm not sure how to make that work with Javolution
-	return TableLob.newInstance(table).getSizeRequest();
+	return TableLob.newInstance(getTable()).getSizeRequest();
     }
 
     public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
@@ -92,7 +92,7 @@ public class BoxLob extends AbstractSequence {
     }
 
     public Lob layout(float width, float height) {
-	return TableLob.newInstance(table).layout(width, height);
+	return TableLob.newInstance(getTable()).layout(width, height);
     }
 
     public Axis getLayoutableAxis() {
@@ -106,14 +106,6 @@ public class BoxLob extends AbstractSequence {
     public void render(VobScene scene, int into, int matchingParent, 
 		       float d, boolean visible) {
 	throw new UnsupportedOperationException("not layouted");
-    }
-
-    public boolean move(ObjectSpace os) {
-	if(super.move(os)) {
-	    table.move(os);
-	    return true;
-	}
-	return false;
     }
 
     private static final Factory FACTORY = new Factory() {

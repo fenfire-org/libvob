@@ -74,8 +74,8 @@ public class TextKeyController extends AbstractDelegateLob {
 	    winAnim.switchVS();
 	    return true;
 	} else if(key.toLowerCase().equals("backspace")) {
-	    if(tc == 0) return true;
 	    if(tc < 0) tc = text.length();
+	    if(tc == 0) return true;
 	    textModel.set(text.substring(0, tc-1) + text.substring(tc));
 	    cursorModel.set(tc-1);
 	    winAnim.switchVS();

@@ -60,4 +60,12 @@ public abstract class AbstractSequence extends AbstractLob {
 
 	return result;
     }
+
+    public boolean move(ObjectSpace os) {
+	if(super.move(os)) {
+	    if(lobs instanceof Realtime) ((Realtime)lobs).move(os);
+	    return true;
+	}
+	return false;
+    }
 }

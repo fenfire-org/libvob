@@ -38,6 +38,16 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
     
     private BreakPoint() {}
 
+    public boolean move(ObjectSpace os) {
+	if(super.move(os)) {
+	    if(pre != null) pre.move(os); 
+	    if(in != null) in.move(os);
+	    if(post != null) post.move(os);
+	    return true;
+	}
+	return false;
+    }
+
     public static BreakPoint newInstance(Axis axis, Lob content, float quality,
 					 Lob pre, Lob in, Lob post) {
 	BreakPoint b = (BreakPoint)FACTORY.object();
