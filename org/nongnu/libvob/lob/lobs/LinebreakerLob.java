@@ -54,7 +54,8 @@ public class LinebreakerLob extends AbstractSequence {
 
     public Lob layoutOneAxis(float size) {
 	List lines = LinebreakerLobList.newInstance(lineAxis, lobs, size);
-	return BoxLob.newInstance(lineAxis.other(), lines);
+	Lob lob = BoxLob.newInstance(lineAxis.other(), lines);
+	return Lobs.request(lineAxis, lob, size, size, size);
     }
 
     public SizeRequest getSizeRequest() {

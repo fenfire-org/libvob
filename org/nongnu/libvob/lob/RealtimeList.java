@@ -227,7 +227,7 @@ public abstract class RealtimeList extends RealtimeCollection implements List {
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(list instanceof Realtime) ((Realtime)list).move(os); 
+                    if(((Object)list) instanceof Realtime) ((Realtime)((Object)list)).move(os); 
                     return true;
                 }
                 return false;
@@ -297,7 +297,7 @@ the_new_ListIterator_1.lastModCount = lastModCount;
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(list instanceof Realtime) ((Realtime)list).move(os); 
+                    if(((Object)list) instanceof Realtime) ((Realtime)((Object)list)).move(os); 
                     return true;
                 }
                 return false;

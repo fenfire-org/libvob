@@ -224,7 +224,7 @@ public class Notebook extends NewLobMain {
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(notes instanceof Realtime) ((Realtime)notes).move(os); if(selectedNote instanceof Realtime) ((Realtime)selectedNote).move(os); 
+                    if(((Object)notes) instanceof Realtime) ((Realtime)((Object)notes)).move(os); if(((Object)selectedNote) instanceof Realtime) ((Realtime)((Object)selectedNote)).move(os); 
                     return true;
                 }
                 return false;
@@ -260,7 +260,7 @@ the_new_Action_2.selectedNote = selectedNote;
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(notes instanceof Realtime) ((Realtime)notes).move(os); if(selectedNote instanceof Realtime) ((Realtime)selectedNote).move(os); 
+                    if(((Object)notes) instanceof Realtime) ((Realtime)((Object)notes)).move(os); if(((Object)selectedNote) instanceof Realtime) ((Realtime)((Object)selectedNote)).move(os); 
                     return true;
                 }
                 return false;
@@ -333,7 +333,7 @@ the_new_Action_3.selectedNote = selectedNote;
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(selectedNote instanceof Realtime) ((Realtime)selectedNote).move(os); 
+                    if(((Object)selectedNote) instanceof Realtime) ((Realtime)((Object)selectedNote)).move(os); 
                     return true;
                 }
                 return false;
@@ -372,7 +372,7 @@ the_new_Action_3.selectedNote = selectedNote;
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(selectedNote instanceof Realtime) ((Realtime)selectedNote).move(os); 
+                    if(((Object)selectedNote) instanceof Realtime) ((Realtime)((Object)selectedNote)).move(os); 
                     return true;
                 }
                 return false;

@@ -69,6 +69,14 @@ public class Margin extends AbstractDelegateLob {
 				       r.minH+dy, r.natH+dy, r.maxH+dy);
     }
 
+    public Lob layoutOneAxis(float size) {
+	Axis axis = getLayoutableAxis();
+	float diff = axis.coord(left+right,top+bottom);
+
+	Lob lob = delegate.layoutOneAxis(size - diff);
+	return wrap(lob);
+    }
+
     public Lob layout(float w, float h) {
 	Lob l = delegate.layout(w-left-right, h-top-bottom);
 	return newInstance(l, left, right, top, bottom);

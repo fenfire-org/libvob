@@ -43,7 +43,9 @@ public class Lobs {
     private static final LocalContext.Variable 
 	WINDOW_ANIMATION = new LocalContext.Variable(null),
 	FOCUS_MODEL = new LocalContext.Variable(null);
-    
+
+    private static LobFont defaultFont;
+
 
 
     public static Lob rect(Color color, float lineWidth) {
@@ -230,8 +232,9 @@ public class Lobs {
     }
 
     public static LobFont font(Color color) {
-	LobFont sf = SimpleLobFont.newInstance("serif", 0, 16, color);
-	return FilterLobFont.newInstance(sf);
+	if(defaultFont == null)
+	    defaultFont = SimpleLobFont.newInstance("serif", 0, 16, color);
+	return FilterLobFont.newInstance(defaultFont);
     }
 
     public static LobFont font() {

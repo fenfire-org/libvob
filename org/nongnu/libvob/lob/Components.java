@@ -212,7 +212,7 @@ public class Components {
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(tr instanceof Realtime) ((Realtime)tr).move(os); if(selected instanceof Realtime) ((Realtime)selected).move(os); 
+                    if(((Object)tr) instanceof Realtime) ((Realtime)((Object)tr)).move(os); if(((Object)selected) instanceof Realtime) ((Realtime)((Object)selected)).move(os); 
                     return true;
                 }
                 return false;
@@ -250,7 +250,7 @@ the_new_Transform_1.selected = selected;
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(openModel instanceof Realtime) ((Realtime)openModel).move(os); 
+                    if(((Object)openModel) instanceof Realtime) ((Realtime)((Object)openModel)).move(os); 
                     return true;
                 }
                 return false;
@@ -318,7 +318,7 @@ the_new_Transform_1.selected = selected;
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(selected instanceof Realtime) ((Realtime)selected).move(os); if(o instanceof Realtime) ((Realtime)o).move(os); 
+                    if(((Object)selected) instanceof Realtime) ((Realtime)((Object)selected)).move(os); if(((Object)o) instanceof Realtime) ((Realtime)((Object)o)).move(os); 
                     return true;
                 }
                 return false;

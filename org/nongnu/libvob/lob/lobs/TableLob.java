@@ -38,7 +38,7 @@ import java.util.*;
 public class TableLob extends AbstractLob {
     private static void p(String s) { System.out.println("TableLob:: "+s); }
 
-    public static int MAXSIZE = (1 << 14);
+    public static int MAXSIZE = (1 << 10);
 
     public interface Table extends Realtime { 
 	// XXX make use of new functional system
@@ -132,6 +132,18 @@ public class TableLob extends AbstractLob {
     }
 
     public Lob layout(float width, float height) {
+	if(width < 0 || height < 0)
+	    throw new IllegalArgumentException("negative size: "+width+" "+height);
+
+	if(width < size.minW || height < size.minH) {
+	    // we have not been given enough space to layout ourselves;
+	    // work around it
+
+	    Lob l = Lobs.translate(this, 0, 0);
+	    l = l.layout(width, height);
+	    return l;
+	}
+
 	TableLayout tl = (TableLayout)LAYOUT_FACTORY.object();
 	tl.init(table);
 
@@ -177,8 +189,14 @@ public class TableLob extends AbstractLob {
 		    diff = totalDiff * (shrink / totalShrink);
 		}
 	    }
+	    
+	    if(diff < 0)
+		throw new Error("XXX negative size diff");
 
 	    cur += nat[i] + diff;
+
+	    if(cur > totalSize)
+		throw new Error("XXX cannot fit in total size");
 	}
 
 	pos[nitems] = totalSize;

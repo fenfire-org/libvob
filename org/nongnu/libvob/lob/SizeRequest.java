@@ -27,6 +27,7 @@ SizeRequest.java
  */
 package org.nongnu.libvob.lob;
 import javolution.realtime.*;
+import javolution.lang.Text;
 
 public final class SizeRequest extends RealtimeObject {
 
@@ -71,6 +72,12 @@ public final class SizeRequest extends RealtimeObject {
 	minH = natH = maxH = h;
     }
 
+    public void check() {
+	if(minW < 0 || natW < 0 || maxW < 0 || 
+	   minH < 0 || natH < 0 || maxH < 0)
+	    throw new Error("Negative size request "+this);
+    }
+
     public static SizeRequest newInstance(float minW, float natW, float maxW,
 					  float minH, float natH, float maxH) {
 	SizeRequest r = (SizeRequest)FACTORY.object();
@@ -83,6 +90,10 @@ public final class SizeRequest extends RealtimeObject {
 	SizeRequest r = (SizeRequest)FACTORY.object();
 	r.setSize(width, height);
 	return r;
+    }
+
+    public Text toText() {
+	return Text.valueOf("SizeRequest("+minW+" "+natW+" "+maxW+" "+minH+" "+natH+" "+maxH+")");
     }
 
     private static final Factory FACTORY = new Factory() {

@@ -46,7 +46,9 @@ public class Lobs {
     private static final LocalContext.Variable 
 	WINDOW_ANIMATION = new LocalContext.Variable(null),
 	FOCUS_MODEL = new LocalContext.Variable(null);
-    
+
+    private static LobFont defaultFont;
+
 
 
     public static Lob rect(Color color, float lineWidth) {
@@ -227,8 +229,9 @@ public class Lobs {
     }
 
     public static LobFont font(Color color) {
-	LobFont sf = SimpleLobFont.newInstance("serif", 0, 16, color);
-	return FilterLobFont.newInstance(sf);
+	if(defaultFont == null)
+	    defaultFont = SimpleLobFont.newInstance("serif", 0, 16, color);
+	return FilterLobFont.newInstance(defaultFont);
     }
 
     public static LobFont font() {
@@ -283,7 +286,7 @@ public class Lobs {
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(lobs instanceof Realtime) ((Realtime)lobs).move(os); if(key instanceof Realtime) ((Realtime)key).move(os); 
+                    if(((Object)lobs) instanceof Realtime) ((Realtime)((Object)lobs)).move(os); if(((Object)key) instanceof Realtime) ((Realtime)((Object)key)).move(os); 
                     return true;
                 }
                 return false;

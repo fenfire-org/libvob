@@ -123,7 +123,7 @@ public class Lists {
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(lists instanceof Realtime) ((Realtime)lists).move(os); 
+                    if(((Object)lists) instanceof Realtime) ((Realtime)((Object)lists)).move(os); 
                     return true;
                 }
                 return false;
@@ -156,7 +156,7 @@ public class Lists {
 
             public boolean move(ObjectSpace os) {
                 if(super.move(os)) {
-                    if(list instanceof Realtime) ((Realtime)list).move(os); if(transform instanceof Realtime) ((Realtime)transform).move(os); 
+                    if(((Object)list) instanceof Realtime) ((Realtime)((Object)list)).move(os); if(((Object)transform) instanceof Realtime) ((Realtime)((Object)transform)).move(os); 
                     return true;
                 }
                 return false;

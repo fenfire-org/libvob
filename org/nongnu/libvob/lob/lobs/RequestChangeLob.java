@@ -79,6 +79,8 @@ public class RequestChangeLob extends AbstractDelegateLob {
 
     public SizeRequest getSizeRequest() {
 	SizeRequest r = delegate.getSizeRequest();
+	r.check();
+
 	SizeRequest l = SizeRequest.newInstance(0, 0, 0, 0, 0, 0);
 
 	l.minW = (minW >= 0) ? minW : r.minW;
@@ -86,14 +88,16 @@ public class RequestChangeLob extends AbstractDelegateLob {
 	l.maxW = (maxW >= 0) ? maxW : r.maxW;
 
 	if(natW < 0 && minW > l.natW) l.natW = minW;
-	if(natW < 0 && maxW < l.natW) l.natW = maxW;
+	if(natW < 0 && maxW >= 0 && maxW < l.natW) l.natW = maxW;
 
 	l.minH = (minH >= 0) ? minH : r.minH;
 	l.natH = (natH >= 0) ? natH : r.natH;
 	l.maxH = (maxH >= 0) ? maxH : r.maxH;
 
 	if(natH < 0 && minH > l.natH) l.natH = minH;
-	if(natH < 0 && maxH < l.natH) l.natH = maxH;
+	if(natH < 0 && maxH >= 0 && maxH < l.natH) l.natH = maxH;
+
+	l.check();
 
 	return l;
     }

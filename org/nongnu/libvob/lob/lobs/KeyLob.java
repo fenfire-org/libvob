@@ -58,6 +58,9 @@ public class KeyLob extends AbstractDelegateLob {
     }
 
     public Lob layout(float w, float h) {
+	if(w < 0 || h < 0)
+	    throw new IllegalArgumentException("Negative size: "+w+" "+h);
+
 	KeyLob l = newInstance(delegate.layout(w, h), key, intKey);
 	l.width = w; l.height = h;
 	return l;
