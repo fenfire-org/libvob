@@ -122,6 +122,8 @@ public interface TextModel extends SequenceModel {
     class StringTextModel extends AbstractTextModel {
 	protected Model keyModel;
 
+	protected String cache;
+
 	public StringTextModel(Model stringModel, Model fontModel) {
 	    super(stringModel, fontModel, true);
 	    this.keyModel = new ObjectModel(null);
@@ -155,6 +157,14 @@ public interface TextModel extends SequenceModel {
 				       (Model)params[2], includeLineEnd);
 	}
 
+	public void chg() {
+	    cache = null;
+	    super.chg();
+	}
+	protected void read() {
+	    cache = (String)stringModel.get();
+	}
+
 	public Object getKey(int index) {
 	    return keyModel.get();
 	}
@@ -173,16 +183,18 @@ public interface TextModel extends SequenceModel {
 	}
 	
 	public void delete(int start, int end) {
-	    String text = (String)stringModel.get();
-	    stringModel.set(text.substring(0, start) + text.substring(end));
+	    if(cache == null) read();
+	    stringModel.set(cache.substring(0, start) + cache.substring(end));
 	}
 
 	protected int getCharCount() {
-	    return ((String)stringModel.get()).length();
+	    if(cache == null) read();
+	    return cache.length();
 	}
 
 	protected char getChar(int index) {
-	    return ((String)stringModel.get()).charAt(index);
+	    if(cache == null) read();
+	    return cache.charAt(index);
 	}
     }
 
