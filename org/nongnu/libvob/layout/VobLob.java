@@ -94,10 +94,9 @@ public class VobLob extends AbstractLob {
 		       float w, float h, float d,
 		       boolean visible) {
 	// XXX create a coordsys? which key?
-	int cs = into;
 	//int cs = scene.coords.box(into, w, h);
 	//scene.matcher.add(matchingParent, cs, this);
 	if(visible)
-	    scene.put(vob, cs);
+	    scene.put(vob, into);
     }
 }

@@ -98,11 +98,11 @@ public class Theme {
 	Lob stipple = new Margin(new RepeatLob(new Margin(rect, 1)), 0);
 
 	Box titleBox = new Box(Lob.X);
-	titleBox.addRequest(new KeyLob(stipple, "left stipple"), 20, 20, 20);
+	titleBox.addRequest(stipple, 20, 20, 20);
 	titleBox.glue(5, 5, 5);
 	titleBox.add(new NoGrowLob(new Label(title, whiteFont)));
 	titleBox.glue(5, 5, 5);
-	titleBox.addRequest(new KeyLob(stipple, "right stipple"), 0, 0, inf);
+	titleBox.addRequest(stipple, 0, 0, inf);
 
 	MonoLob titleLob = new Frame(darkColor, null, 0, 1, 
 				     false, false, false);
@@ -117,7 +117,6 @@ public class Theme {
 	vbox.add(l);
 
 	l = new Frame(vbox, lightColor, darkColor, 1, 0, true, true, false);
-	//l = new KeyLob(l, "innerFrame");
 	l = new Frame(l, null, darkColor, 1, 0, false, false, false);
 
 	map.put(Window.URI, l);

@@ -88,7 +88,7 @@ public class AlignLob extends AbstractMonoLob {
 	float x = parentX*w - childX*childW;
 	float y = parentY*h - childY*childH;
 
-	int cs = scene.coords.translate(into, x, y);
+	int cs = scene.coords.box(into, x, y, childW, childH);
 
 	content.render(scene, cs, matchingParent, 
 		       childW, childH, d, visible);

@@ -1,7 +1,7 @@
 /*
 AWTVobCoorder.java
  *
- *    Copyright (c) 2004, Matti J. Katila
+ *    Copyright (c) 2004, Matti J. Katila and Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -23,7 +23,7 @@ AWTVobCoorder.java
  *
 */
 /*
- * Written by Matti J. Katila
+ * Written by Matti J. Katila and Benja Fallenstein
  */
 package org.nongnu.libvob.impl.awt;
 import org.nongnu.libvob.*;
@@ -108,11 +108,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	Trans t = getTrans(cs);
 	try {
 	    t.transformRect(into, useInterp);
-	    if(useInterp) {
-		t.getInterpolatedWH(wh);
-	    } else {
-		wh[0] = t.w(); wh[1] = t.h();
-	    }
+	    t.getWH(wh, useInterp);
 	    //scale[0] = t.sx(); scale[1] = t.sy();
 	} finally {
 	    t.pop();
@@ -221,7 +217,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    float sy() { return height; }
 	    float w() { return 1; }
 	    float h() { return 1; }
-	    void getInterpolatedWH(float[] wh) { wh[0] = wh[1] = 1; }
+	    void getWH(float[] wh, boolean useInterp) { wh[0] = wh[1] = 1; }
 	};
 
     
@@ -585,10 +581,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	float w() { return 1; }
 	float h() { return 1; }
 
-	void getInterpolatedWH(float[] wh) { // get interpolated w/h
+	void getWH(float[] wh, boolean useInterp) {
 	    int ocs;
 
-	    if(cs() < interpList.length)
+	    if(useInterp && cs() < interpList.length)
 		ocs = interpList[cs()];
 	    else
 		ocs = VobMatcher.SHOW_IN_INTERP;
@@ -596,7 +592,11 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    if(ocs >= 0) {
 		Trans o = otherCoorder.getTrans(ocs);
 		try {
-		    float w1 = w(), h1 = h(), w2 = o.w(), h2 = o.h();
+		    getWH(wh, false);
+		    float w1 = wh[0], h1 = wh[1];
+		    o.getWH(wh, false);
+		    float w2 = wh[0], h2 = wh[1];
+
 		    wh[0] = i(w1, w2, fract);
 		    wh[1] = i(h1, h2, fract);
 
@@ -611,9 +611,13 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    } else if(ocs == VobMatcher.DONT_INTERP) {
 		wh[0] = 1; wh[1] = 1;
 	    } else if(ocs == VobMatcher.SHOW_IN_INTERP) {
-		Trans p = getParentTrans();
-		p.getInterpolatedWH(wh);
-		p.pop();
+		if(w() == 1 && h() == 1) {
+		    Trans p = getParentTrans();
+		    p.getWH(wh, useInterp);
+		    p.pop();
+		} else {
+		    wh[0] = w(); wh[1] = h();
+		}
 	    }		
 	}
     }

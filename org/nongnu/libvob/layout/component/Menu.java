@@ -66,9 +66,7 @@ public class Menu extends LobLob {
 	l = new AlignLob(l, 0, 0, 0, 0);
 	l = new Frame(l, Theme.lightColor, Theme.darkColor, 1, 0,
 		      true, true, false);
-	l = new KeyLob(l, "innerFrame");
 	l = new Frame(l, null, Theme.darkColor, 1, 0, false, false, false);
-	l = new KeyLob(l, new ObjectModel(this));
 
 	setDelegate(l);
     }
@@ -123,7 +121,7 @@ public class Menu extends LobLob {
 	Model visible = selected.equalsInt(n);
 
 	Lob l;
-	l = new DepthChangeLob(submenu, -1000000000);
+	l = new DepthChangeLob(submenu, -1000);
 	l = new VisibilityLob(l, visible);
 	l = new NextToLob(axis.other(), new Margin(lob, 2), l);
 

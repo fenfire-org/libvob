@@ -32,8 +32,6 @@ import org.nongnu.libvob.*;
  *  to fill out the space assigned by its parent. Another way to say it
  *  is that this lob <em>tiles</em> its child to fill out its allocation
  *  (like with tiled background images).
- *  <p>
- *  Requires IndexedVobMatcher in the scene.
  */
 public class RepeatLob extends AbstractMonoLob {
     
@@ -85,14 +83,10 @@ public class RepeatLob extends AbstractMonoLob {
 	float cw = content.getNatSize(X);
 	float ch = content.getNatSize(Y);
 
-	IndexedVobMatcher m = (IndexedVobMatcher)scene.matcher;
-
 	for(int i=0; i*cw<w; i++) {
 	    for(int j=0; j*ch<h; j++) {
 
 		int cs = scene.coords.box(into, i*cw, j*ch, cw, ch);
-		m.add(matchingParent, cs, KEY, i*10000+j);
-	
 		content.render(scene, cs, cs, cw, ch, d, visible);
 	    }
 	}
