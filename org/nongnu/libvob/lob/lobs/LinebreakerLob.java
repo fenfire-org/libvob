@@ -68,6 +68,17 @@ public class LinebreakerLob extends AbstractLob {
 	return l.layout(width, height);
     }
 
+    public boolean key(String key) {
+	for(int i=0; i<items.size(); i++)
+	    if(((Lob)items.get(i)).key(key)) return true;
+	return false;
+    }
+
+    public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
+			 float x, float y) { 
+	throw new UnsupportedOperationException("not layouted");
+    }
+
     public void render(VobScene scene, int into, int matchingParent, 
 		       float d, boolean visible) {
 	throw new UnsupportedOperationException("not layouted");

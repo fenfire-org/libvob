@@ -73,6 +73,15 @@ public class VobLob extends AbstractLob {
 	throw new UnsupportedOperationException("not layouted yet");
     }
 
+    public boolean key(String key) {
+	return false;
+    }
+
+    public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
+			 float x, float y) { 
+	return false; 
+    }
+
     private static final class VobLayout extends AbstractLayout {
 	private Vob vob;
 
@@ -85,6 +94,15 @@ public class VobLob extends AbstractLob {
 
 	    int cs = scene.coords.box(into, width, height);
 	    if(visible) scene.put(vob, cs);
+	}
+
+	public boolean key(String key) {
+	    return false;
+	}
+
+	public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
+			     float x, float y) { 
+	    return false; 
 	}
 
 	public boolean move(ObjectSpace os) {

@@ -99,6 +99,12 @@ public class SimpleLobFont extends RealtimeObject implements LobFont {
 	
 	protected TextVob textvob;
 
+	public boolean key(String key) { return false; }
+	public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
+			     float x, float y) { 
+	    return false; 
+	}
+
 	public Lob layout(float w, float h) { // plaaah...
 	    Glyph g = (Glyph)GLYPH_FACTORY.object();
 

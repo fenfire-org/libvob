@@ -52,11 +52,29 @@ public class NullLob extends AbstractLob {
 	throw new UnsupportedOperationException("not layouted");
     }
 
+    public boolean key(String key) {
+	return false;
+    }
+
+    public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
+			 float x, float y) { 
+	return false; 
+    }
+
     private static class NullLayout extends AbstractLayout {
 	protected void setSize(float w, float h) { super.setSize(w, h); }
 
 	public void render(VobScene scene, int into, int matchingParent, 
 			   float d, boolean visible) {
+	}
+
+	public boolean key(String key) {
+	    return false;
+	}
+
+	public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
+			     float x, float y) { 
+	    return false; 
 	}
     }
 
