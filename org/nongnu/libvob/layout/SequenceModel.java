@@ -208,4 +208,49 @@ public interface SequenceModel extends ListModel {
 	    add(lob, key, intKey);
 	}
     }
+
+
+    class Concat extends ListModel.Concat implements SequenceModel {
+
+	public Concat(SequenceModel m1, SequenceModel m2) {
+	    this(new ListModel.Simple(new Object[] { m1, m2 }));
+	}
+	public Concat(SequenceModel m1, SequenceModel m2, SequenceModel m3) {
+	    this(new ListModel.Simple(new Object[] { m1, m2, m3 }));
+	}
+
+	public Concat(ListModel models) {
+	    super(models);
+	}
+
+	public void add(Object o, Object key, int intKey) {
+	    throw new UnsupportedOperationException();
+	}
+
+	protected SequenceModel smodel(int i) {
+	    return (SequenceModel)models.get(i);
+	}
+
+	public Object getKey(int index) {
+	    int rel_idx = index;
+	    for(int i=0; i<sizes.length; i++) {
+		if(rel_idx < sizes[i])
+		    return smodel(i).getKey(rel_idx);
+
+		rel_idx -= sizes[i];
+	    }
+	    throw new IndexOutOfBoundsException(""+index);
+	}
+
+	public int getIntKey(int index) {
+	    int rel_idx = index;
+	    for(int i=0; i<sizes.length; i++) {
+		if(rel_idx < sizes[i])
+		    return smodel(i).getIntKey(rel_idx);
+
+		rel_idx -= sizes[i];
+	    }
+	    throw new IndexOutOfBoundsException(""+index);
+	}
+    }
 }

@@ -47,6 +47,8 @@ public interface TextModel extends SequenceModel {
 	protected Model stringModel;
 	protected Model fontModel;
 
+	protected boolean includeLineEnd = true;
+
 	protected LobFont font;   // cached value of fontModel
 
 	public AbstractTextModel(Model stringModel, Model fontModel) {
@@ -56,6 +58,13 @@ public interface TextModel extends SequenceModel {
 	    fontModel.addObs(this); stringModel.addObs(this);
 
 	    chg();
+	}
+
+	public void setIncludeLineEnd(boolean value) {
+	    if(value != includeLineEnd) {
+		includeLineEnd = value;
+		chg();
+	    }
 	}
 
 	public int hashCode() { return System.identityHashCode(this); }
@@ -70,7 +79,12 @@ public interface TextModel extends SequenceModel {
 	    return new Replaceable[] { stringModel, fontModel };
 	}
 	
-	public int size() { return getCharCount() + 1; }
+	public int size() { 
+	    if(!includeLineEnd)
+		return getCharCount();
+	    else
+		return getCharCount() + 1; 
+	}
 	
 	public void clear() { 
 	    throw new UnsupportedOperationException("changing the model");
@@ -85,7 +99,7 @@ public interface TextModel extends SequenceModel {
 	public Object get(int index) { 
 	    if(index < getCharCount())
 		return font.getGlyph(getChar(index));
-	    else if(index == getCharCount())
+	    else if(index == getCharCount() && includeLineEnd)
 		return font.getLineEnd();
 	    else
 		throw new IndexOutOfBoundsException(""+index);
@@ -181,4 +195,64 @@ public interface TextModel extends SequenceModel {
 	}
     }
     */
+
+    class Concat extends SequenceModel.Concat implements TextModel {
+
+	public Concat(TextModel m1, TextModel m2) {
+	    this(new ListModel.Simple(new Object[] { m1, m2 }));
+	}
+	public Concat(TextModel m1, TextModel m2, TextModel m3) {
+	    this(new ListModel.Simple(new Object[] { m1, m2, m3 }));
+	}
+
+	public Concat(ListModel models) {
+	    super(models);
+	}
+
+	protected TextModel tmodel(int i) {
+	    return (TextModel)models.get(i);
+	}
+
+	public void insert(int pos, String text) {
+	    int rel_idx = pos;
+	    for(int i=0; i<sizes.length; i++) {
+		if(rel_idx < sizes[i]) {
+		    tmodel(i).insert(rel_idx, text);
+		    return;
+		}
+
+		rel_idx -= sizes[i];
+	    }
+	    throw new IndexOutOfBoundsException(""+pos);
+	}
+
+	public void delete(int start, int end) {
+	    int rel_idx = start;
+	    int len = end-start;
+
+	    int i=0;
+	    for(; i<sizes.length; i++) {
+		if(rel_idx < sizes[i])
+		    break;
+
+		rel_idx -= sizes[i];
+	    }
+
+	    while(len>0) {
+		if(i>=sizes.length)
+		    throw new IndexOutOfBoundsException(start+" "+end);
+
+		int del = sizes[i] - rel_idx;
+		if(len < del) del = len;
+
+		tmodel(i).delete(rel_idx, rel_idx+del);
+
+		len -= del;
+
+		i++;
+		rel_idx = 0;
+	    }
+	}
+    }
+    
 }
