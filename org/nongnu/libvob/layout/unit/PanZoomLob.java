@@ -112,12 +112,12 @@ public class PanZoomLob extends AbstractMonoLob {
     protected final Object KEY_CONCAT = new Object();
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 	this.scene = scene;
 	this.w = w;
 	this.h = h;
-	into = scene.coords.box(into, x, y, w, h);
+	into = scene.coords.box(into, w, h);
 
 	int box2screen = into;
 	box2plane = scene.coords.orthoBox(0,0,0,0,0,0,0,0);
@@ -127,7 +127,7 @@ public class PanZoomLob extends AbstractMonoLob {
 	int plane2screen = scene.concatCS(box2screen, KEY_CONCAT,
 				       plane2box);
 
-	content.render(scene, plane2screen, matchingParent, 0, 0,
+	content.render(scene, plane2screen, matchingParent,
 		       content.getNatSize(X), 
 		       content.getNatSize(Y), d, visible);
     }

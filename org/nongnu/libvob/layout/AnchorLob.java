@@ -61,9 +61,9 @@ public class AnchorLob extends AbstractMonoLob {
     
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
-	int cs = scene.coords.box(into, x, y, w, h);
+	int cs = scene.coords.box(into, w, h);
 	scene.matcher.add(matchingParent, cs, key);
 
 	this.cs = cs;
@@ -71,6 +71,6 @@ public class AnchorLob extends AbstractMonoLob {
 	this.width = w;
 	this.height = h;
 
-	content.render(scene, cs, cs, 0, 0, w, h, d, visible);
+	content.render(scene, cs, cs, w, h, d, visible);
     }
 }

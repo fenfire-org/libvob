@@ -60,11 +60,10 @@ public class SelectionLob extends AbstractDelegateSequence {
 
     public void render(VobScene scene, int into, 
 		       int matchingParent, 
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 	int cs = scene.coords.translate(into, 0, 0, 0);
-	list.render(scene, cs, matchingParent, x, y, w, h, d/2,
-		    visible);
+	list.render(scene, cs, matchingParent, w, h, d/2, visible);
 	
 	Object key = keyModel.get();
 	int intKey = intKeyModel.getInt();
@@ -82,7 +81,7 @@ public class SelectionLob extends AbstractDelegateSequence {
 	scene.coords.getSqSize(anchor, wh);
 
 	cs = scene.coords.translate(anchor, 0, 0, d/2);
-	selector.render(scene, cs, matchingParent, 0, 0, wh[0], wh[1], d/2,
+	selector.render(scene, cs, matchingParent, wh[0], wh[1], d/2,
 			visible);
     }
 }

@@ -214,7 +214,7 @@ public class Box extends AbstractSequence {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 	if(!positionsAreCurrent)
 	    //layout(width, height);
@@ -231,7 +231,7 @@ public class Box extends AbstractSequence {
 	for(int i=0; i<length(); i++) {
 	    float p = positions[i], lw = positions[i+1] - positions[i];
 
-	    int cs = scene.coords.box(into, isHBox?x+p:x, isHBox?y:y+p,
+	    int cs = scene.coords.box(into, isHBox?p:0, isHBox?0:p,
 				      isHBox?lw:h, isHBox?h:lw);
 
 	    int mp = matchingParent;
@@ -247,7 +247,7 @@ public class Box extends AbstractSequence {
 		mp = cs;
 	    }
 
-	    getLob(i).render(scene, cs, mp, 0, 0, isHBox?lw:h, isHBox?h:lw,
+	    getLob(i).render(scene, cs, mp, isHBox?lw:h, isHBox?h:lw,
 			     d, visible);
 	
 	    if(lw == getLob(i).getNatSize(axis)) {

@@ -90,10 +90,10 @@ public class VobLob extends AbstractLob {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 	// XXX create a coordsys? which key?
-	int cs = scene.coords.box(into, x, y, w, h);
+	int cs = scene.coords.box(into, w, h);
 	scene.matcher.add(matchingParent, cs, key);
 	if(visible)
 	    scene.put(vob, cs);

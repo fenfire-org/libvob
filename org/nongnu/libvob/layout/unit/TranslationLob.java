@@ -88,16 +88,15 @@ public class TranslationLob extends AbstractMonoLob {
 	};
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 
 	this.scene = scene;
-	into = scene.coords.translate(into, x, y);
 	this.cs = scene.coords.translate(into, 
 					 this.x.getFloat(),
 					 this.y.getFloat());
 
-	content.render(scene, this.cs, matchingParent, 0, 0,
+	content.render(scene, this.cs, matchingParent,
 		       content.getNatSize(X), 
 		       content.getNatSize(Y), d, visible);
     }

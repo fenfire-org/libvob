@@ -94,7 +94,7 @@ public abstract class LobMain extends Main implements Obs {
 	    
 	    long m1 = System.currentTimeMillis();
 
-	    lob.render(scene, 0, 0, 0, 0, size.width, size.height, 1, true);
+	    lob.render(scene, 0, 0, size.width, size.height, 1, true);
 
 	    long m2 = System.currentTimeMillis();
 

@@ -94,7 +94,14 @@ public class AWTRenderer {
                     
 		    try {
 		        other = interpList[my];
-		        if(other < 0) return false;
+		        if(other < 0) {
+			    return false;
+			    /* // render anyway:
+			    ((AWTVobCoorderBase)sc.coords).setInfo(
+			        my, (OrthoRenderInfo)info);
+			    return true;
+			    */
+			}
 		    } catch(ArrayIndexOutOfBoundsException _) {
 		        // XXX Not all coordsys must be in the matcher.
 			// Therefore, it is legal for the matcher

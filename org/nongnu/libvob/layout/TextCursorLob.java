@@ -60,9 +60,9 @@ public class TextCursorLob extends LobSequence {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
-	super.render(scene, into, matchingParent, x, y, w, h, d, visible);
+	super.render(scene, into, matchingParent, w, h, d, visible);
 
 	if(!showModel.getBool()) return;
 
@@ -73,8 +73,8 @@ public class TextCursorLob extends LobSequence {
 	float x2 = delegate.getPosition(X, i), y2 = delegate.getPosition(Y, i);
 	float h2 = delegate.getLob(i).getNatSize(Lob.Y);
 
-	int upper = scene.coords.translate(into, x+x2, y+y2, -1);
-	int lower = scene.coords.translate(into, x+x2, y+y2+h2, -1);
+	int upper = scene.coords.translate(into, x2, y2, -1);
+	int lower = scene.coords.translate(into, x2, y2+h2, -1);
 
 	scene.matcher.add(matchingParent, upper, UPKEY);
 	scene.matcher.add(matchingParent, lower, LOWKEY);

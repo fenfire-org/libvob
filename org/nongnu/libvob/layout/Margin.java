@@ -70,10 +70,12 @@ public class Margin extends AbstractMonoLob {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
-	content.render(scene, into, matchingParent,
-		       x + margin, y + margin, 
+	int cs = scene.coords.box(into, margin, margin, 
+				  w - 2*margin, h - 2*margin);
+
+	content.render(scene, cs, matchingParent,
 		       w - 2*margin, h - 2*margin, d,
 		       visible);
     }

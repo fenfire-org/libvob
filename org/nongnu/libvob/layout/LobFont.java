@@ -174,7 +174,7 @@ public class LobFont extends AbstractHashtable {
 	protected TextVob textvob;
 
 	public void render(VobScene scene, int into, int matchingParent,
-			   float x, float y, float _w, float _h, float d,
+			   float _w, float _h, float d,
 			   boolean visible) {
 
 	    if(scene.map instanceof DefaultVobMap) {
@@ -187,7 +187,7 @@ public class LobFont extends AbstractHashtable {
 					  color);
 
 		float h = textvob.style.getHeight(1);
-		int cs = scene.coords.ortho(into, 0, x, y, h, h);
+		int cs = scene.coords.scale(into, h, h);
 		scene.matcher.add(matchingParent, cs, KEY);
 		if(visible)
 		    scene.put(textvob, cs);

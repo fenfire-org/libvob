@@ -57,7 +57,7 @@ public interface Lob extends Observable, Replaceable {
      *           and like height is to the y-axis
      */
     void render(VobScene scene, int into, int matchingParent, 
-		float x, float y, float w, float h, float d,
+		float w, float h, float d,
 		boolean visible) 
 	throws UnknownSizeError;
 

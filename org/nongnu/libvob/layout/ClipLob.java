@@ -54,12 +54,12 @@ public class ClipLob extends AbstractMonoLob {
     }
  
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 
-	this.scene=scene; this.x=x; this.y=y; this.w=w; this.h=h; this.d=d;
+	this.scene=scene; this.w=w; this.h=h; this.d=d;
 	this.visible = visible;
-	this.cs = scene.coords.box(into, x, y, w, h);
+	this.cs = scene.coords.box(into, w, h);
 	this.matchingParent = matchingParent;
 	scene.matcher.add(matchingParent, cs, key);
 
@@ -87,7 +87,7 @@ public class ClipLob extends AbstractMonoLob {
 
     protected VobScene scene;
     protected int cs, matchingParent;
-    protected float x,y,w,h,d;
+    protected float w,h,d;
     protected boolean visible;
 
     private Runnable run_put_stencil = new Runnable() { public void run() {
@@ -95,6 +95,6 @@ public class ClipLob extends AbstractMonoLob {
     }};
 
     private Runnable run_render = new Runnable() { public void run() {
-	content.render(scene, cs, matchingParent, 0, 0, w, h, d, visible);
+	content.render(scene, cs, matchingParent, w, h, d, visible);
     }};
 }

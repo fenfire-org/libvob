@@ -107,7 +107,7 @@ public class Tray extends AbstractSequence {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 	float z = d;
 	float dd = d/length();
@@ -115,10 +115,10 @@ public class Tray extends AbstractSequence {
 	for(int i=0; i<length(); i++) {
 
 	    z -= dd;
-	    int cs = scene.coords.translate(into, x, y, z);
+	    int cs = scene.coords.translate(into, 0, 0, z);
 
 	    if(model.getKey(i) == null) {
-		getLob(i).render(scene, cs, matchingParent, 0, 0, w, h, dd,
+		getLob(i).render(scene, cs, matchingParent, w, h, dd,
 				 visible);
 	    } else {
 		if(scene.matcher instanceof IndexedVobMatcher) {
@@ -128,7 +128,7 @@ public class Tray extends AbstractSequence {
 		} else {
 		    scene.matcher.add(matchingParent, cs, model.getKey(i));
 		}
-		getLob(i).render(scene, cs, cs, 0, 0, w, h, dd, visible);
+		getLob(i).render(scene, cs, cs, w, h, dd, visible);
 	    }
 	}
     }

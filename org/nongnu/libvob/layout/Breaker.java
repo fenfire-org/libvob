@@ -362,10 +362,10 @@ public class Breaker extends AbstractSequence {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 	if(!layoutIsCurrent) layout();
-	broken.render(scene, into, matchingParent, x, y, w, h, d, visible);
+	broken.render(scene, into, matchingParent, w, h, d, visible);
     }
 
 

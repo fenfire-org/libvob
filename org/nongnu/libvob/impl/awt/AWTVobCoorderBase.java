@@ -275,7 +275,27 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	noOp, // 9 rotate
 	noOp, // 10 nadirUnitSq
 	noOp, // 11 unit
-	noOp, // 12 box
+	new Trans() {   // 12 box
+	    public String toString() { return "box"; }
+	    void transformRect(float[] rect) { 
+		Trans t = getParentTrans();
+		t.transformRect(rect);
+		t.pop();
+	    }
+	    void inverseTransformRect(float[] rect) { 
+		Trans t = getParentTrans();
+		t.inverseTransformRect(rect);
+		t.pop();
+	    }
+	    float w() {
+		int f = inds[cs()+2];
+		return floats[f+0];
+	    }
+	    float h() {
+		int f = inds[cs()+2];
+		return floats[f+1];
+	    }
+	},
 	noOp, // 13 rotateXYZ
 	noOp, // 14 rotateQuaternion	    
 	noOp, // 15 affine

@@ -69,9 +69,9 @@ public abstract class AbstractDelegateLob extends AbstractLob
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
-	getDelegate().render(scene, into, matchingParent, x, y, w, h, d,
+	getDelegate().render(scene, into, matchingParent, w, h, d,
 			     visible);
     }
 

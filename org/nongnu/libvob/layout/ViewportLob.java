@@ -90,14 +90,18 @@ public class ViewportLob extends AbstractMonoLob {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
 
-	if(axis == X)
-	    super.render(scene, into, matchingParent, x+getScroll(), y, 
+	if(axis == X) {
+	    int cs = scene.coords.translate(into, getScroll(), 0);
+	    super.render(scene, cs, matchingParent,
 			 content.getNatSize(X), h, d, visible);
-	else
-	    super.render(scene, into, matchingParent, x, y+getScroll(),
+
+	} else {
+	    int cs = scene.coords.translate(into, 0, getScroll());
+	    super.render(scene, into, matchingParent,
 			 w, content.getNatSize(Y), d, visible);
+	}
     }
 }

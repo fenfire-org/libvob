@@ -37,7 +37,7 @@ public class NullLob extends AbstractLob {
     protected Object clone(Object[] params) { return this; }
 
     public void render(VobScene scene, int into, int matchingParent, 
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
     }
 

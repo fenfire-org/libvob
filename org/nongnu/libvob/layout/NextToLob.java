@@ -68,19 +68,20 @@ public class NextToLob extends AbstractMonoLob {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
-	boolean visible) {
+		       float w, float h, float d,
+		       boolean visible) {
 
-	super.render(scene, into, matchingParent, x, y, w, h, d, visible);
+	super.render(scene, into, matchingParent, w, h, d, visible);
 	
 	float lw = lob.getNatSize(X), lh = lob.getNatSize(Y);
 
+	int cs;
 	if(axis == X)
-	    lob.render(scene, into, matchingParent, x+w, y, lw, lh, d, 
-		       visible);
+	    cs = scene.coords.box(into, w, 0, lw, lh);
 	else
-	    lob.render(scene, into, matchingParent, x, y+h, lw, lh, d, 
-		       visible);
+	    cs = scene.coords.box(into, 0, h, lw, lh);
+
+	lob.render(scene, cs, matchingParent, lw, lh, d, visible);
     }
 
     public boolean isLargerThanItSeems() {

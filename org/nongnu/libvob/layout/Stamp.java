@@ -77,8 +77,8 @@ public class Stamp extends AbstractLob {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
-	content.render(scene, into, matchingParent, x, y, w, h, d, visible);
+	content.render(scene, into, matchingParent, w, h, d, visible);
     }
 }

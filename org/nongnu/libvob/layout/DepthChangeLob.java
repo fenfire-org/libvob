@@ -45,9 +45,9 @@ public class DepthChangeLob extends AbstractMonoLob {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
-	int cs = scene.coords.translate(into, x, y, depthChange);
-	content.render(scene, cs, matchingParent, 0, 0, w, h, d, visible);
+	int cs = scene.coords.translate(into, 0, 0, depthChange);
+	content.render(scene, cs, matchingParent, w, h, d, visible);
     }
 }

@@ -49,15 +49,15 @@ public class KeyLob extends AbstractMonoLob {
     }
 
     public void render(VobScene scene, int into, int matchingParent,
-		       float x, float y, float w, float h, float d,
+		       float w, float h, float d,
 		       boolean visible) {
-	int cs = scene.coords.box(into, x, y, w, h);
+	int cs = scene.coords.box(into, w, h);
 	int mp = matchingParent;
 
 	if(keyModel.get() != null)
 	    // only change matching parent if key is non-null
 	    mp = scene.matcher.add(matchingParent, cs, keyModel.get());
 	
-	content.render(scene, cs, mp, 0, 0, w, h, d, visible);
+	content.render(scene, cs, mp, w, h, d, visible);
     }
 }
