@@ -28,13 +28,12 @@ BreakPoint.java
 package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 
-public class BreakPoint extends AbstractDelegateLob implements Breakable {
+public class BreakPoint extends AbstractDelegateLob {
 
     protected Axis axis;
     protected float quality;
     protected Lob pre, in, post;
 
-    protected Breakable subBreakable;
     
     private BreakPoint() {}
 
@@ -57,7 +56,6 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
 	b.pre = pre;
 	b.in = in;
 	b.post = post;
-	b.subBreakable = (Breakable)content.getImplementation(Breakable.class);
 	return b;
     }
 
@@ -72,37 +70,21 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
     public float getBreakQuality(Axis axis) {
 	if(axis==this.axis)
 	    return quality;
-	else if(subBreakable != null)
-	    return subBreakable.getBreakQuality(axis);
 	else
-	    return -INF;
+	    return delegate.getBreakQuality(axis);
     }
 
-    public Lob getPreBreakLob(Axis axis) {
-	if(axis==this.axis)
-	    return pre;
-	else if(subBreakable != null)
-	    return subBreakable.getPreBreakLob(axis);
-	else
-	    return null;
-    }
-
-    public Lob getInBreakLob(Axis axis) {
-	if(axis==this.axis)
-	    return in;
-	else if(subBreakable != null)
-	    return subBreakable.getInBreakLob(axis);
-	else
-	    return null;
-    }
-
-    public Lob getPostBreakLob(Axis axis) {
-	if(axis==this.axis)
-	    return post;
-	else if(subBreakable != null)
-	    return subBreakable.getPostBreakLob(axis);
-	else
-	    return null;
+    public Lob getBreakLob(Axis axis, int dir) {
+	if(axis==this.axis) {
+	    if(dir < 0)
+		return pre;
+	    else if(dir == 0)
+		return in;
+	    else
+		return post;
+	} else {
+	    return delegate.getBreakLob(axis, dir);
+	}
     }
 
     private static Factory FACTORY = new Factory() {

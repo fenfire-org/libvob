@@ -83,7 +83,7 @@ public class FilterLobFont extends RealtimeObject implements LobFont {
 
 	Lob glue = Lobs.glue(Axis.X, 25, 25, 25);
 	Lob newline = // forced break followed by indent
-	    BreakPoint.newInstance(Axis.X, lineEnd, Breakable.INF, 
+	    BreakPoint.newInstance(Axis.X, lineEnd, Lob.INF, 
 				   lineEnd, null, glue);
 
 	FastInt ch = FastInt.newInstance((int)' ');

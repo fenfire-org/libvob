@@ -40,7 +40,7 @@ import java.util.*;
 public class LinebreakerLobList extends RealtimeList {
     private static void p(String s) { System.out.println("LinebreakerLobList:: "+s); }
 
-    private static final float INF = Breakable.INF;
+    private static final float INF = Lob.INF;
 
     public static int MAXSIZE = (1 << 10);
 
@@ -89,22 +89,17 @@ public class LinebreakerLobList extends RealtimeList {
 		    Lob l = (Lob)items.get(next);
 		    SizeRequest r = l.getSizeRequest();
 
-		    nextBreakQuality = -INF;
+		    nextBreakQuality = l.getBreakQuality(lineAxis);
 		    
-		    Breakable br = (Breakable)l.getImplementation(Breakable.class);
-		    if(br != null) {
-			nextBreakQuality = br.getBreakQuality(lineAxis);
-			
-			Lob preBreak = br.getPreBreakLob(lineAxis);
-			if(preBreak != null)
-			    nextPreBreakWid = 
-				preBreak.getSizeRequest().nat(lineAxis);
-
-			Lob postBreak = br.getPostBreakLob(lineAxis);
-			if(postBreak != null)
-			    nextPostBreakWid = 
-				postBreak.getSizeRequest().nat(lineAxis);
-		    }
+		    Lob preBreak = l.getBreakLob(lineAxis, -1);
+		    if(preBreak != null)
+			nextPreBreakWid = 
+			    preBreak.getSizeRequest().nat(lineAxis);
+		    
+		    Lob postBreak = l.getBreakLob(lineAxis, +1);
+		    if(postBreak != null)
+			nextPostBreakWid = 
+			    postBreak.getSizeRequest().nat(lineAxis);
 
 		    if(nextBreakQuality < 0) {
 			wid += r.nat(lineAxis);
@@ -155,27 +150,20 @@ public class LinebreakerLobList extends RealtimeList {
 	List lobs = items.subList(start, end);
 
 	if(breaks[line] >= 0) {
-	    Lob brLob = (Lob)items.get(breaks[line]);
-	    Breakable br = (Breakable)brLob.getImplementation(Breakable.class);
+	    Lob br = (Lob)items.get(breaks[line]);
 
-	    if(br != null) {
-		Lob before = br.getPostBreakLob(lineAxis);
-		if(before != null) {
-		    lobs = Lists.concat(Lists.list(before), lobs);
-		}
+	    Lob before = br.getBreakLob(lineAxis, +1);
+	    if(before != null) {
+		lobs = Lists.concat(Lists.list(before), lobs);
 	    }
 	}
 
 	if(breaks[line+1] < items.size()) {
-	    Lob brLob = (Lob)items.get(breaks[line+1]);
-	    Breakable br = 
-		(Breakable)brLob.getImplementation(Breakable.class);
+	    Lob br = (Lob)items.get(breaks[line+1]);
 
-	    if(br != null) {
-		Lob after = br.getPreBreakLob(lineAxis);
-		if(after != null) {
-		    lobs = Lists.concat(lobs, Lists.list(after));
-		}
+	    Lob after = br.getBreakLob(lineAxis, -1);
+	    if(after != null) {
+		lobs = Lists.concat(lobs, Lists.list(after));
 	    }
 	}
 

@@ -94,6 +94,18 @@ public abstract class AbstractDelegateLob extends AbstractLob {
 	return delegate.getFocusableLobs();
     }
 
+    public float getBreakQuality(Axis axis) {
+	return delegate.getBreakQuality(axis);
+    }
+
+    public Lob getBreakLob(Axis axis, int dir) {
+	Lob lob = delegate.getBreakLob(axis, dir);
+	if(dir < 0)
+	    return (lob != null) ? wrap(lob) : null;
+	else
+	    return lob;
+    }
+
     public boolean move(ObjectSpace os) {
 	if(super.move(os)) {
 	    delegate.move(os);

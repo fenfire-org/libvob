@@ -51,6 +51,14 @@ public abstract class AbstractLob extends RealtimeObject implements Lob {
 	throw new UnsupportedOperationException();
     }
 
+    public float getBreakQuality(Axis axis) {
+	return -INF;
+    }
+
+    public Lob getBreakLob(Axis axis, int dir) {
+	return null;
+    }
+
     /* individual lobs MUST implement key&mouse -- else, too many bugs by omission
     public boolean key(String key) {
 	return false;
