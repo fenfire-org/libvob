@@ -27,11 +27,13 @@ RequestChangeLob.java
  */
 package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.util.*;
+import javolution.realtime.*;
 
 /** A monolob that changes the requested size of its child.
  *  If one of the values (minimum, natural or maximum size)
- *  is Float.NaN ("not a number"), the child's value is used. 
+ *  is < 0, the child's value is used. 
  *  However, if the natural size is not specified, but a minimal size
  *  is specified which is greater than the child's natural size,
  *  this lob's natural size is the specified minimal size.
@@ -39,71 +41,55 @@ import org.nongnu.libvob.util.*;
  *  which is smaller than the child's natural size, this lob's
  *  natural size is the specified maximum size.
  */
-public class RequestChangeLob /*extends AbstractDelegateLob*/ {
+public class RequestChangeLob extends AbstractDelegateLob {
 
-    /*
-    protected Axis axis;
-    protected Model min, nat, max;
+    protected float minW, natW, maxW;
+    protected float minH, natH, maxH;
 
-    public RequestChangeLob(Axis axis, Lob content,
-			    float min, float nat, float max) {
-	this(axis, content,
-	     new FloatModel(min), new FloatModel(nat), new FloatModel(max));
-    }
+    private RequestChangeLob() {}
 
-    public RequestChangeLob(Axis axis, Lob content,
-			    Model min, Model nat, Model max) {
-	super(content); this.axis = axis; 
-	this.min = min; this.nat = nat; this.max = max;
-	min.addObs(this); nat.addObs(this); max.addObs(this);
-    }
+    public static RequestChangeLob newInstance(
+            Axis axis, Lob content, float min, float nat, float max) {
 
-    public RequestChangeLob(Lob content, float minx, float natx, float maxx,
-			    float miny, float naty, float maxy) {
-	this(Y, new RequestChangeLob(X, content, minx, natx, maxx),
-	     miny, naty, maxy);
-    }
-
-    public RequestChangeLob(Lob content, Model minx, Model natx, Model maxx,
-			    Model miny, Model naty, Model maxy) {
-	this(Y, new RequestChangeLob(X, content, minx, natx, maxx),
-	     miny, naty, maxy);
-    }
-
-    protected Replaceable[] getParams() {
-	return new Replaceable[] { content, min, nat, max };
-    }
-    protected Object clone(Object[] params) {
-	return new RequestChangeLob(axis, (Lob)params[0], (Model)params[1],
-				    (Model)params[2], (Model)params[3]);
-    }
-
-    public float getMinSize(Axis axis) {
-	if(axis!=this.axis || Float.isNaN(min.getFloat()))
-	    return content.getMinSize(axis);
-	else
-	    return min.getFloat();
-    }
-
-    public float getNatSize(Axis axis) { 
-	if(axis!=this.axis) {
-	    return content.getNatSize(axis);
-	} else if(Float.isNaN(nat.getFloat())) {
-	    float _min = min.getFloat(), _max = max.getFloat();
-	    float size = content.getNatSize(axis);
-	    if(size < _min) size = _min; // these are false 
-	    if(size > _max) size = _max; // if size is NaN
-	    return size;
+	if(axis == Axis.X) {
+	    return newInstance(content, min, nat, max, -1, -1, -1);
 	} else {
-	    return nat.getFloat();
+	    return newInstance(content, -1, -1, -1, min, nat, max);
 	}
     }
 
-    public float getMaxSize(Axis axis) {
-	if(axis!=this.axis || Float.isNaN(max.getFloat()))
-	    return content.getMaxSize(axis);
-	else
-	    return max.getFloat();
+    public static RequestChangeLob newInstance(
+            Lob content, float minW,  float natW, float maxW,
+	    float minH, float natH, float maxH) {
+
+	RequestChangeLob l = (RequestChangeLob)FACTORY.object();
+	SizeRequest r = content.getSizeRequest();
+	l.delegate = content;
+
+	l.minW = (minW >= 0) ? minW : r.minW;
+	l.natW = (natW >= 0) ? natW : r.natW;
+	l.maxW = (maxW >= 0) ? maxW : r.maxW;
+
+	if(natW < 0 && minW > l.natW) l.natW = minW;
+	if(natW < 0 && maxW < l.natW) l.natW = maxW;
+
+	l.minH = (minH >= 0) ? minH : r.minH;
+	l.natH = (natH >= 0) ? natH : r.natH;
+	l.maxH = (maxH >= 0) ? maxH : r.maxH;
+
+	if(natH < 0 && minH > l.natH) l.natH = minH;
+	if(natH < 0 && maxH < l.natH) l.natH = maxH;
+
+	return l;
     }
-    */
+
+    public SizeRequest getSizeRequest() {
+	return SizeRequest.newInstance(minW, natW, maxW, minH, natH, maxH);
+    }
+
+    private static Factory FACTORY = new Factory() {
+	    protected Object create() {
+		return new RequestChangeLob();
+	    }
+	};
 }

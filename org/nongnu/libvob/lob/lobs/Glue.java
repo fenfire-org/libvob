@@ -34,7 +34,7 @@ public class Glue extends NullLob {
     protected float minX, natX, maxX;
     protected float minY, natY, maxY;
 
-    public Glue newInstance(Axis axis, float min, float nat, float max) {
+    public static Glue newInstance(Axis axis, float min, float nat, float max) {
 	Axis X = Axis.X, Y = Axis.Y;
 	float inf = SizeRequest.INF;
 
@@ -47,8 +47,8 @@ public class Glue extends NullLob {
 			   axis==Y ? max : inf);
     }
 
-    public Glue newInstance(float minX, float natX, float maxX,
-			    float minY, float natY, float maxY) {
+    public static Glue newInstance(float minX, float natX, float maxX,
+				   float minY, float natY, float maxY) {
 	Glue g = (Glue)FACTORY.object();
 	g.minX = minX; g.natX = natX; g.maxX = maxX;
 	g.minY = minY; g.natY = natY; g.maxY = maxY; 

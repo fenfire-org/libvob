@@ -29,6 +29,13 @@ package org.nongnu.libvob.lob;
 
 public interface Breakable extends Lob {
 
+    /**
+     *  For infinitely good or infinitely bad breaks.
+     */
+    float INF = SizeRequest.INF;
+
+
+
     /** Return a value representing how good an idea it would be
      *  to insert a break (line break, page break, etc., depending
      *  on what kind of sequence this is inserted to) in place of this Lob.

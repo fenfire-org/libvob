@@ -25,48 +25,43 @@ BreakPoint.java
 /*
  * Written by Benja Fallenstein
  */
-package org.nongnu.libvob.lob;
+package org.nongnu.libvob.lob.lobs;
+import org.nongnu.libvob.lob.*;
 
-public class BreakPoint /*implements Breakable*/ {
+public class BreakPoint extends AbstractDelegateLob implements Breakable {
 
-    /*
     protected Axis axis;
     protected float quality;
     protected Lob pre, in, post;
     
+    private BreakPoint() {}
 
-    public BreakPoint(Axis axis, Lob content, float quality, 
-		      Lob pre, Lob in, Lob post) {
-	super(content);
-	this.axis = axis;
-	this.quality = quality;
-	this.pre = pre;
-	this.in = in;
-	this.post = post;
-    }
-
-    protected Replaceable[] getParams() {
-	return new Replaceable[] { content, pre, in, post };
-    }
-    protected Object clone(Object[] params) {
-	return new BreakPoint(axis, (Lob)params[0], quality, 
-			      (Lob)params[1], (Lob)params[2], (Lob)params[3]);
+    public static BreakPoint newInstance(Axis axis, Lob content, float quality,
+					 Lob pre, Lob in, Lob post) {
+	BreakPoint b = (BreakPoint)FACTORY.object();
+	b.delegate = content;
+	b.axis = axis;
+	b.quality = quality;
+	b.pre = pre;
+	b.in = in;
+	b.post = post;
+	return b;
     }
 
     public float getBreakQuality(Axis axis) {
 	if(axis==this.axis)
 	    return quality;
-	else if(content instanceof Breakable)
-	    return ((Breakable)content).getBreakQuality(axis);
+	else if(delegate instanceof Breakable)
+	    return ((Breakable)delegate).getBreakQuality(axis);
 	else
-	    return Float.NEGATIVE_INFINITY;
+	    return -INF;
     }
 
     public Lob getPreBreakLob(Axis axis) {
 	if(axis==this.axis)
 	    return pre;
-	else if(content instanceof Breakable)
-	    return ((Breakable)content).getPreBreakLob(axis);
+	else if(delegate instanceof Breakable)
+	    return ((Breakable)delegate).getPreBreakLob(axis);
 	else
 	    return null;
     }
@@ -74,8 +69,8 @@ public class BreakPoint /*implements Breakable*/ {
     public Lob getInBreakLob(Axis axis) {
 	if(axis==this.axis)
 	    return in;
-	else if(content instanceof Breakable)
-	    return ((Breakable)content).getInBreakLob(axis);
+	else if(delegate instanceof Breakable)
+	    return ((Breakable)delegate).getInBreakLob(axis);
 	else
 	    return null;
     }
@@ -83,10 +78,15 @@ public class BreakPoint /*implements Breakable*/ {
     public Lob getPostBreakLob(Axis axis) {
 	if(axis==this.axis)
 	    return post;
-	else if(content instanceof Breakable)
-	    return ((Breakable)content).getPostBreakLob(axis);
+	else if(delegate instanceof Breakable)
+	    return ((Breakable)delegate).getPostBreakLob(axis);
 	else
 	    return null;
     }
-    */
+
+    private static Factory FACTORY = new Factory() {
+	    protected Object create() {
+		return new BreakPoint();
+	    }
+	};
 }
