@@ -1,5 +1,5 @@
 /*
-ScaleLob.java
+KeyLob.java
  *    
  *    Copyright (c) 2004-2005, Benja Fallenstein
  *
@@ -28,52 +28,59 @@ ScaleLob.java
 package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.layout.IndexedVobMatcher;
+import javolution.realtime.*;
 
-/** A lob placing its contents into a scaling cs.
+/** A lob placing its contents into a translation cs.
  */
-public class ScaleLob extends AbstractDelegateLob {
+public class KeyLob extends AbstractDelegateLob {
 
-    protected float scaleX, scaleY;
+    protected Object key;
+    protected int intKey;
 
-    private ScaleLob() {}
+    private KeyLob() {}
 
-    public static ScaleLob newInstance(Lob content, float scale) {
-	return newInstance(content, scale, scale);
-    }
-
-    public static ScaleLob newInstance(Lob content, float scaleX, 
-				       float scaleY) {
-	ScaleLob m = (ScaleLob)FACTORY.object();
+    public static KeyLob newInstance(Lob content, Object key, int intKey) {
+	KeyLob m = (KeyLob)FACTORY.object();
 	m.delegate = content;
 
-	m.scaleX = scaleX;
-	m.scaleY = scaleY;
+	m.key = key;
+	m.intKey = intKey;
 
 	return m;
     }
 
-    public SizeRequest getSizeRequest() {
-	float sx = scaleX, sy = scaleY;
-	SizeRequest r = delegate.getSizeRequest();
-
-	return SizeRequest.newInstance(r.minW*sx, r.natW*sx, r.maxW*sx,
-				       r.minH*sy, r.natH*sy, r.maxH*sy);
-    }
-
     public Lob layout(float w, float h) {
-	Lob l = delegate.layout(w/scaleX, h/scaleY);
-	return newInstance(l, scaleX, scaleY);
+	return newInstance(delegate.layout(w, h), key, intKey);
     }
 
     public void render(VobScene scene, int into, int matchingParent,
 		       float d, boolean visible) {
-	int cs = scene.coords.scale(into, scaleX, scaleY);
-	delegate.render(scene, cs, matchingParent, d, visible);
+
+	int cs = scene.coords.translate(into, 0, 0, 0);
+
+	if(scene.matcher instanceof IndexedVobMatcher) {
+	    IndexedVobMatcher m = (IndexedVobMatcher)scene.matcher;
+	    m.add(matchingParent, cs, key, intKey);
+	} else {
+	    scene.matcher.add(matchingParent, cs, key);
+	}
+
+	delegate.render(scene, cs, cs, d, visible);
+    }
+
+    public boolean move(ObjectSpace os) {
+	if(super.move(os)) {
+	    if(key instanceof Realtime)
+		((Realtime)key).move(os);
+	    return true;
+	}
+	return false;
     }
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
-		return new ScaleLob();
+		return new KeyLob();
 	    }
 	};
 }

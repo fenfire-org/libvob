@@ -1,5 +1,5 @@
 /*
-ScaleLob.java
+TranslateLob.java
  *    
  *    Copyright (c) 2004-2005, Benja Fallenstein
  *
@@ -29,51 +29,44 @@ package org.nongnu.libvob.lob.lobs;
 import org.nongnu.libvob.lob.*;
 import org.nongnu.libvob.*;
 
-/** A lob placing its contents into a scaling cs.
+/** A lob placing its contents into a translation cs.
  */
-public class ScaleLob extends AbstractDelegateLob {
+public class TranslateLob extends AbstractDelegateLob {
 
-    protected float scaleX, scaleY;
+    protected float x, y, z;
 
-    private ScaleLob() {}
+    private TranslateLob() {}
 
-    public static ScaleLob newInstance(Lob content, float scale) {
-	return newInstance(content, scale, scale);
-    }
-
-    public static ScaleLob newInstance(Lob content, float scaleX, 
-				       float scaleY) {
-	ScaleLob m = (ScaleLob)FACTORY.object();
+    public static TranslateLob newInstance(Lob content, float x, float y,
+					   float z) {
+	TranslateLob m = (TranslateLob)FACTORY.object();
 	m.delegate = content;
 
-	m.scaleX = scaleX;
-	m.scaleY = scaleY;
+	m.x = x; m.y = y; m.z = z;
 
 	return m;
     }
 
     public SizeRequest getSizeRequest() {
-	float sx = scaleX, sy = scaleY;
-	SizeRequest r = delegate.getSizeRequest();
-
-	return SizeRequest.newInstance(r.minW*sx, r.natW*sx, r.maxW*sx,
-				       r.minH*sy, r.natH*sy, r.maxH*sy);
+	return SizeRequest.newInstance(0, 0, SizeRequest.INF,
+				       0, 0, SizeRequest.INF);
     }
 
     public Lob layout(float w, float h) {
-	Lob l = delegate.layout(w/scaleX, h/scaleY);
-	return newInstance(l, scaleX, scaleY);
+	SizeRequest r = delegate.getSizeRequest();
+	Lob l = delegate.layout(r.natW, r.natH);
+	return newInstance(l, x, y, z);
     }
 
     public void render(VobScene scene, int into, int matchingParent,
 		       float d, boolean visible) {
-	int cs = scene.coords.scale(into, scaleX, scaleY);
+	int cs = scene.coords.translate(into, x, y, z);
 	delegate.render(scene, cs, matchingParent, d, visible);
     }
 
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
-		return new ScaleLob();
+		return new TranslateLob();
 	    }
 	};
 }

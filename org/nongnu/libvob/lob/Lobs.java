@@ -52,6 +52,22 @@ public class Lobs {
 	return VobLob.newInstance(FilledRectVob.newInstance(color));
     }
 
+    public static Lob translate(Lob l, float x, float y) {
+	return translate(l, x, y, 0);
+    }
+
+    public static Lob translate(Lob l, float x, float y, float z) {
+	return TranslateLob.newInstance(l, x, y, z);
+    }
+
+    public static Lob scale(Lob l, float scale) {
+	return scale(l, scale, scale);
+    }
+
+    public static Lob scale(Lob l, float sx, float sy) {
+	return translate(l, sx, sy);
+    }
+
     public static Lob margin(Lob l, float margin) {
 	return Margin.newInstance(l, margin);
     }
@@ -87,6 +103,14 @@ public class Lobs {
 			      float minH, float natH, float maxH) {
 	return RequestChangeLob.newInstance(content, minW, natW, maxW, 
 					    minH, natH, maxH);
+    }
+
+    public static Lob key(Lob content, Object key) {
+	return key(content, key, -1);
+    }
+
+    public static Lob key(Lob content, Object key, int intKey) {
+	return KeyLob.newInstance(content, key, intKey);
     }
 
     public static Lob frame(Lob content, Color bg, Color border, 

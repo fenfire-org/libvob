@@ -25,7 +25,7 @@ from javolution.lang import *
 
 from java.awt import Color
 
-import vob, java
+import vob, java, org
 
 vob.putil.demo.usingNormalBindings = 0
 
@@ -73,6 +73,12 @@ class Scene:
     def mouse(self, m): pass
 
     def scene(self, scene):
+        _ = scene
+        matcher = org.nongnu.libvob.layout.IndexedVobMatcher()
+
+        scene = org.nongnu.libvob.VobScene(_.map, _.coords, matcher,
+                                           _.gfxapi, _.window, _.size)
+            
         scene.put(background((1,1,.8)))
 
         lob = TableLob.newInstance(Table())
@@ -85,6 +91,7 @@ class Scene:
         render(scene, lob.layout(size.natW, size.natH), 300-size.natW/2, 50)
 
         loblist = TextLobList.newInstance(Lobs.font(), Text.valueOf(text))
+        loblist = KeyLobList.newInstance(loblist, "text")
         loblist = Linebreaker.newInstance(Axis.X, loblist, 300)
         lob = BoxLob.newInstance(Axis.Y, loblist)
         lob = Lobs.frame(lob, None, Color.black, 1, 5, 0)
