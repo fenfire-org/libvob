@@ -354,31 +354,48 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	     *  coded by Tuomas J. Lukka
 	     */
 	    void doTransformRect(float[] rect_, boolean useInterp) {
-		float [] rect = new float[rect_.length];
-
 		int areaCS = inds[cs()+1];
 		int anchorCS = inds[cs()+2];
 
-		// get absolutely area
-		getAbsoluteRect(areaCS, rect, 
-				new float[]{1,1},useInterp);
-		float[] areaF = new float[rect.length];
-		System.arraycopy(rect,0,areaF,0,rect.length);
+		// get absolute area
+		float[] areaF = new float[5];
+		float[] areaScale = new float[2];
+		getAbsoluteRect(areaCS, areaF, areaScale, useInterp);
 
+		/*
 		// compute sq of the area
-		getSqSize(areaCS, rect);
-		float[] sqF = new float[2];
-		System.arraycopy(rect,0,sqF,0,2);
+
+		sqF[0] = areaF[2] - areaF[0];
+		sqF[1] = areaF[3] - areaF[1];
 
 		// get anchor
-		getAbsoluteRect(anchorCS, rect, 
+		float[] anchorF = new float[5];
+		getAbsoluteRect(anchorCS, anchorF, 
 				new float[]{1,1},useInterp);
-		float[] anchorF = new float[rect.length];
-		System.arraycopy(rect,0,anchorF,0,rect.length);
+		*/
 
-		Vect anchor = new Vect((anchorF[0]-areaF[0]) / sqF[0], 
-				       (anchorF[1]-areaF[1]) / sqF[1]); 
-		//p("anchor sqd: "+anchor);
+
+		float[] anchorCoords = new float[5];
+		getSqSize(anchorCS, anchorCoords);
+
+		anchorCoords[0] *= .5f; anchorCoords[1] *= .5f;
+
+		Trans t = getTrans(anchorCS);
+		t.transformRect(anchorCoords, useInterp);
+		t.pop();
+
+		t = getTrans(areaCS);
+		t.inverseTransformRect(anchorCoords, useInterp);
+		t.pop();
+
+		float[] sqF = new float[2];
+		getSqSize(areaCS, sqF);
+
+		anchorCoords[0] /= sqF[0];
+		anchorCoords[1] /= sqF[1];
+
+		Vect anchor = new Vect(anchorCoords[0], anchorCoords[1]);
+
 		
 		float shift = floats[inds[cs()+3]+1] / sqF[0];
 		float direction = floats[inds[cs()+3]];
@@ -405,20 +422,14 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		float scale = 1 - (anchor.neg(ctr)).abs() / .5f;
 		if(scale < shift) scale = shift;
-		rect_[4] += -scale; // depth
-		rect_[0] = buoy.x() * sqF[0] + areaF[0] + 2f*scale*rect_[0]/2f;
-		rect_[1] = buoy.y() * sqF[1] + areaF[1] + 2f*scale*rect_[1]/2f;
-		rect_[2] *= scale;
-		rect_[3] *= scale;
-
+		rect_[4] -= scale; // depth
+		rect_[0] = (buoy.x() * sqF[0] + scale*rect_[0])*areaScale[0] + areaF[0];
+		rect_[1] = (buoy.y() * sqF[1] + scale*rect_[1])*areaScale[1] + areaF[1];
+		rect_[2] *= scale * areaScale[0];
+		rect_[3] *= scale * areaScale[1];
 	    }
-	    void doInverseTransformRect(float[] rect, boolean useInterp) { 
-		int parent = inds[cs()+1];
-		int anchor = inds[cs()+2];
-		inverseTransformRect(parent, rect, useInterp);
-		p("inverse parent: "+rect);
-		throw new Error("not impl.");
-	    }
+	    float w() { return 1; }
+	    float h() { return 1; }
 	},
 	new Trans() {   // 19 orthoBox
 	    public String toString() { return "orthoBox"; }
