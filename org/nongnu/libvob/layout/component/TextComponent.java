@@ -122,7 +122,7 @@ public abstract class TextComponent extends LobLob implements Component {
 			 Theme.darkColor, 1, 0, false, false, true);
     }
 
-    protected ViewportLob viewport;
+    protected Model visibleSize, natSize;
 
     protected Lob text(Sequence s) {
 	s.setModel(textModel);
@@ -134,8 +134,13 @@ public abstract class TextComponent extends LobLob implements Component {
 	    new TextCursorLob(textEditController, textCursorModel,
 			      textEditController.isFocusedModel());
 
-	viewport = new ViewportLob(scrollAxis, textCursorLob, positionModel);
-	Lob lob = new Margin(viewport, 5);
+	visibleSize = new FloatModel();
+	natSize = new FloatModel();
+	Lob lob = new SizeRequestWatcherLob(Lob.Y, textCursorLob, 
+					    null, natSize, null);
+	lob = new ViewportLob(scrollAxis, lob, positionModel);
+	lob = new Margin(lob, 5);
+	lob = new AssignedSizeWatcherLob(Lob.Y, lob, visibleSize);
 	//lob = new ClipLob(lob);
 	
 	return lob;
@@ -143,7 +148,7 @@ public abstract class TextComponent extends LobLob implements Component {
 
     protected Lob scrollbar() {
 	Lob l = new Scrollbar(Lob.Y, lineModel, lineCountModel.minus(1),
-			      viewport.getVisibleFractionModel());
+			      visibleSize.divide(natSize));
 	return new KeyLob(l, "SCROLLBAR");
     }
 
