@@ -129,7 +129,7 @@ public class LobFont extends AbstractHashtable {
 	else if(ch == '\n')
 	    return newline;
 	else {
-	    for(int i=first(ch); i>=0; i=next(ch))
+	    for(int i=first(ch); i>=0; i=next(i))
 		if(glyphChar[i] == ch)
 		    return glyph[i];
 
