@@ -47,7 +47,7 @@ public class BreakPoint extends AbstractDelegateLob implements Breakable {
 	b.pre = pre;
 	b.in = in;
 	b.post = post;
-	b.subBreakable = (Breakable)content.getInterface(Breakable.class);
+	b.subBreakable = (Breakable)content.getImplementation(Breakable.class);
 	return b;
     }
 

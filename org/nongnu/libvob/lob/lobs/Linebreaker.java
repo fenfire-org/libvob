@@ -81,7 +81,7 @@ public class Linebreaker extends RealtimeObject implements LobList {
 
 		    nextBreakQuality = -INF;
 		    
-		    Breakable br = (Breakable)l.getInterface(Breakable.class);
+		    Breakable br = (Breakable)l.getImplementation(Breakable.class);
 		    if(br != null)
 			nextBreakQuality = br.getBreakQuality(lineAxis);
 
@@ -128,7 +128,7 @@ public class Linebreaker extends RealtimeObject implements LobList {
 
 	if(breaks[line] >= 0) {
 	    Lob brLob = items.getLob(breaks[line]);
-	    Breakable br = (Breakable)brLob.getInterface(Breakable.class);
+	    Breakable br = (Breakable)brLob.getImplementation(Breakable.class);
 
 	    Lob before = br.getPostBreakLob(lineAxis);
 	    if(before != null) {
@@ -139,7 +139,7 @@ public class Linebreaker extends RealtimeObject implements LobList {
 
 	if(breaks[line+1] < items.getLobCount()) {
 	    Lob brLob = items.getLob(breaks[line+1]);
-	    Breakable br = (Breakable)brLob.getInterface(Breakable.class);
+	    Breakable br = (Breakable)brLob.getImplementation(Breakable.class);
 
 	    Lob after = br.getPreBreakLob(lineAxis);
 	    if(after != null) {

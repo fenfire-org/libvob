@@ -35,11 +35,11 @@ public abstract class AbstractDelegateLob extends AbstractLob {
 
     protected Lob delegate;
 
-    public Lob getInterface(Class clazz) {
+    public Lob getImplementation(Class clazz) {
 	if(clazz.isInstance(this))
 	    return this;
 	else
-	    return delegate.getInterface(clazz);
+	    return delegate.getImplementation(clazz);
     }
 
     public SizeRequest getSizeRequest() {

@@ -31,7 +31,7 @@ import java.util.*;
 
 public abstract class AbstractLob extends RealtimeObject implements Lob {
 
-    public Lob getInterface(Class clazz) {
+    public Lob getImplementation(Class clazz) {
 	if(clazz.isInstance(this))
 	    return this;
 	else

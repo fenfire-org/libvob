@@ -53,11 +53,11 @@ public class Between extends AbstractLob {
 	return middle.getSizeRequest();
     }
 
-    public Lob getInterface(Class clazz) {
+    public Lob getImplementation(Class clazz) {
 	if(clazz.isInstance(this))
 	    return this;
 	else
-	    return middle.getInterface(clazz);
+	    return middle.getImplementation(clazz);
     }
 
     public Lob layout(float w, float h) {

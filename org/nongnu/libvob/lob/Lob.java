@@ -52,7 +52,7 @@ public interface Lob extends Realtime {
      *  <p>
      *  If no implementation of the interface is found, return null.
      */
-    Lob getInterface(Class iface);
+    Lob getImplementation(Class iface);
 
 
     SizeRequest getSizeRequest();
