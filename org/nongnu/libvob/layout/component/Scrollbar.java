@@ -132,14 +132,15 @@ public class Scrollbar extends LobLob {
 	Model fract = (dir<0) ? fract1 : fract2;
 
 	Lob glue = new RequestChangeLob(axis, NullLob.instance, 
-					zero, zero, fract);
+					zero, zero, fract.times(LARGE));
 	return clickListener(glue, dir);
     }
 
     private Lob middle() {
 	Model min = new FloatModel(10);
 	Lob buttonRect = buttonRect(10, 10, 10);
-	return new RequestChangeLob(axis, buttonRect, min, min, knobFract);
+	return new RequestChangeLob(axis, buttonRect, min, min, 
+				    knobFract.times(LARGE));
     }
 	
     private Lob rect(float min, float nat, float max) {

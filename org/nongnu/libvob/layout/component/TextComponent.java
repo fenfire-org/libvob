@@ -122,6 +122,8 @@ public abstract class TextComponent extends LobLob implements Component {
 			 Theme.darkColor, 1, 0, false, false, true);
     }
 
+    protected ViewportLob viewport;
+
     protected Lob text(Sequence s) {
 	s.setModel(textModel);
 
@@ -132,15 +134,16 @@ public abstract class TextComponent extends LobLob implements Component {
 	    new TextCursorLob(textEditController, textCursorModel,
 			      textEditController.isFocusedModel());
 
-	Lob lob = new ViewportLob(scrollAxis, textCursorLob, positionModel);
-	lob = new Margin(lob, 5);
+	viewport = new ViewportLob(scrollAxis, textCursorLob, positionModel);
+	Lob lob = new Margin(viewport, 5);
 	//lob = new ClipLob(lob);
 	
 	return lob;
     }
 
     protected Lob scrollbar() {
-	Lob l = new Scrollbar(Lob.Y, lineModel, lineCountModel.minus(1));
+	Lob l = new Scrollbar(Lob.Y, lineModel, lineCountModel.minus(1),
+			      viewport.getVisibleFractionModel());
 	return new KeyLob(l, "SCROLLBAR");
     }
 
