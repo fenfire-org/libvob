@@ -80,22 +80,20 @@ public class KeyLob extends AbstractDelegateLob {
 	    scene.matcher.add(matchingParent, cs, key);
 	}
 
-	LocalContext.enter();
+	RoleContext.enter(this.key);
 	try {
-	    StateModel.enterSubState(this.key);
 	    delegate.render(scene, cs, cs, d, visible);
 	} finally {
-	    LocalContext.exit();
+	    RoleContext.exit();
 	}
     }
 
     public boolean key(String key) {
-	LocalContext.enter();
+	RoleContext.enter(this.key);
 	try {
-	    StateModel.enterSubState(this.key);
 	    return delegate.key(key);
 	} finally {
-	    LocalContext.exit();
+	    RoleContext.exit();
 	}
     }
 
@@ -109,12 +107,11 @@ public class KeyLob extends AbstractDelegateLob {
 	    cs = scene.matcher.getCS(cs, key);
 	}
 
-	LocalContext.enter();
+	RoleContext.enter(this.key);
 	try {
-	    StateModel.enterSubState(this.key);
 	    return delegate.mouse(e, scene, cs, x, y);
 	} finally {
-	    LocalContext.exit();
+	    RoleContext.exit();
 	}
     }
 

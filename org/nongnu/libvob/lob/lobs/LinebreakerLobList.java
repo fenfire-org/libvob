@@ -147,11 +147,14 @@ public class LinebreakerLobList extends RealtimeList {
 
 	if(breaks[line+1] < items.size()) {
 	    Lob brLob = (Lob)items.get(breaks[line+1]);
-	    Breakable br = (Breakable)brLob.getImplementation(Breakable.class);
+	    Breakable br = 
+		(Breakable)brLob.getImplementation(Breakable.class);
 
-	    Lob after = br.getPreBreakLob(lineAxis);
-	    if(after != null) {
-		lobs = Lists.concat(lobs, Lists.list(after));
+	    if(br != null) {
+		Lob after = br.getPreBreakLob(lineAxis);
+		if(after != null) {
+		    lobs = Lists.concat(lobs, Lists.list(after));
+		}
 	    }
 	}
 

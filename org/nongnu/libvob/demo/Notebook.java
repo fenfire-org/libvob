@@ -99,41 +99,31 @@ public class Notebook extends NewLobMain {
 
 	List vbox = Lists.list();
 
-	Lob titleLob;
-
-	LocalContext.enter(); 
+	RoleContext.enter("title"); 
 	try {
-	    StateModel.enterSubState("title");
-
 	    Model titleModel = new_Model_5(selectedNote);
 
-	    titleLob = Components.textBox(titleModel, Maps.map());
+	    Lob titleLob = Components.textBox(titleModel, Maps.map());
+	    titleLob = RoleContext.lob(titleLob);
+	    vbox.add(titleLob);
 	} finally {
-	    LocalContext.exit();
+	    RoleContext.exit();
 	}
-
-	titleLob = Lobs.key(titleLob, "title");
-	vbox.add(titleLob);
 
 	vbox.add(Lobs.glue(Axis.Y, 5, 5, 5));
 
-	Lob bodyLob;
-
-	LocalContext.enter(); 
+	RoleContext.enter("body"); 
 	try {
-	    StateModel.enterSubState("body");
-
 	    Model bodyModel = new_Model_6(selectedNote);
 	    
-	    bodyLob = Components.textArea(bodyModel, Maps.map());
+	    Lob bodyLob = Components.textArea(bodyModel, Maps.map());
 	    bodyLob = Lobs.request(Axis.Y, bodyLob, 30, 100, SizeRequest.INF);
+	    bodyLob = RoleContext.lob(bodyLob);
+	    vbox.add(bodyLob);
 	} finally {
-	    LocalContext.exit();
+	    RoleContext.exit();
 	}
 
-	bodyLob = Lobs.key(bodyLob, "body");
-	vbox.add(bodyLob);
-	    
 	hbox.add(Lobs.vbox(vbox));
 
 	hbox.add(Lobs.glue(Axis.X, 5, 5, 5));
