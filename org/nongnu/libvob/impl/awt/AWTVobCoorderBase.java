@@ -39,12 +39,6 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     private static void p(String s) { System.out.println("AWTCoorder:: "+s); }
 
 
-    public static class DoNotInterpolateException extends RuntimeException {
-	public DoNotInterpolateException(String s) { super(s); }
-	public DoNotInterpolateException() { super(); }
-    }
-
-
     float width, height;
     final DepthSorter sorter;
     public AWTVobCoorderBase(float w, float h) {
@@ -127,15 +121,25 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     AWTVobCoorderBase otherCoorder;
     float fract;
 
-    public void setInterpInfo(int cs1, AWTVobCoorderBase other, 
-			      int[] interpList, float fract,
-			      OrthoRenderInfo info
-			) throws DoNotInterpolateException {
+    /**
+     *  Return true if the coordinate system should be interpolated,
+     *  false if one of its ancestors is DONT_INTERP in the interp list.
+     */
+    public boolean setInterpInfo(int cs1, AWTVobCoorderBase other, 
+				 int[] interpList, float fract,
+				 OrthoRenderInfo info) {
+
 	//p("cs: "+cs1);
 	if(interpList != null) {
 	    this.interpList = interpList;
 	    this.otherCoorder = other;
 	    this.fract = fract;
+
+	    Trans t = getTrans(cs1);
+	    boolean dontInterp = t.isDontInterpSet();
+	    t.pop();
+	    
+	    if(dontInterp) return false;
 	    
 	    getAbsoluteRect(cs1, cs1rect, scale, true);
 	} else {
@@ -145,6 +149,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
         info.setCoords(cs1rect[4],// depth
                        cs1rect[0], cs1rect[1], cs1rect[2], cs1rect[3],
                        scale[0], scale[1]);
+
+	return true;
 
 	/*
 	int cs2;
@@ -190,11 +196,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     }
 
     public void setInfo(int cs, OrthoRenderInfo info) {
-	try {
-	    setInterpInfo(cs, this, null, 0, info);
-	} catch(DoNotInterpolateException e) {
-	    throw new Error(e);
-	}
+	setInterpInfo(cs, this, null, 0, info);
     }
 
 
@@ -214,6 +216,8 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    float w() { return 1; }
 	    float h() { return 1; }
 	    void getWH(float[] wh, boolean useInterp) { wh[0] = wh[1] = 1; }
+
+	    int nparents() { return 0; }
 	};
 
     
@@ -230,6 +234,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		transformRect(inds[cs()+2], rect, useInterp);
 		transformRect(inds[cs()+1], rect, useInterp);
 	    }
+	    int nparents() { return 2; }
 	},
 	new Trans() {   // 6 concatInverse
 	    public String toString() { return "concat inverse"; }
@@ -237,6 +242,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		inverseTransformRect(inds[cs()+2], rect, useInterp);
 		transformRect(inds[cs()+1], rect, useInterp);
 	    }
+	    int nparents() { return 2; }
 	},
 	new Trans() {   // 7 translate
 	    public String toString() { return "translate"; }
@@ -448,6 +454,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    }
 	    float w() { return 1; }
 	    float h() { return 1; }
+	    int nparents() { return 2; }
 	},
 	new Trans() {   // 19 orthoBox
 	    public String toString() { return "orthoBox"; }
@@ -535,6 +542,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		rect[4] += (af[4] > bf[4]) ? af[4] : bf[4];
 	    }
+	    int nparents() { return 2; }
 	},
 	new Trans() {   // 22 translatePolar
 	    void doTransformRect(float[] rect, boolean useInterp) { 
@@ -628,6 +636,9 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	int getParent() { return inds[cs()+1]; }
 	Trans getParentTrans() { return getTrans(inds[cs()+1]); }
 
+	/** how many parents (param coordinate systems) this cs type has */
+	int nparents() { return 1; }
+
 	protected void transformRect(int cs, float[] rect, boolean useInterp) {
 	    Trans t = getTrans(cs);
 	    try {
@@ -688,7 +699,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		    for(int i=0; i<rect.length; i++)
 			rect[i] = i(rect[i], tmprect[i], fract);
 		} else if(ocs == VobMatcher.DONT_INTERP) {
-		    throw new DoNotInterpolateException();
+		    throw new Error("transform called with useInterp=true on a cs that has DONT_INTERP set");
 		} else if(ocs == VobMatcher.SHOW_IN_INTERP) {
 		    if(!inverse)
 			doTransformRect(rect, true);
@@ -709,8 +720,11 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     
 	abstract void doTransformRect(float[] rect, boolean useInterp);
 
-	void doInverseTransformRect(float[] rect_, boolean useInterp) { 
-	    float[] rect = new float[5];
+	void doInverseTransformRect(float[] rect, boolean useInterp) { 
+	    float rx = rect[0], ry = rect[1], rw = rect[2], rh = rect[3];
+	    float rd = rect[4];
+
+	    rect[0] = rect[1] = rect[4] = 0;
 	    rect[2] = rect[3] = 1;
 	    doTransformRect(rect, useInterp);
 	    
@@ -718,11 +732,12 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    float scaleX = rect[2], scaleY = rect[3];
 	    float depth = rect[4];
 	    
-	    rect_[0] -= x; rect_[1] -= y;
-	    rect_[4] -= depth;
+	    rect[0] = rx-x; rect[1] = ry-y;
+	    rect[2] = rw;   rect[3] = rh;
+	    rect[4] = rd-depth;
 	    
-	    rect_[0] /= scaleX; rect_[1] /= scaleY;
-	    rect_[2] /= scaleX; rect_[3] /= scaleY;
+	    rect[0] /= scaleX; rect[1] /= scaleY;
+	    rect[2] /= scaleX; rect[3] /= scaleY;
 	}
 
 	float sx() { 
@@ -782,6 +797,19 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    } else if(ocs == VobMatcher.SHOW_IN_INTERP) {
 		wh[0] = w(); wh[1] = h();
 	    }		
+	}
+
+	boolean isDontInterpSet() {
+	    if(cs() < interpList.length && 
+	       interpList[cs()] == VobMatcher.DONT_INTERP) return true;
+	    
+	    for(int i=0; i<nparents(); i++) {
+		Trans p = getTrans(inds[cs()+i+1]);
+		if(p.isDontInterpSet()) { p.pop(); return true; }
+		p.pop();
+	    }
+
+	    return false;
 	}
     }
 

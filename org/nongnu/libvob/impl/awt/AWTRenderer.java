@@ -131,16 +131,9 @@ public class AWTRenderer {
 		    }
 		    */
 
-		    try {
-			((AWTVobCoorderBase)sc.coords).setInterpInfo(
-			    my, ((AWTVobCoorderBase)osc.coords), interpList, 
-			    fract, (OrthoRenderInfo)info);
-			//System.out.println("interplist = "+interpList);
-			return true;
-		    } catch(AWTVobCoorderBase.DoNotInterpolateException e) {
-			//System.out.println("do-not-interp-exception");
-			return false;
-		    }
+		    return ((AWTVobCoorderBase)sc.coords).setInterpInfo(
+		        my, ((AWTVobCoorderBase)osc.coords), interpList,
+			fract, (OrthoRenderInfo)info);
 		} else {
 		    if(dbg) p("...interpTo == null");
 		    ((AWTVobCoorderBase)sc.coords).setInfo(
