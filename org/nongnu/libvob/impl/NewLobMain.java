@@ -111,10 +111,24 @@ public abstract class NewLobMain extends Main {
 	}
     }
 
+    protected boolean dontUseFocusLob = false;
+
     protected class LobBinder extends AbstractBinder {
 	public void keystroke(String key) {
 	    if(!initialized) return;
 
+	    if(dontUseFocusLob) {
+		// ARGH!!!
+		PoolContext.enter();
+		try {
+		    Lob lob = createLob();
+		    List focusable = lob.getFocusableLobs();
+		    if(focusable.size() > 0) focusModel.set(focusable.get(0));
+		} finally {
+		    PoolContext.exit();
+		}
+	    }
+	    
 	    PoolContext.enter();
 	    LocalContext.enter();
 	    try {
