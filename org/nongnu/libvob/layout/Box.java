@@ -357,8 +357,6 @@ public class Box extends AbstractSequence {
 	positionsAreCurrent = true;
     }
 
-    int nc;
-
     public void chg() {
 	if(!isLayouting) {
 	    sizesAreCurrent = positionsAreCurrent = false;
