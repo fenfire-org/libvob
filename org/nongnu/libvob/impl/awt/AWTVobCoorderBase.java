@@ -1,7 +1,7 @@
 /*
 AWTVobCoorder.java
  *
- *    Copyright (c) 2004, Matti J. Katila and Benja Fallenstein
+ *    Copyright (c) 2004-2005, Matti J. Katila and Benja Fallenstein
  *
  *    This file is part of Libvob.
  *    
@@ -54,26 +54,46 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     int ninds = 1; // zero is special (the root)
     ChildVobScene[] children = new ChildVobScene[128];
 
+    int[] cses = new int[128];
+    int ncs = 1;
+
     public void clear() {
 	nfloats = 0;
 	ninds = 1;
+	ncs = 1;
     }
 
 
-    protected class Interpolation {
+    /** A set of coordinates for each cs in this coorder -- there's one set
+     *  for the coorder by itself, and one set for every interpolation frame.
+     *  (XXX currently only one for the coorder and none per frame)
+     */
+    protected class Coordinates {
 	float[] coords;
-	boolean[] interpolate;
-	AWTVobCoorderBase other;
+	//boolean[] interpolated;
 
-	public Interpolation() {
-	    coords = new float[ninds*5];
-	    interpolate = new boolean[ninds];
-	    // XXX fill
+	public void init() {
+	    p("init!");
+
+	    if(coords == null || ninds*5 > coords.length) {
+		coords = new float[ninds*5];
+		//interpolated = new boolean[ninds];
+	    }
+
+	    Arrays.fill(coords, 0);
+	    //Arrays.fill(interpolated, false);
+
+	    for(int i=0; i<ncs; i++) {
+		Trans t = getTrans(cses[i]);
+		t.put(this);
+		//p("init "+i+"th ("+cses[i]+", type "+inds[cses[i]]+") to "+coords[5*cses[i]+0]+" "+coords[5*cses[i]+1]+" "+coords[5*cses[i]+2]+" "+coords[5*cses[i]+3]+" "+coords[5*cses[i]+4]);
+		t.pop();
+	    }
 	}
 
-	public void clear() {
-	    Arrays.fill(coords, 0);
-	    Arrays.fill(interpolate, false);
+	void check() {
+	    if(coords == null || ninds*5 > coords.length)
+		init();
 	}
 
 	float x(int cs) { return coords[5*cs]; }
@@ -89,13 +109,15 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	void setD(int cs, float value) { coords[5*cs+4] = value; }
 
 	void copy(int from, int to) {
-	    for(int i=0; i<5; i++) coords[5*from+i] = coords[5*to+i];
+	    for(int i=0; i<5; i++) coords[5*to+i] = coords[5*from+i];
 	}
 
-	public boolean transform(int cs, float[] rect) {
+	public void transform(int cs, float[] rect) {
+	    check();
+
 	    int i = 5*cs;
 
-	    if(!interpolate[cs]) return false;
+	    //if(!interpolated[cs]) return false;
 
 	    rect[0] *= coords[i+2]; rect[1] *= coords[i+3];
 	    rect[2] *= coords[i+2]; rect[3] *= coords[i+3];
@@ -103,10 +125,12 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    rect[0] += coords[i]; rect[1] += coords[i+1];
 	    rect[4] += coords[i+4];
 
-	    return true;
+	    //return true;
 	}
 
 	public boolean inverseTransform(int cs, float[] rect) {
+	    check();
+
 	    int i = 5*cs;
 	    if(coords[i] < 0) return false;
 
@@ -130,6 +154,14 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	}
     }
     protected final void addInds(int n) { 
+	if(ncs+1 > cses.length) {
+	    int[] ncses = new int[cses.length*2];
+	    System.arraycopy(cses, 0, ncses, 0, cses.length);
+	    cses = ncses;
+	}
+	cses[ncs] = ninds;
+	ncs++;
+
 	ninds += n; 
 	if(ninds > inds.length) {
 	    int[] ni = new int[inds.length*2];
@@ -144,11 +176,15 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     static float i(float a, float b, float fract)
 	{ return (a + fract * (b-a)); }
 
+    static void interpolate(float[] a, float[] b, float fract) {
+	for(int i=0; i<a.length; i++) a[i] = i(a[i], b[i], fract);
+    }
+
 
     float[] cs1rect = new float[5];
     float[] cs2rect = new float[5];
     float[] wh = new float[4];
-    float[] scale = new float[2];
+    float[] scale = new float[2], scale2 = new float[2];
 
     protected void getAbsoluteRect(int cs, float[] into, float[] scale,
 				   boolean useInterp) {
@@ -160,10 +196,12 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    for (int i=0; i<4; i++)
 		p("info: "+into[i]);
 	}
+
+	coordinates.transform(cs, into);
 	
 	Trans t = getTrans(cs);
 	try {
-	    t.transformRect(into, useInterp);
+	    //t.transformRect(into, useInterp);
 	    t.getWH(wh, useInterp);
 	    //scale[0] = t.sx(); scale[1] = t.sy();
 	} finally {
@@ -182,36 +220,57 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     AWTVobCoorderBase otherCoorder;
     float fract;
 
+    Coordinates coordinates = new Coordinates();
+
     /**
      *  Return true if the coordinate system should be interpolated,
      *  false if one of its ancestors is DONT_INTERP in the interp list.
      */
-    public boolean setInterpInfo(int cs1, AWTVobCoorderBase other, 
+    public boolean setInterpInfo(int cs, AWTVobCoorderBase other, 
 				 int[] interpList, float fract,
 				 OrthoRenderInfo info) {
 
-	//p("cs: "+cs1);
-	if(interpList != null) {
-	    this.interpList = interpList;
-	    this.otherCoorder = other;
-	    this.fract = fract;
+	coordinates.check();
 
-	    Trans t = getTrans(cs1);
-	    boolean dontInterp = t.isDontInterpSet();
+	int ocs;
+	boolean dontInterp = false;
+
+	if(interpList != null && cs < interpList.length)
+	    ocs = interpList[cs];
+	else
+	    ocs = VobMatcher.SHOW_IN_INTERP;
+
+	getAbsoluteRect(cs, cs1rect, scale, false);
+
+	if(ocs >= 0) {
+	    this.otherCoorder = other;
+	    this.interpList = interpList;
+
+	    Trans t = getTrans(cs);
+	    dontInterp = t.isDontInterpSet();
 	    t.pop();
-	    
-	    if(dontInterp) return false;
-	    
-	    getAbsoluteRect(cs1, cs1rect, scale, true);
+
+	    if(!dontInterp) {
+		other.getAbsoluteRect(ocs, cs2rect, scale2, false);
+		
+		interpolate(cs1rect, cs2rect, fract);
+		interpolate(scale, scale2, fract);
+	    }
+	} else if(ocs == VobMatcher.DONT_INTERP) {
+	    dontInterp = true;
+	} else if(ocs == VobMatcher.SHOW_IN_INTERP) {
+	    getAbsoluteRect(cs, cs1rect, scale, false);
 	} else {
-	    getAbsoluteRect(cs1, cs1rect, scale, false);
+	    throw new UnsupportedOperationException("Interpolation type: "+ocs);
 	}
 
+	//p("set "+cs+": "+cs1rect[0]+" "+cs1rect[1]+" "+cs1rect[2]+" "+cs1rect[3]+" "+cs1rect[4]+" "+scale[0]+" "+scale[1]);
+	    
         info.setCoords(cs1rect[4],// depth
                        cs1rect[0], cs1rect[1], cs1rect[2], cs1rect[3],
                        scale[0], scale[1]);
 
-	return true;
+	return !dontInterp;
     }
 
     public void setInfo(int cs, OrthoRenderInfo info) {
@@ -221,7 +280,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
     Trans noOp = new Trans(){
 	    public String toString() { return "no op"; }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		into.copy(getParent(), cs());
 	    }
 	    void doTransformRect(float[] rect, boolean useInterp) { 
@@ -239,7 +298,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    float h() { return 1; }
 	    void getWH(float[] wh, boolean useInterp) { wh[0] = wh[1] = 1; }
 
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		into.setX(cs(), 0); 
 		into.setY(cs(), 0);
 		into.setSX(cs(), 1);
@@ -264,7 +323,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		transformRect(inds[cs()+2], rect, useInterp);
 		transformRect(inds[cs()+1], rect, useInterp);
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		int p1 = inds[cs()+1], p2 = inds[cs()+2];
 		into.setX(cs(), into.x(p2)*into.sx(p1) + into.x(p1));
 		into.setY(cs(), into.y(p2)*into.sy(p1) + into.y(p1));
@@ -280,7 +339,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		inverseTransformRect(inds[cs()+2], rect, useInterp);
 		transformRect(inds[cs()+1], rect, useInterp);
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		int p1 = inds[cs()+1], p2 = inds[cs()+2];
 		into.setX(cs(), into.x(p2)*into.sx(p1)/into.sx(p2)+into.x(p1));
 		into.setY(cs(), into.y(p2)*into.sy(p1)/into.sy(p2)+into.y(p1));
@@ -300,12 +359,13 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		transformRect(getParent(), rect, useInterp);
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		int f = inds[cs()+2];
 		into.copy(getParent(), cs());
 		into.setX(cs(), into.x(cs()) + floats[f+0]);
 		into.setY(cs(), into.y(cs()) + floats[f+1]);
-		into.setD(cs(), into.d(cs()) + floats[f+4]);
+		into.setD(cs(), into.d(cs()) + floats[f+2]);
+		//p("put transl "+getParent()+" "+floats[f+0]+" "+floats[f+1]+" "+floats[f+2]);
 	    }
 	},
 	new Trans() {   // 8 scale
@@ -320,7 +380,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		transformRect(getParent(), rect, useInterp);
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		int f = inds[cs()+2];
 		into.copy(getParent(), cs());
 		into.setX(cs(), into.x(cs()) * floats[f+0]);
@@ -346,7 +406,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    void doTransformRect(float[] rect, boolean useInterp) { 
 		transformRect(getParent(), rect, useInterp);
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		into.copy(getParent(), cs());
 	    }
 	    float w() {
@@ -376,13 +436,13 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		transformRect(getParent(), rect, useInterp);
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		int f = inds[cs()+2];
-		into.setX(cs(), floats[f+0]*into.sx(cs()) + into.x(cs()));
-		into.setY(cs(), floats[f+1]*into.sy(cs()) + into.y(cs()));
-		into.setSX(cs(), floats[f+2]*into.sx(cs()));
-		into.setSY(cs(), floats[f+3]*into.sy(cs()));
-		into.setD(cs(), floats[f+4] + into.d(cs()));
+		into.setX(cs(), floats[f+1]*into.sx(cs()) + into.x(cs()));
+		into.setY(cs(), floats[f+2]*into.sy(cs()) + into.y(cs()));
+		into.setSX(cs(), floats[f+3]*into.sx(cs()));
+		into.setSY(cs(), floats[f+4]*into.sy(cs()));
+		into.setD(cs(), floats[f+0] + into.d(cs()));
 	    }
 	    float sx() {
 		int f = inds[cs()+2];
@@ -526,7 +586,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		}
 	    }
 
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		float[] f = getarr();
 		f[2] = f[3] = 1;
 		doTransformRect(f, false); // XXX useInterp shouldn't always be 'false', I suppose
@@ -558,15 +618,15 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		transformRect(getParent(), rect, useInterp);
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		int f = inds[cs()+2];
-		into.setX(cs(), floats[f+0]*into.sx(getParent()) + 
+		into.setX(cs(), floats[f+1]*into.sx(getParent()) + 
 			        into.x(getParent()));
-		into.setY(cs(), floats[f+1]*into.sy(getParent()) + 
+		into.setY(cs(), floats[f+2]*into.sy(getParent()) + 
 			        into.y(getParent()));
-		into.setSX(cs(), floats[f+2]*into.sx(getParent()));
-		into.setSY(cs(), floats[f+3]*into.sy(getParent()));
-		into.setD(cs(), floats[f+4] + into.d(getParent()));
+		into.setSX(cs(), floats[f+3]*into.sx(getParent()));
+		into.setSY(cs(), floats[f+4]*into.sy(getParent()));
+		into.setD(cs(), floats[f+0] + into.d(getParent()));
 	    }
 	    float sx() {
 		int f = inds[cs()+2];
@@ -598,7 +658,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		//System.out.println(rect[0]+" "+rect[1]+" "+rect[2]+" "+rect[3]);
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		into.copy(getParent(), cs());
 		into.setSX(cs(), sx()*into.sx(cs()));
 		into.setSY(cs(), sy()*into.sy(cs()));
@@ -643,7 +703,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 
 		rect[4] += (af[4] > bf[4]) ? af[4] : bf[4];
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		int p1 = inds[cs()+1], p2 = inds[cs()+2];
 		into.setX(cs(), (into.x(p1)+into.x(p2)) / 2);
 		into.setY(cs(), (into.y(p1)+into.y(p2)) / 2);
@@ -668,7 +728,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 		rect[0] += dist*cos;
 		rect[1] += dist*sin;
 	    }
-	    void put(Interpolation into) {
+	    void put(Coordinates into) {
 		into.copy(getParent(), cs());
 
 		int f = inds[cs()+2];
@@ -764,7 +824,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	/** how many parents (param coordinate systems) this cs type has */
 	int nparents() { return 1; }
 
-	abstract void put(Interpolation into);
+	abstract void put(Coordinates into);
 
 	protected void transformRect(int cs, float[] rect, boolean useInterp) {
 	    Trans t = getTrans(cs);
