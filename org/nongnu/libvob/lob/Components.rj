@@ -107,6 +107,35 @@ public class Components {
 	return lob;
     }
 
+    /** A checkbox without a label or stuff like that, just the box.
+     */
+    public static Lob singleCheckBox(Model state) {
+	Lob lob;
+
+	if(state.get() == Boolean.TRUE) {
+	    lob = Lobs.tray(false);
+	    lob.add(Lobs.line(Color.black, 0, 0, 1, 1));
+	    lob.add(Lobs.line(Color.black, 0, 1, 1, 0));
+	} else {
+	    lob = Lobs.nullLob();
+	}
+
+	lob = frame(lob);
+
+	lob = Lobs.clickController(lob, 1, new @realtime-i Action(Model state) {
+	    public void run() {
+		if(state.get() == Boolean.TRUE) {
+		    state.set(Boolean.FALSE);
+		} else {
+		    state.set(Boolean.TRUE);
+		}
+	    }
+	});
+
+	lob = Lobs.request(lob, 15, 15, 15, 15, 15, 15);
+	return lob;
+    }
+
     public static Lob listBox(List elements, Map params) {
 	Transform tr = (Transform)getParam(params, "transform", 
 					   toStringTransform());

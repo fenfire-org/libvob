@@ -72,13 +72,20 @@ public class LobDemo extends NewLobMain {
         lob = Lobs.key(lob, "table");
         tray.add(lob);
 
-        lob = Lobs.hbox(Lobs.text(Components.font(Color.blue), "Hello world!"));
+	lob = Lobs.hbox();
+	Model state = Components.getModel(Maps.map(), "checkbox state", null);
+	lob.add(Components.singleCheckBox(state));
+
+	lob.add(Lobs.glue(Axis.X, 5, 5, 5));
+
+        lob.add(Lobs.hbox(Lobs.text(Components.font(Color.blue), "Hello world!")));
+	
         lob = Lobs.frame3d(lob, null, Color.red, 1, 5, false, true);
         lob = Lobs.align(lob, .5f, .5f);
         lob = Lobs.request(lob, 400, 400, 400, 100, 100, 100);
         lob = Lobs.translate(lob, 100, 0);
         lob = Lobs.key(lob, "hello world");
-        tray.add(lob);
+	tray.add(lob);
 
 	List elements = Lists.fromArray(new Object[] {
 	    "Alpha", "Beta", "Gamma", "Eene", "Meene",

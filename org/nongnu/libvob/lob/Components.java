@@ -110,6 +110,27 @@ public class Components {
 	return lob;
     }
 
+    /** A checkbox without a label or stuff like that, just the box.
+     */
+    public static Lob singleCheckBox(Model state) {
+	Lob lob;
+
+	if(state.get() == Boolean.TRUE) {
+	    lob = Lobs.tray(false);
+	    lob.add(Lobs.line(Color.black, 0, 0, 1, 1));
+	    lob.add(Lobs.line(Color.black, 0, 1, 1, 0));
+	} else {
+	    lob = Lobs.nullLob();
+	}
+
+	lob = frame(lob);
+
+	lob = Lobs.clickController(lob, 1, new_Action_1(state));
+
+	lob = Lobs.request(lob, 15, 15, 15, 15, 15, 15);
+	return lob;
+    }
+
     public static Lob listBox(List elements, Map params) {
 	Transform tr = (Transform)getParam(params, "transform", 
 					   toStringTransform());
@@ -119,7 +140,7 @@ public class Components {
 
 	Axis axis = (Axis)getParam(params, "axis", Axis.Y);
 
-	tr = new_Transform_1(tr,selected);
+	tr = new_Transform_2(tr,selected);
 
 	List lobs = Lists.transform(elements, tr);
 	Lob glue = Lobs.glue(axis, 0, 0, SizeRequest.INF);
@@ -190,7 +211,7 @@ public class Components {
     public static Lob menuitem(Lob lob, Lob submenu) {
 	Model openModel = StateModel.newInstance("open", Boolean.FALSE);
 
-	Action action = new_Action_2(openModel);
+	Action action = new_Action_3(openModel);
 
 	lob = Lobs.margin(lob, 8, 2);
 
@@ -221,12 +242,48 @@ public class Components {
 
 
     public static Transform toStringTransform() {
-	return new_Transform_3();
+	return new_Transform_4();
     }
 
-        private static class _Transform_1 extends RealtimeObject implements Transform {
+        private static class _Action_1 extends RealtimeObject implements Action {
 
-            private _Transform_1() {}
+            private _Action_1() {}
+
+            Model state;
+
+            
+	    public void run() {
+		if(state.get() == Boolean.TRUE) {
+		    state.set(Boolean.FALSE);
+		} else {
+		    state.set(Boolean.TRUE);
+		}
+	    }
+	
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    if(((Object)state) instanceof Realtime) ((Realtime)((Object)state)).move(os); 
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private static final RealtimeObject.Factory _Action_1_FACTORY =
+            new RealtimeObject.Factory() {
+                protected Object create() { return new _Action_1(); }
+            };
+
+        private static _Action_1 new_Action_1(Model state) {
+            _Action_1 the_new_Action_1 = (_Action_1)_Action_1_FACTORY.object();
+            the_new_Action_1.state = state;
+            return the_new_Action_1;
+        }
+    
+        private static class _Transform_2 extends RealtimeObject implements Transform {
+
+            private _Transform_2() {}
 
             Transform tr; Model selected;
 
@@ -235,7 +292,7 @@ public class Components {
 		Lob lob = (Lob)tr.transform(o);
 		lob = Lobs.margin(lob, 1);
 
-		Action select = new_Action_4(selected,o);
+		Action select = new_Action_5(selected,o);
 
 		lob = Lobs.clickController(lob, 1, select);
                     
@@ -252,21 +309,21 @@ public class Components {
             }
         }
 
-        private static final RealtimeObject.Factory _Transform_1_FACTORY =
+        private static final RealtimeObject.Factory _Transform_2_FACTORY =
             new RealtimeObject.Factory() {
-                protected Object create() { return new _Transform_1(); }
+                protected Object create() { return new _Transform_2(); }
             };
 
-        private static _Transform_1 new_Transform_1(Transform tr, Model selected) {
-            _Transform_1 the_new_Transform_1 = (_Transform_1)_Transform_1_FACTORY.object();
-            the_new_Transform_1.tr = tr;
-the_new_Transform_1.selected = selected;
-            return the_new_Transform_1;
+        private static _Transform_2 new_Transform_2(Transform tr, Model selected) {
+            _Transform_2 the_new_Transform_2 = (_Transform_2)_Transform_2_FACTORY.object();
+            the_new_Transform_2.tr = tr;
+the_new_Transform_2.selected = selected;
+            return the_new_Transform_2;
         }
     
-        private static class _Action_2 extends RealtimeObject implements Action {
+        private static class _Action_3 extends RealtimeObject implements Action {
 
-            private _Action_2() {}
+            private _Action_3() {}
 
             Model openModel;
 
@@ -290,20 +347,20 @@ the_new_Transform_1.selected = selected;
             }
         }
 
-        private static final RealtimeObject.Factory _Action_2_FACTORY =
+        private static final RealtimeObject.Factory _Action_3_FACTORY =
             new RealtimeObject.Factory() {
-                protected Object create() { return new _Action_2(); }
+                protected Object create() { return new _Action_3(); }
             };
 
-        private static _Action_2 new_Action_2(Model openModel) {
-            _Action_2 the_new_Action_2 = (_Action_2)_Action_2_FACTORY.object();
-            the_new_Action_2.openModel = openModel;
-            return the_new_Action_2;
+        private static _Action_3 new_Action_3(Model openModel) {
+            _Action_3 the_new_Action_3 = (_Action_3)_Action_3_FACTORY.object();
+            the_new_Action_3.openModel = openModel;
+            return the_new_Action_3;
         }
     
-        private static class _Transform_3 extends RealtimeObject implements Transform {
+        private static class _Transform_4 extends RealtimeObject implements Transform {
 
-            private _Transform_3() {}
+            private _Transform_4() {}
 
             ;
 
@@ -325,20 +382,20 @@ the_new_Transform_1.selected = selected;
             }
         }
 
-        private static final RealtimeObject.Factory _Transform_3_FACTORY =
+        private static final RealtimeObject.Factory _Transform_4_FACTORY =
             new RealtimeObject.Factory() {
-                protected Object create() { return new _Transform_3(); }
+                protected Object create() { return new _Transform_4(); }
             };
 
-        private static _Transform_3 new_Transform_3() {
-            _Transform_3 the_new_Transform_3 = (_Transform_3)_Transform_3_FACTORY.object();
+        private static _Transform_4 new_Transform_4() {
+            _Transform_4 the_new_Transform_4 = (_Transform_4)_Transform_4_FACTORY.object();
             
-            return the_new_Transform_3;
+            return the_new_Transform_4;
         }
     
-        private static class _Action_4 extends RealtimeObject implements Action {
+        private static class _Action_5 extends RealtimeObject implements Action {
 
-            private _Action_4() {}
+            private _Action_5() {}
 
             Model selected;
 						       Object o;
@@ -358,15 +415,15 @@ the_new_Transform_1.selected = selected;
             }
         }
 
-        private static final RealtimeObject.Factory _Action_4_FACTORY =
+        private static final RealtimeObject.Factory _Action_5_FACTORY =
             new RealtimeObject.Factory() {
-                protected Object create() { return new _Action_4(); }
+                protected Object create() { return new _Action_5(); }
             };
 
-        private static _Action_4 new_Action_4(Model selected, Object o) {
-            _Action_4 the_new_Action_4 = (_Action_4)_Action_4_FACTORY.object();
-            the_new_Action_4.selected = selected;
-the_new_Action_4.o = o;
-            return the_new_Action_4;
+        private static _Action_5 new_Action_5(Model selected, Object o) {
+            _Action_5 the_new_Action_5 = (_Action_5)_Action_5_FACTORY.object();
+            the_new_Action_5.selected = selected;
+the_new_Action_5.o = o;
+            return the_new_Action_5;
         }
     }
