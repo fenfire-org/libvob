@@ -67,8 +67,10 @@ public class ArrayVobMatcher implements VobMatcher {
     protected void addToHashtable(int cs) {
 	int i = hashIndex(csHash(cs));
 	for(int cs2=hashtable[i]; cs2>0; cs2=csNextInHashtable[cs2])
-	    if(cs2==cs)
-		throw new Error("XXX cycle in hashtable @ "+i+": "+cs+" "+csParent[cs]+" "+csKey[cs]);
+	    if(cs2==cs) {
+		return; // XXX what does this mean?
+		//throw new Error("XXX cycle in hashtable @ "+i+": "+cs+" "+csParent[cs]+" "+csKey[cs]);
+	    }
 	csNextInHashtable[cs] = hashtable[i];
 	hashtable[i] = cs;
 	ensureHashtable();
