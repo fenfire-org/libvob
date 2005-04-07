@@ -239,6 +239,10 @@ public class Lobs {
 	return KeyController.newInstance(child, actions);
     }
 
+    public static Lob ignoreKeyEventsLob(Lob delegate) {
+	return new_AbstractDelegateLob_3(delegate);
+    }
+
     public static Lob hbox() {
 	return hbox(Lists.list());
     }
@@ -379,5 +383,45 @@ the_new_AbstractPositionLob_1.parentY = parentY;
             the_new_RealtimeList_2.lobs = lobs;
 the_new_RealtimeList_2.key = key;
             return the_new_RealtimeList_2;
+        }
+    
+        private static class _AbstractDelegateLob_3 extends AbstractDelegateLob {
+
+            private _AbstractDelegateLob_3() {}
+
+            ;
+
+            
+	    public boolean key(String key) {
+		return false;
+	    }
+
+	    public List getFocusableLobs() {
+		return Lists.list();
+	    }
+
+	    public Lob wrap(Lob l) {
+		return ignoreKeyEventsLob(l);
+	    }
+	
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    if(((Object)delegate) instanceof Realtime) ((Realtime)((Object)delegate)).move(os); 
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private static final RealtimeObject.Factory _AbstractDelegateLob_3_FACTORY =
+            new RealtimeObject.Factory() {
+                protected Object create() { return new _AbstractDelegateLob_3(); }
+            };
+
+        private static _AbstractDelegateLob_3 new_AbstractDelegateLob_3(Lob delegate) {
+            _AbstractDelegateLob_3 the_new_AbstractDelegateLob_3 = (_AbstractDelegateLob_3)_AbstractDelegateLob_3_FACTORY.object();
+            the_new_AbstractDelegateLob_3.delegate = delegate;
+            return the_new_AbstractDelegateLob_3;
         }
     }

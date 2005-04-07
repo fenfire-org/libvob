@@ -253,6 +253,22 @@ public class Lobs {
 	return KeyController.newInstance(child, actions);
     }
 
+    public static Lob ignoreKeyEventsLob(Lob delegate) {
+	return new @realtime AbstractDelegateLob(@set Lob delegate) {
+	    public boolean key(String key) {
+		return false;
+	    }
+
+	    public List getFocusableLobs() {
+		return Lists.list();
+	    }
+
+	    public Lob wrap(Lob l) {
+		return ignoreKeyEventsLob(l);
+	    }
+	};
+    }
+
     public static Lob hbox() {
 	return hbox(Lists.list());
     }
