@@ -34,16 +34,20 @@ import org.nongnu.libvob.*;
 public class TranslateLob extends AbstractDelegateLob {
 
     protected float x, y, z;
+    protected boolean testBoundsInMouse;
     protected float width, height;
 
     private TranslateLob() {}
 
-    public static TranslateLob newInstance(Lob content, float x, float y,
-					   float z) {
+    public static TranslateLob newInstance(Lob content, 
+					   float x, float y, float z, 
+					   boolean testBoundsInMouse) {
 	TranslateLob m = (TranslateLob)FACTORY.object();
 	m.delegate = content;
 
 	m.x = x; m.y = y; m.z = z;
+	m.testBoundsInMouse = testBoundsInMouse;
+
 	m.width = m.height = -1;
 
 	return m;
@@ -61,7 +65,7 @@ public class TranslateLob extends AbstractDelegateLob {
     public Lob layout(float w, float h) {
 	SizeRequest r = delegate.getSizeRequest();
 	Lob l = delegate.layout(r.natW, r.natH);
-	TranslateLob t = newInstance(l, x, y, z);
+	TranslateLob t = newInstance(l, x, y, z, testBoundsInMouse);
 	t.width = w; t.height = h;
 	return t;
     }
@@ -87,9 +91,12 @@ public class TranslateLob extends AbstractDelegateLob {
 	    throw new UnsupportedOperationException("not layouted");
 
 	SizeRequest r = delegate.getSizeRequest();
-	if(x < this.x || x > this.x + r.width())  return false;
-	if(y < this.y || y > this.y + r.height()) return false;
-	
+
+	if(testBoundsInMouse) {
+	    if(x < this.x || x > this.x + r.width())  return false;
+	    if(y < this.y || y > this.y + r.height()) return false;
+	}
+
 	return delegate.mouse(e, scene, cs, x-this.x, y-this.y);
     }
 

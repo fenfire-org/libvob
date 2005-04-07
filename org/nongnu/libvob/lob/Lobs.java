@@ -98,11 +98,21 @@ public class Lobs {
     }
 
     public static Lob translate(Lob l, float x, float y) {
-	return translate(l, x, y, 0);
+	return translate(l, x, y, 0, true);
     }
 
     public static Lob translate(Lob l, float x, float y, float z) {
-	return TranslateLob.newInstance(l, x, y, z);
+	return translate(l, x, y, z, true);
+    }
+
+    public static Lob translate(Lob l, float x, float y, 
+				boolean testBoundsInMouse) {
+	return translate(l, x, y, 0, testBoundsInMouse);
+    }
+
+    public static Lob translate(Lob l, float x, float y, float z,
+				boolean testBoundsInMouse) {
+	return TranslateLob.newInstance(l, x, y, z, testBoundsInMouse);
     }
 
     public static Lob scale(Lob l, float scale) {
@@ -110,7 +120,7 @@ public class Lobs {
     }
 
     public static Lob scale(Lob l, float sx, float sy) {
-	return translate(l, sx, sy);
+	return ScaleLob.newInstance(l, sx, sy);
     }
 
     public static Lob margin(Lob l, float margin) {
@@ -307,7 +317,7 @@ public class Lobs {
 		float y = parentY*height - childY*s.natH;
 		
 		Lob l = delegate.layout(s.natW, s.natH);
-		l = TranslateLob.newInstance(l, x, y, 0);
+		l = translate(l, x, y, false);
 		return l.layout(width, height);
 	    }
 	

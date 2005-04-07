@@ -55,6 +55,10 @@ public class Tray extends AbstractSequence {
     private static float max(float a, float b) { return (a>b) ? a : b; }
 
     public SizeRequest getSizeRequest() {
+	if(width >= 0)
+	    return SizeRequest.newInstance(width, width, width,
+					   height, height, height);
+
 	SizeRequest r = SizeRequest.newInstance(SizeRequest.INF, 0, 0,
 						SizeRequest.INF, 0, 0);
 	
