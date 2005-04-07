@@ -61,6 +61,7 @@ public class ClickController extends AbstractDelegateLob {
 	if(e.getType() == eventType && e.getButton() == button) {
 
 	    action.run();
+	    delegate.mouse(e, sc, cs, x, y);
 	    AbstractUpdateManager.chg();
 	    return true;
 	} else {
