@@ -79,6 +79,8 @@ public class ArrayVobMatcher implements VobMatcher {
     }
 
     public int add(int parent, int cs, Object key) {
+	if(key == null) throw new NullPointerException("key == null");
+
 	ensureCSList(ncs+1);
 	csList[ncs] = cs;
 	ncs++;
