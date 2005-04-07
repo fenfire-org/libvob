@@ -27,6 +27,7 @@ ArrayVobMatcher.java
  */
 package org.nongnu.libvob.impl;
 import org.nongnu.libvob.*;
+import java.util.Arrays;
 
 /** An implementation of VobMatcher that does not create objects
  *  for every coordsys added, using arrays instead.
@@ -68,8 +69,7 @@ public class ArrayVobMatcher implements VobMatcher {
 	int i = hashIndex(csHash(cs));
 	for(int cs2=hashtable[i]; cs2>0; cs2=csNextInHashtable[cs2])
 	    if(cs2==cs) {
-		return; // XXX what does this mean?
-		//throw new Error("XXX cycle in hashtable @ "+i+": "+cs+" "+csParent[cs]+" "+csKey[cs]);
+		throw new Error("XXX cycle in hashtable @ "+i+": "+cs+" "+csParent[cs]+" "+csKey[cs]);
 	    }
 	csNextInHashtable[cs] = hashtable[i];
 	hashtable[i] = cs;
@@ -83,11 +83,15 @@ public class ArrayVobMatcher implements VobMatcher {
     public int add(int parent, int cs, Object key) {
 	if(key == null) throw new NullPointerException("key == null");
 
+	ensureMaxCS(cs);
+
+	if(csKey[cs] != null)
+	    throw new IllegalStateException("cs already added to matcher: "+cs+" key "+key+" parent "+parent);
+
 	ensureCSList(ncs+1);
 	csList[ncs] = cs;
 	ncs++;
 
-	ensureMaxCS(cs);
 	csParent[cs] = parent;
 	csKey[cs] = key;
 	addToHashtable(cs);
@@ -152,14 +156,18 @@ public class ArrayVobMatcher implements VobMatcher {
 
 
     public Object getKey(int cs) {
+	if(csKey[cs] == null) {
+	    throw new IllegalArgumentException("cs has not been added to matcher: "+cs);
+	}
+
 	return csKey[cs];
     }
 
     public void clear() {
 	ncs = 0;
 	maxCS = -1;
-	java.util.Arrays.fill(hashtable, 0);
-	java.util.Arrays.fill(csKey, null);
+	Arrays.fill(hashtable, 0);
+	Arrays.fill(csKey, null);
     }
 
     protected int getOtherCS(VobMatcher other, int oparent, int mycs) {
@@ -252,6 +260,7 @@ public class ArrayVobMatcher implements VobMatcher {
 
     protected void expandHashtable(int n) {
 	hashtable = new int[n];
+	Arrays.fill(csNextInHashtable, 0, csNextInHashtable.length, 0);
 	for(int i=0; i<ncs; i++)
 	    addToHashtable(csList[i]);
     }
