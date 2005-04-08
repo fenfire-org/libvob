@@ -68,6 +68,10 @@ public class ClipLob extends AbstractDelegateLob {
 	return delegate.mouse(e, scene, cs, x, y);
     }
 
+
+    private static int clipparent = -1; // ARGH!!!
+    private static int clipparent_matchingparent = -1;
+
     public void render(VobScene scene, int into, int matchingParent,
 		       float d, boolean visible) {
 
@@ -78,10 +82,23 @@ public class ClipLob extends AbstractDelegateLob {
 	this.visible = visible;
 	this.matchingParent = matchingParent;
 
+	int oldcp = clipparent, oldcpmp = clipparent_matchingparent;
+
 	if(key != null) {
 	    this.cs = scene.coords.box(into, w, h);
-	    this.matchingParent = cs;
-	    scene.matcher.add(matchingParent, cs, key);
+
+	    //this.matchingParent = cs; // don't change the matching parent
+	    // instead, this ugly hack:
+	    if(clipparent_matchingparent == matchingParent) {
+		scene.matcher.add(clipparent, cs, key);
+	    } else {
+		scene.matcher.add(matchingParent, cs, key);
+	    }
+
+	    clipparent = cs;
+	    clipparent_matchingparent = matchingParent;
+
+	    //scene.matcher.add(matchingParent, cs, key);
 	} else {
 	    this.cs = into;
 	}
@@ -106,6 +123,8 @@ public class ClipLob extends AbstractDelegateLob {
 	    throw new Error("Unsupported API: "+api);
 	}
 
+	clipparent = oldcp;
+	clipparent_matchingparent = oldcpmp;
     }
 
     protected VobScene scene;
