@@ -99,6 +99,7 @@ public class ViewportLob extends AbstractDelegateLob {
 	SizeRequest r = delegate.getSizeRequest();
 
 	int cs = scene.coords.translate(into, 0, 0);
+	scene.matcher.add(matchingParent, cs, "viewport cs");
 
 	delegate.render(scene, cs, matchingParent, d, visible);
 
@@ -138,6 +139,18 @@ public class ViewportLob extends AbstractDelegateLob {
 	    else
 		scene.coords.setTranslateParams(cs, 0, scroll);
 	}
+    }
+
+    public boolean mouse(VobMouseEvent e, VobScene scene, int matchingParent, 
+			 float _x, float _y) {
+
+	
+	int cs = scene.matcher.getCS(matchingParent, "viewport cs");
+
+	point[0] = e.getX(); point[1] = e.getY(); point[2] = 0;
+	scene.coords.inverseTransformPoints3(cs, point, point);
+
+	return delegate.mouse(e, scene, matchingParent, point[0], point[1]);
     }
 
     protected float getScroll(float pos, float lobSize, float viewportSize) {

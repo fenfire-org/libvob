@@ -62,10 +62,8 @@ public class ClipLob extends AbstractDelegateLob {
     public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
 			 float x, float y) {
 	
-	/*
 	if(key != null)
 	    cs = scene.matcher.getCS(cs, key);
-	*/
 
 	return delegate.mouse(e, scene, cs, x, y);
     }
