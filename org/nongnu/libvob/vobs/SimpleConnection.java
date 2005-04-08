@@ -82,8 +82,12 @@ public class SimpleConnection extends AbstractVob {
 	    else
 		g.setColor(info2.fade(color));
 	}
-	g.drawLine(info1.box_x(x0), info1.box_y(y0), 
-		   info2.box_x(x1), info2.box_y(y1));
+	int x0r = info1.box_x(x0), y0r = info1.box_y(y0),
+	    x1r = info2.box_x(x1), y1r = info2.box_y(y1);
+	// AWT pen "hangs down and to the right", but vobs don't,
+	// so substract one from the lower and rightmost values
+	g.drawLine(x0r-(x0r>x1r?1:0), y0r-(y0r>y1r?1:0), 
+		   x1r-(x1r>x0r?1:0), y1r-(y1r>y0r?1:0));
     }
 
     public Vob glsetup;
