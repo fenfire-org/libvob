@@ -147,6 +147,9 @@ public class ViewportLob extends AbstractDelegateLob {
 	
 	int cs = scene.matcher.getCS(matchingParent, "viewport cs");
 
+	if(cs < 0)
+	    throw new Error("viewport cs not found");
+
 	point[0] = e.getX(); point[1] = e.getY(); point[2] = 0;
 	scene.coords.inverseTransformPoints3(cs, point, point);
 
