@@ -32,15 +32,11 @@ import org.nongnu.libvob.util.*;
 
 public class NoGrowLob extends AbstractDelegateLob {
 
-    protected Axis axis;
+    protected Axis axis; // if null, don't grow on either axis
 
     private NoGrowLob() {}
 
-    public NoGrowLob newInstance(Lob content) {
-	return newInstance(null, content); // don't grow on either axis
-    }
-
-    public NoGrowLob newInstance(Axis axis, Lob content) {
+    public static NoGrowLob newInstance(Axis axis, Lob content) {
 	NoGrowLob l = (NoGrowLob)FACTORY.object();
 	l.axis = axis;
 	l.delegate = content;

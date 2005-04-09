@@ -177,6 +177,14 @@ public class Lobs {
 					    minH, natH, maxH);
     }
 
+    public static Lob noGrow(Lob content) {
+	return noGrow(null, content); // don't grow on either axis
+    }
+
+    public static Lob noGrow(Axis axis, Lob content) {
+	return NoGrowLob.newInstance(axis, content);
+    }
+
     public static Lob nextTo(Axis axis, Lob lob, Lob popup) {
 	return NextToLob.newInstance(axis, lob, popup);
     }
