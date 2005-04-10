@@ -186,6 +186,39 @@ public class Components {
 	return lob;
     }
 
+    private static List getTreeList(Tree tree, Object parent) {
+	List list = Lists.list();
+
+	if(parent != null)
+	    list.add(parent);
+	
+	for(Iterator i=tree.getChildren(parent).iterator(); i.hasNext();)
+	    list.addAll(getTreeList(tree, i.next()));
+
+	return list;
+    }
+
+    public static Lob treeBox(Tree tree, Map params) {
+	Transform tr = (Transform)getParam(params, "transform", 
+					   toStringTransform());
+
+	List list = getTreeList(tree, null);
+
+	return listBox(list, Maps.map("transform", new @realtime-i Transform(Tree tree, Transform tr) {
+	    public Object transform(Object node) { 
+		int level = -1;
+		for(Object o=node; o!=null; o=tree.getParent(o))
+		    level++;
+
+		Lob hbox = Lobs.hbox();
+		hbox.add(Lobs.glue(Axis.X, 20*level, 20*level, 20*level));
+		hbox.add((Lob)tr.transform(node));
+
+		return hbox;
+	    }
+	}));
+    }
+
     public static Lob textBox(Model text, Map params) {
 	params.put("multiline", Boolean.FALSE);
 	return textComponent(text, params);

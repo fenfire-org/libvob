@@ -165,6 +165,27 @@ public class Components {
 	return lob;
     }
 
+    private static List getTreeList(Tree tree, Object parent) {
+	List list = Lists.list();
+
+	if(parent != null)
+	    list.add(parent);
+	
+	for(Iterator i=tree.getChildren(parent).iterator(); i.hasNext();)
+	    list.addAll(getTreeList(tree, i.next()));
+
+	return list;
+    }
+
+    public static Lob treeBox(Tree tree, Map params) {
+	Transform tr = (Transform)getParam(params, "transform", 
+					   toStringTransform());
+
+	List list = getTreeList(tree, null);
+
+	return listBox(list, Maps.map("transform", new_Transform_3(tree,tr)));
+    }
+
     public static Lob textBox(Model text, Map params) {
 	params.put("multiline", Boolean.FALSE);
 	return textComponent(text, params);
@@ -218,7 +239,7 @@ public class Components {
     public static Lob menuitem(Lob lob, Lob submenu) {
 	Model openModel = StateModel.newInstance("open", Boolean.FALSE);
 
-	Action action = new_Action_3(openModel);
+	Action action = new_Action_4(openModel);
 
 	lob = Lobs.margin(lob, 8, 2);
 
@@ -249,7 +270,7 @@ public class Components {
 
 
     public static Transform toStringTransform() {
-	return new_Transform_4();
+	return new_Transform_5();
     }
 
         private static class _Action_1 extends RealtimeObject implements Action {
@@ -299,7 +320,7 @@ public class Components {
 		Lob lob = (Lob)tr.transform(o);
 		lob = Lobs.margin(lob, 1);
 
-		Action select = new_Action_5(selected,o);
+		Action select = new_Action_6(selected,o);
 
 		lob = Lobs.clickController(lob, 1, select);
                     
@@ -328,9 +349,50 @@ the_new_Transform_2.selected = selected;
             return the_new_Transform_2;
         }
     
-        private static class _Action_3 extends RealtimeObject implements Action {
+        private static class _Transform_3 extends RealtimeObject implements Transform {
 
-            private _Action_3() {}
+            private _Transform_3() {}
+
+            Tree tree; Transform tr;
+
+            
+	    public Object transform(Object node) { 
+		int level = -1;
+		for(Object o=node; o!=null; o=tree.getParent(o))
+		    level++;
+
+		Lob hbox = Lobs.hbox();
+		hbox.add(Lobs.glue(Axis.X, 20*level, 20*level, 20*level));
+		hbox.add((Lob)tr.transform(node));
+
+		return hbox;
+	    }
+	
+
+            public boolean move(ObjectSpace os) {
+                if(super.move(os)) {
+                    if(((Object)tree) instanceof Realtime) ((Realtime)((Object)tree)).move(os); if(((Object)tr) instanceof Realtime) ((Realtime)((Object)tr)).move(os); 
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        private static final RealtimeObject.Factory _Transform_3_FACTORY =
+            new RealtimeObject.Factory() {
+                protected Object create() { return new _Transform_3(); }
+            };
+
+        private static _Transform_3 new_Transform_3(Tree tree, Transform tr) {
+            _Transform_3 the_new_Transform_3 = (_Transform_3)_Transform_3_FACTORY.object();
+            the_new_Transform_3.tree = tree;
+the_new_Transform_3.tr = tr;
+            return the_new_Transform_3;
+        }
+    
+        private static class _Action_4 extends RealtimeObject implements Action {
+
+            private _Action_4() {}
 
             Model openModel;
 
@@ -354,20 +416,20 @@ the_new_Transform_2.selected = selected;
             }
         }
 
-        private static final RealtimeObject.Factory _Action_3_FACTORY =
+        private static final RealtimeObject.Factory _Action_4_FACTORY =
             new RealtimeObject.Factory() {
-                protected Object create() { return new _Action_3(); }
+                protected Object create() { return new _Action_4(); }
             };
 
-        private static _Action_3 new_Action_3(Model openModel) {
-            _Action_3 the_new_Action_3 = (_Action_3)_Action_3_FACTORY.object();
-            the_new_Action_3.openModel = openModel;
-            return the_new_Action_3;
+        private static _Action_4 new_Action_4(Model openModel) {
+            _Action_4 the_new_Action_4 = (_Action_4)_Action_4_FACTORY.object();
+            the_new_Action_4.openModel = openModel;
+            return the_new_Action_4;
         }
     
-        private static class _Transform_4 extends RealtimeObject implements Transform {
+        private static class _Transform_5 extends RealtimeObject implements Transform {
 
-            private _Transform_4() {}
+            private _Transform_5() {}
 
             ;
 
@@ -389,20 +451,20 @@ the_new_Transform_2.selected = selected;
             }
         }
 
-        private static final RealtimeObject.Factory _Transform_4_FACTORY =
+        private static final RealtimeObject.Factory _Transform_5_FACTORY =
             new RealtimeObject.Factory() {
-                protected Object create() { return new _Transform_4(); }
+                protected Object create() { return new _Transform_5(); }
             };
 
-        private static _Transform_4 new_Transform_4() {
-            _Transform_4 the_new_Transform_4 = (_Transform_4)_Transform_4_FACTORY.object();
+        private static _Transform_5 new_Transform_5() {
+            _Transform_5 the_new_Transform_5 = (_Transform_5)_Transform_5_FACTORY.object();
             
-            return the_new_Transform_4;
+            return the_new_Transform_5;
         }
     
-        private static class _Action_5 extends RealtimeObject implements Action {
+        private static class _Action_6 extends RealtimeObject implements Action {
 
-            private _Action_5() {}
+            private _Action_6() {}
 
             Model selected;
 						       Object o;
@@ -422,15 +484,15 @@ the_new_Transform_2.selected = selected;
             }
         }
 
-        private static final RealtimeObject.Factory _Action_5_FACTORY =
+        private static final RealtimeObject.Factory _Action_6_FACTORY =
             new RealtimeObject.Factory() {
-                protected Object create() { return new _Action_5(); }
+                protected Object create() { return new _Action_6(); }
             };
 
-        private static _Action_5 new_Action_5(Model selected, Object o) {
-            _Action_5 the_new_Action_5 = (_Action_5)_Action_5_FACTORY.object();
-            the_new_Action_5.selected = selected;
-the_new_Action_5.o = o;
-            return the_new_Action_5;
+        private static _Action_6 new_Action_6(Model selected, Object o) {
+            _Action_6 the_new_Action_6 = (_Action_6)_Action_6_FACTORY.object();
+            the_new_Action_6.selected = selected;
+the_new_Action_6.o = o;
+            return the_new_Action_6;
         }
     }
