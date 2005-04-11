@@ -52,6 +52,10 @@ public class ScaleLob extends AbstractDelegateLob {
 	return m;
     }
 
+    protected Lob wrap(Lob l) {
+	return newInstance(l, scaleX, scaleY);
+    }
+
     public SizeRequest getSizeRequest() {
 	float sx = scaleX, sy = scaleY;
 	SizeRequest r = delegate.getSizeRequest();
@@ -61,8 +65,7 @@ public class ScaleLob extends AbstractDelegateLob {
     }
 
     public Lob layout(float w, float h) {
-	Lob l = delegate.layout(w/scaleX, h/scaleY);
-	return newInstance(l, scaleX, scaleY);
+	return wrap(delegate.layout(w/scaleX, h/scaleY));
     }
 
     public Axis getLayoutableAxis() {
@@ -71,9 +74,9 @@ public class ScaleLob extends AbstractDelegateLob {
 
     public Lob layoutOneAxis(float size) {
 	if(delegate.getLayoutableAxis() == Axis.X)
-	    return delegate.layoutOneAxis(size/scaleX);
+	    return wrap(delegate.layoutOneAxis(size/scaleX));
 	else if(delegate.getLayoutableAxis() == Axis.Y)
-	    return delegate.layoutOneAxis(size/scaleY);
+	    return wrap(delegate.layoutOneAxis(size/scaleY));
 	else
 	    throw new UnsupportedOperationException("delegate doesn't support layoutOneAxis()");
     }

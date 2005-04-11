@@ -135,7 +135,6 @@ public class Tray extends AbstractSequence {
 
 	for(int i=0; i<nlobs; i++) {
 
-	    z += dd;
 	    int cs = scene.coords.translate(into, 0, 0, z);
 
 	    PoolContext.enter();
@@ -145,6 +144,8 @@ public class Tray extends AbstractSequence {
 	    } finally {
 		PoolContext.exit();
 	    }
+
+	    z += dd;
 	}
     }
 
