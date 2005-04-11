@@ -96,11 +96,11 @@ public class BoxLob extends AbstractSequence {
     }
 
     public Axis getLayoutableAxis() {
-	return axis.other();
+	return TableLob.newInstance(getTable()).getLayoutableAxis();
     }
 
     public Lob layoutOneAxis(float size) {
-	return newInstance(axis, lobs, size);
+	return TableLob.newInstance(getTable()).layoutOneAxis(size);
     }
 
     public void render(VobScene scene, int into, int matchingParent, 

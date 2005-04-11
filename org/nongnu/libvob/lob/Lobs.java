@@ -51,6 +51,11 @@ public class Lobs {
 
 
 
+    public static Lob debug(Lob lob, String name) {
+	return DebugLob.newInstance(lob, name);
+    }
+
+
     public static Lob vob(Vob vob) {
 	return VobLob.newInstance(vob);
     }

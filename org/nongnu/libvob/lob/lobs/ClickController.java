@@ -52,8 +52,8 @@ public class ClickController extends AbstractDelegateLob {
 	return c;
     }
 
-    public Lob layout(float w, float h) {
-	return newInstance(delegate.layout(w, h), button, eventType, action);
+    public Lob wrap(Lob l) {
+	return newInstance(l, button, eventType, action);
     }
 
     public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 

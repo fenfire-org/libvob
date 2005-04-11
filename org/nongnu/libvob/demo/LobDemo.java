@@ -57,7 +57,9 @@ public class LobDemo extends NewLobMain {
 
     private Table table = new Table();
 
-    private Model text = SimpleModel.newInstance("Copyright (c) 2005, Benja Fallenstein\n\nThis file is part of Libvob.\n\nLibvob is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n\nLibvob is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with Libvob; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.");
+    private String textString = "Copyright (c) 2005, Benja Fallenstein\n\nThis file is part of Libvob.\n\nLibvob is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.\n\nLibvob is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with Libvob; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.";
+
+    private Model text = SimpleModel.newInstance(textString);
 
     public LobDemo(Color bg) {
 	super(bg);
@@ -102,6 +104,33 @@ public class LobDemo extends NewLobMain {
         lob = Lobs.translate(lob, 600, 100);
         lob = Lobs.key(lob, "textbox");
         tray.add(lob);
+
+
+
+	String str = textString.substring(0, 100);
+	lob = Lobs.vbox();
+
+	Lob hbox = Lobs.hbox();
+	hbox.add(Lobs.linebreaker(Lobs.text(Components.font(), str)));
+	hbox.add(Lobs.glue(Axis.X, 15, 15, 15));
+	hbox.add(Lobs.linebreaker(Lobs.text(Components.font(), str)));
+	lob.add(hbox);
+
+	lob.add(Lobs.glue(Axis.Y, 15, 15, 15));
+
+	hbox = Lobs.hbox();
+	hbox.add(Lobs.linebreaker(Lobs.text(Components.font(), str)));
+	hbox.add(Lobs.glue(Axis.X, 15, 15, 15));
+	hbox.add(Lobs.linebreaker(Lobs.text(Components.font(), str)));
+	lob.add(hbox);
+
+	lob = Components.frame(lob);
+	lob = lob.layoutOneAxis(300);
+	lob = Lobs.translate(lob, 600, 350);
+	lob = Lobs.key(lob, "foo");
+	tray.add(lob);
+
+
 
         return tray;
     }

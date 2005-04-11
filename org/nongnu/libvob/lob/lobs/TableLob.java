@@ -59,6 +59,9 @@ public class TableLob extends AbstractLob {
     protected float[] colNatW = new float[MAXSIZE];
     protected float[] colMaxW = new float[MAXSIZE];
 
+    protected Axis layoutableAxis;
+    protected int layoutableRowOrColumn;
+
     protected SizeRequest size = new SizeRequest();
 
     private TableLob() {}
@@ -89,11 +92,27 @@ public class TableLob extends AbstractLob {
 	    colMaxW[c] = SizeRequest.INF;
 	}
 
+	layoutableAxis = null;
+
 	for(int r=0; r<rows; r++) {
 	    for(int c=0; c<cols; c++) {
 		PoolContext.enter();
 		try {
 		    Lob l = table.getLob(r, c);
+
+		    if(layoutableAxis == null) {
+			Axis laxis = l.getLayoutableAxis();
+			if(laxis != null) {
+			    // XXX? we just take the first non-null one, if any
+
+			    layoutableAxis = laxis;
+			    if(layoutableAxis == Axis.X)
+				layoutableRowOrColumn = c;
+			    else
+				layoutableRowOrColumn = r;
+			}
+		    }
+
 		    SizeRequest s = l.getSizeRequest();
 		    
 		    if(s.minH > rowMinH[r]) rowMinH[r] = s.minH;
@@ -131,9 +150,40 @@ public class TableLob extends AbstractLob {
 	return size;
     }
 
+    public Axis getLayoutableAxis() {
+	return layoutableAxis;
+    }
+
+    public Lob layoutOneAxis(float axis_size) {
+	if(layoutableAxis == null)
+	    throw new Error("neither axis is layoutable");
+
+	OneAxisLayoutedTable t =
+	    (OneAxisLayoutedTable)TABLE_FACTORY.object();
+
+	t.table = table;
+	t.axis = layoutableAxis;
+	
+	int rows = table.getRowCount();
+	int cols = table.getColumnCount();
+
+	if(layoutableAxis == Axis.Y)
+	    doLayout(t.pos, rowMinH, rowNatH, rowMaxH, 
+		     size.minH, size.natH, size.maxH, axis_size, rows);
+	else
+	    doLayout(t.pos, colMinW, colNatW, colMaxW, 
+		     size.minW, size.natW, size.maxW, axis_size, cols);
+
+	return newInstance(t);
+    }
+
     public Lob layout(float width, float height) {
 	if(width < 0 || height < 0)
 	    throw new IllegalArgumentException("negative size: "+width+" "+height);
+
+	if(layoutableAxis != null) {
+	    return layoutOneAxis(layoutableAxis.coord(width, height)).layout(width, height);
+	}
 
 	if(width < size.minW || height < size.minH) {
 	    // we have not been given enough space to layout ourselves;
@@ -264,6 +314,39 @@ public class TableLob extends AbstractLob {
 	return result;
     }
 
+    private static final class OneAxisLayoutedTable
+	extends RealtimeObject implements Table {
+
+	private Table table;
+	private Axis axis;
+	private float[] pos = new float[MAXSIZE];
+
+	public int getRowCount() { return table.getRowCount(); }
+	public int getColumnCount() { return table.getColumnCount(); }
+
+	public Lob getLob(int r, int c) {
+	    Lob l = table.getLob(r, c);
+
+	    int ind = (axis == Axis.X) ? c : r;
+	    float size = pos[ind+1] - pos[ind];
+
+	    if(l.getLayoutableAxis() == axis)
+		l = l.layoutOneAxis(size);
+	    
+	    l = Lobs.request(axis, l, size, size, size);
+	    
+	    return l;
+	}
+
+	public boolean move(ObjectSpace os) {
+	    if(super.move(os)) {
+		table.move(os);
+		return true;
+	    }
+	    return false;
+	}
+    }
+
     private static final class TableLayout extends AbstractLayout {
 	private Table table;
 	private float[] posX = new float[MAXSIZE], posY = new float[MAXSIZE];
@@ -374,6 +457,12 @@ public class TableLob extends AbstractLob {
     private static final Factory LOB_FACTORY = new Factory() {
 	    public Object create() {
 		return new TableLob();
+	    }
+	};
+
+    private static final Factory TABLE_FACTORY = new Factory() {
+	    public Object create() {
+		return new OneAxisLayoutedTable();
 	    }
 	};
 }
