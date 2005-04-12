@@ -33,7 +33,7 @@ import java.util.*;
 
 public abstract class AbstractDelegateLob extends AbstractLob {
 
-    protected Lob delegate;
+    public Lob delegate;
 
     /** Create a lob like this one, but with a different delegate.
      *  Used in default implementations of layout() and layoutOneAxis().

@@ -72,6 +72,12 @@ public class DebugLob extends AbstractDelegateLob {
 	super.render(scene, into, matchingParent, d, visible);
     }
 
+    public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
+			 float x, float y) {
+	p("mouse: "+e+" "+cs+" "+x+" "+y);
+	return super.mouse(e, scene, cs, x, y);
+    }
+
     private static final Factory FACTORY = new Factory() {
 	    public Object create() {
 		return new DebugLob();
