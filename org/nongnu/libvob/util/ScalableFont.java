@@ -49,7 +49,7 @@ public final class ScalableFont {
     public static Component fmComp;
     {
 	// just to get this initialized always... is it bad to do it like this?
-	fmComp = new Panel();
+	if(fmComp == null) fmComp = new Panel();
     }
 
     /** A cache for Fonts and FontMetrics of same family and style.
