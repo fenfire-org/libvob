@@ -81,6 +81,8 @@ run_lobdemo:
 run_bossbuzzle:
 	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.BossBuzzle
 
+generate_lob_docs:
+	$(LDLIB) $(JYTHON) -Dvob.windowsize="300x211" -Dvob.api="awt" $(DBG) rundemo.py  vob/putil/lob_printter.py  org.nongnu.libvob.lob.doc.Example1  $(DEMO)
 
 # Have to use params for find for it not to descend into the {arch} dirs.
 FINDSRC=[a-zA-Z0-9]*

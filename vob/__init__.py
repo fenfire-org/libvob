@@ -42,6 +42,7 @@ view = _libvob.view
 impl = _libvob.impl
 input = _libvob.input
 mouse = _libvob.mouse
+lob = _libvob.lob
 
 del _vob
 

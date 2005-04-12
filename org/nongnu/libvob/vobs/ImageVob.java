@@ -32,6 +32,7 @@ import java.io.*;
 public class ImageVob extends AbstractVob {
     protected float width, height;
     protected java.awt.Image img;
+    protected int id;
 
     public float getWidth() { return width; }
     public float getHeight() { return height; }
@@ -57,6 +58,7 @@ public class ImageVob extends AbstractVob {
 
 	//System.out.println("Image: "+png+", w: "+width+", h: "+height);
 	img = Toolkit.getDefaultToolkit().createImage(png);
+	id = ID;
 	tracker.addImage(img, ID++);
 	png = null;
     }
@@ -69,6 +71,11 @@ public class ImageVob extends AbstractVob {
 	int w = (int)(info1.width), 
 	    h = (int)(info1.height);
 	
+	try {
+	    tracker.waitForID(id);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
 	g.drawImage(img, x,y,w,h, null); 
     }
 }
