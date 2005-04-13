@@ -146,6 +146,24 @@ public class Lobs {
 	return NullLob.instance;
     }
 
+    public static Lob hglue() {
+	return glue(Axis.X);
+    }
+
+    public static Lob vglue() {
+	return glue(Axis.Y);
+    }
+
+    /** The spring like glue.
+     */
+    public static Lob glue(Axis axis) {
+	return glue(axis, 0,0,Lob.INF);
+    } 
+
+    public static Lob glue(Axis axis, float size) {
+	return glue(axis, size, size, size);
+    } 
+
     public static Lob glue(Axis axis, float min, float nat, float max) {
 	return request(axis, nullLob(), min, nat, max);
     }

@@ -14,19 +14,22 @@ public class Example_TextBoxesAndGlue {
 	
 	// vertical box or list
 	Lob vbox = Lobs.vbox();
+	
+	vbox.add(Lobs.hbox(font.textLn("Hello world!")));
 
 	List l1 = font.text("Hello");
-	List l2 = Lists.list(Lobs.glue(Axis.X, 10,10,10));
+	List l2 = Lists.list(Lobs.glue(Axis.X, 1));
 	List l3 = font.text("world!");
-	List l4 = Lists.list(Lobs.glue(Axis.X, Lob.INF, Lob.INF ,Lob.INF));
+	List l4 = Lists.list(Lobs.hglue());
 	vbox.add(Lobs.hbox(Lists.concat(l1,l2,l3,l4)));
 	
-	l1 = Lists.list(Lobs.glue(Axis.X, Lob.INF, Lob.INF, Lob.INF));
+	l1 = Lists.list(Lobs.hglue());
 	l2 = font.text("Hello");
 	l3 = font.text("world!");
-	vbox.add(Lobs.hbox(Lists.concat(l1,l2,l3)));
+	l4 = Lists.list(Lobs.hglue());
+	vbox.add(Lobs.hbox(Lists.concat(l1,l2,l3, l4)));
 		 
-	l1 = Lists.list(Lobs.glue(Axis.X, Lob.INF, Lob.INF, Lob.INF));
+	l1 = Lists.list(Lobs.hglue());
 	l2 = font.text("Hello");
 	l3 = font.text(" ");
 	l4 = font.text("world!");
