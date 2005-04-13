@@ -84,11 +84,11 @@ public class Components {
     }
 
     public static Lob label(Text t) {
-	return Lobs.hbox(font().text(t));
+	return Lobs.hbox(font().textLn(t));
     }
 
     public static Lob label(String s) {
-	return Lobs.hbox(font().text(s));
+	return Lobs.hbox(font().textLn(s));
     }
 
 
