@@ -34,7 +34,7 @@ import javolution.realtime.*;
 import javolution.util.*;
 import java.util.*;
 
-public class FilterLobFont extends RealtimeObject implements LobFont {
+public class FilterLobFont extends AbstractLobFont {
 
     public static final Object TEXT_END = new Object();
 

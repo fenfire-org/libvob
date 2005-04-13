@@ -75,10 +75,9 @@ public class BossBuzzle extends NewLobMain {
 		final Block block = (Block) blocks.get(i);
 		if (!(block.is(col, row))) continue;
 		
-		Lob lob = Lobs.hbox(Lobs.text(
-					SimpleLobFont.newInstance("serif", 
-						0, 36, Color.blue), 
-					block.id));
+		LobFont font = SimpleLobFont.newInstance("serif", 
+							 0, 36, Color.blue);
+		Lob lob = Lobs.hbox(font.text(block.id));
 		
 		lob = Lobs.align(lob, .5f, .5f);
 		lob = Lobs.clickController(lob, 1, new Action() {

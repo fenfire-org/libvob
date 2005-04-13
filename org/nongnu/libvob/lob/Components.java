@@ -87,11 +87,11 @@ public class Components {
     }
 
     public static Lob label(Text t) {
-	return Lobs.hbox(Lobs.text(font(), t));
+	return Lobs.hbox(font().text(t));
     }
 
     public static Lob label(String s) {
-	return Lobs.hbox(Lobs.text(font(), s));
+	return Lobs.hbox(font().text(s));
     }
 
 
@@ -205,7 +205,7 @@ public class Components {
 	boolean multiline = multilineB.booleanValue();
 
 	Text txt = Text.valueOf((String)text.get());
-	List list = Lobs.text(font, txt);
+	List list = font.text(txt);
 	list = Lobs.keyList(list, "text");
 	Lob lob = multiline ? Lobs.linebreaker(list) : Lobs.hbox(list);
 

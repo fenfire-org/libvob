@@ -322,14 +322,6 @@ public class Lobs {
 	return Tray.newInstance(lobs, sendEventsOnlyToFrontLob);
     }
 
-    public static List text(LobFont font, String s) {
-	return text(font, Text.valueOf(s));
-    }
-
-    public static List text(LobFont font, Text text) {
-	return TextLobList.newInstance(font, text);
-    }
-
     public static Model getFocusModel() {
 	return (Model)FOCUS_MODEL.getValue();
     }

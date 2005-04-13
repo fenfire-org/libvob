@@ -80,7 +80,7 @@ public class LobDemo extends NewLobMain {
 
 	lob.add(Lobs.glue(Axis.X, 5, 5, 5));
 
-        lob.add(Lobs.hbox(Lobs.text(Components.font(Color.blue), "Hello world!")));
+        lob.add(Lobs.hbox(Components.font(Color.blue).text("Hello world!")));
 	
         lob = Lobs.frame3d(lob, null, Color.red, 1, 5, false, true);
         lob = Lobs.align(lob, .5f, .5f);
@@ -104,33 +104,6 @@ public class LobDemo extends NewLobMain {
         lob = Lobs.translate(lob, 600, 100);
         lob = Lobs.key(lob, "textbox");
         tray.add(lob);
-
-
-
-	String str = textString.substring(0, 100);
-	lob = Lobs.vbox();
-
-	Lob hbox = Lobs.hbox();
-	hbox.add(Lobs.linebreaker(Lobs.text(Components.font(), str)));
-	hbox.add(Lobs.glue(Axis.X, 15, 15, 15));
-	hbox.add(Lobs.linebreaker(Lobs.text(Components.font(), str)));
-	lob.add(hbox);
-
-	lob.add(Lobs.glue(Axis.Y, 15, 15, 15));
-
-	hbox = Lobs.hbox();
-	hbox.add(Lobs.linebreaker(Lobs.text(Components.font(), str)));
-	hbox.add(Lobs.glue(Axis.X, 15, 15, 15));
-	hbox.add(Lobs.linebreaker(Lobs.text(Components.font(), str)));
-	lob.add(hbox);
-
-	lob = Components.frame(lob);
-	lob = lob.layoutOneAxis(300);
-	lob = Lobs.translate(lob, 600, 350);
-	lob = Lobs.key(lob, "foo");
-	tray.add(lob);
-
-
 
         return tray;
     }

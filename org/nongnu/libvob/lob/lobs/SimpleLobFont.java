@@ -36,7 +36,7 @@ import javolution.realtime.*;
 import java.awt.Color;
 import java.util.*;
 
-public class SimpleLobFont extends RealtimeObject implements LobFont {
+public class SimpleLobFont extends AbstractLobFont {
 
     protected static final Object KEY = new Object();
 

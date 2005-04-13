@@ -1,5 +1,5 @@
 /*
-TextLobList.java
+AbstractLobFont.java
  *    
  *    Copyright (c) 2005, Benja Fallenstein
  *
@@ -25,47 +25,28 @@ TextLobList.java
 /*
  * Written by Benja Fallenstein
  */
-package org.nongnu.libvob.lob.lobs;
-import org.nongnu.libvob.lob.*;
-import org.nongnu.libvob.*;
-import javolution.lang.*;
+package org.nongnu.libvob.lob;
+import org.nongnu.libvob.lob.lobs.TextLobList;
 import javolution.realtime.*;
+import javolution.lang.Text;
+import java.util.*;
 
-public class TextLobList extends RealtimeList {
-    private static void p(String s) { System.out.println("TextLobList:: "+s); }
+public abstract class AbstractLobFont extends RealtimeObject 
+    implements LobFont {
 
-    private LobFont font;
-    private Text text;
-
-    private TextLobList() {}
-
-    public static TextLobList newInstance(LobFont font, Text text) {
-	TextLobList l = (TextLobList)FACTORY.object();
-	l.font = font;
-	l.text = text;
-	return l;
+    public List text(String s) {
+	return text(Text.valueOf(s));
     }
 
-    public int size() {
-	return text.length();
+    public List text(Text text) {
+	return TextLobList.newInstance(this, text);
     }
 
-    public Object get(int index) {
-	return font.getLob(text.charAt(index));
+    public List textLn(String s) {
+	return textLn(Text.valueOf(s));
     }
 
-    public boolean move(ObjectSpace os) {
-	if(super.move(os)) {
-	    font.move(os);
-	    text.move(os);
-	    return true;
-	}
-	return false;
+    public List textLn(Text text) {
+	return Lists.concat(text(text), Lists.list(getTextEndLob()));
     }
-
-    private static final Factory FACTORY = new Factory() {
-	    public Object create() {
-		return new TextLobList();
-	    }
-	};
 }

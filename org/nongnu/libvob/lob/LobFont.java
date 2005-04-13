@@ -28,6 +28,8 @@ LobFont.java
 
 package org.nongnu.libvob.lob;
 import javolution.realtime.*;
+import javolution.lang.Text;
+import java.util.*;
 
 public interface LobFont extends Realtime {
     // XXX use Functional system...
@@ -42,4 +44,11 @@ public interface LobFont extends Realtime {
     Lob getLob(char c);
 
     Lob getTextEndLob();
+
+
+    List text(String s);
+    List text(Text t);
+
+    List textLn(String s);
+    List textLn(Text t);
 }
