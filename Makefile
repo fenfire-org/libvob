@@ -81,7 +81,7 @@ run_lobdemo:
 run_bossbuzzle:
 	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.BossBuzzle
 
-LOB_DOCS = $(shell find org/nongnu/libvob/lob/doc/ -name '*.java' | sed 's/.java//')
+LOB_DOCS?= $(shell find org/nongnu/libvob/lob/doc/ -name '*.java' | sed 's/.java//')
 
 generate_lob_docs:
 	for file in $(LOB_DOCS); do echo $$file; $(LDLIB) $(JYTHON) -Dvob.windowsize="320x256" -Dvob.api="awt" $(DBG) rundemo.py  vob/putil/lob_printter.py  $$file  $(DEMO); done
