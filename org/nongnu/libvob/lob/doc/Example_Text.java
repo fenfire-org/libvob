@@ -8,7 +8,7 @@ import org.nongnu.libvob.lob.*;
 public class Example_Text {
 
     public Lob getLob() {
-	return Lobs.hbox(Components.font().text("H e l l o   w o r l d !"));
+	return Lobs.hbox(Components.font().text("H e l l o !"));
     }
 
 }

@@ -16,6 +16,7 @@ public class Example_TextBoxesAndGlue {
 	Lob vbox = Lobs.vbox();
 	
 	vbox.add(Lobs.hbox(font.textLn("Hello world!")));
+	vbox.add(Lobs.hbox(font.text("Hello world!")));
 
 	List l1 = font.text("Hello");
 	List l2 = Lists.list(Lobs.glue(Axis.X, 1));
@@ -27,7 +28,12 @@ public class Example_TextBoxesAndGlue {
 	l2 = font.text("Hello");
 	l3 = font.text("world!");
 	l4 = Lists.list(Lobs.hglue());
-	vbox.add(Lobs.hbox(Lists.concat(l1,l2,l3, l4)));
+	vbox.add(Lobs.hbox(Lists.concat(l1,l2,l3,l4)));
+
+	l1 = Lists.list(Lobs.hglue());
+	l2 = font.text("Hello world!");
+	l3 = Lists.list(Lobs.hglue());
+	vbox.add(Lobs.hbox(Lists.concat(l1,l2,l3)));
 		 
 	l1 = Lists.list(Lobs.hglue());
 	l2 = font.text("Hello");
