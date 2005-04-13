@@ -5,16 +5,18 @@ Util to print out layout object visual output for documentation.
 """
 
 import sys, org, java
-
-print 'asdf'
+import time, string
 
 file = sys.argv[2]
+
+scale = 2
 
 class Scene:
     print 'foo', sys.argv[2:]
 
     def lob(self):
-
+        global file
+        file = string.replace(file, '/', '.')
         c = java.lang.Class.forName(file)
         constructor = c.getConstructors()[0]
         instance = constructor.newInstance([])
@@ -33,8 +35,10 @@ class Scene:
         #vob.lob.PoolContext.enter()
         try:
             l = self.lob()
-            l = l.layout(scene.size.width, scene.size.height)
-            l.render(scene, 0, 0, 1, 1)
+            global scale
+            scaled = scene.scaleCS(0, "scaled", scale, scale)
+            l = l.layout(scene.size.width/scale, scene.size.height/scale)
+            l.render(scene, scaled, scaled, 1, 1)
         finally: pass
         #vob.lob.PoolContext.exit()
 
@@ -43,7 +47,6 @@ class Scene:
 
         class T(java.lang.Thread):
             def run(self):
-                import time, string
                 time.sleep(1)
                 global file
                 file = string.replace(file, '.', '/')
