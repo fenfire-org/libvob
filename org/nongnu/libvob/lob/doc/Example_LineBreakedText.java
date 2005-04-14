@@ -2,6 +2,7 @@
 
 package org.nongnu.libvob.lob.doc;
 import org.nongnu.libvob.lob.*;
+import java.awt.Color;
 import java.util.*;
 
 // class is run from printter util to 
@@ -9,28 +10,26 @@ import java.util.*;
 public class Example_LineBreakedText {
 
     public Lob getLob() {
-	LobFont[] fonts = new LobFont[]{
-	    Components.font(java.awt.Color.black),
-	    Components.font(java.awt.Color.gray),
-	    Components.font(java.awt.Color.yellow),
-	    Components.font(java.awt.Color.red),
-	    Components.font(java.awt.Color.blue),
-	    Components.font(java.awt.Color.green),
-	    Components.font(java.awt.Color.cyan),
-	    Components.font(java.awt.Color.white),
-	    Components.font(java.awt.Color.orange)
-	};
-
 	String [] texts = {
 	    "Abc", "cat", "walks", "to", "some", "tree", "which",
 	    "has", "ugly", "green", "tea", "next", "to", "see.", 
 	};
 
+
+	Random r = new Random(0);
+	LobFont[] fonts = new LobFont[texts.length];
+	for (int i=0; i<texts.length; i++)
+	    fonts[i] = Components.font(new Color(r.nextInt(255),
+						 r.nextInt(255),
+						 r.nextInt(255)));
+
 	List textList = Lists.list();
 	for (int i=0; i<texts.length; i++) {
 	    textList = Lists.concat(textList, 
-				    fonts[i%fonts.length].text(texts[i]+" "));
+				    fonts[i].text(texts[i]+" "));
 	}
-	return Lobs.linebreaker(textList);
+	Lob l = Lobs.linebreaker(textList);
+	l = Lobs.margin(l, 10);
+	return l;
     }
 }
