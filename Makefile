@@ -6,20 +6,20 @@ SUBDIRS = src/trans src/util src/texture src/paper src/lines src/os src/main src
 
 RAWSRC = `find org/ -name "*.java"` 
 
+RJSRC := $(shell find org/ -name "*.rj")
+
+GENSRC := $(RJSRC:%.rj=%.java)
+
 .PHONY: all subdirs $(SUBDIRS)
 
 all: subdirs generate java jni
 
 CLASSDIR=CLASSES/
 
-java:
-	python metacode/rj2java.py org/nongnu/libvob/lob/RealtimeList.rj org/nongnu/libvob/lob/RealtimeList.java
-	python metacode/rj2java.py org/nongnu/libvob/lob/Lists.rj org/nongnu/libvob/lob/Lists.java
-	python metacode/rj2java.py org/nongnu/libvob/lob/Lobs.rj org/nongnu/libvob/lob/Lobs.java
-	python metacode/rj2java.py org/nongnu/libvob/lob/Components.rj org/nongnu/libvob/lob/Components.java
-	python metacode/rj2java.py org/nongnu/libvob/lob/lobs/BoxLob.rj org/nongnu/libvob/lob/lobs/BoxLob.java
-	python metacode/rj2java.py org/nongnu/libvob/demo/Notebook.rj org/nongnu/libvob/demo/Notebook.java
-	python metacode/rj2java.py org/nongnu/libvob/demo/Puzzle.rj org/nongnu/libvob/demo/Puzzle.java
+%.java: %.rj
+	python metacode/rj2java.py $*.rj $*.java
+
+java: $(GENSRC)
 	mkdir -p CLASSES
 	$(JAVAC) $(DEBUG) -d $(CLASSDIR) $(RAWSRC) 
 
@@ -105,6 +105,7 @@ clean:
 	rm -f src/jni/made*
 	rm -f src/jni/org_nongnu*
 	rm -rf CLASSES
+	rm -f $(GENSRC)
 
 
 #  # Generate a random number suitable for use as a coordinate system
