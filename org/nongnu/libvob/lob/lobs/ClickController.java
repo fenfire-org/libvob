@@ -32,6 +32,10 @@ import javolution.realtime.*;
 
 public class ClickController extends AbstractDelegateLob {
 
+    private static LocalContext.Variable 
+	CLICK_SCENE = new LocalContext.Variable(),
+	CLICK_CS = new LocalContext.Variable();
+
     protected int button, eventType;
     protected Action action;
 
@@ -52,6 +56,20 @@ public class ClickController extends AbstractDelegateLob {
 	return c;
     }
 
+    public static VobScene getClickScene() {
+	VobScene sc = (VobScene)CLICK_SCENE.getValue();
+	if(sc == null)
+	    throw new IllegalStateException("not in a ClickController callback");
+	return sc;
+    }
+
+    public static int getClickCS() {
+	Integer i = (Integer)CLICK_CS.getValue();
+	if(i == null)
+	    throw new IllegalStateException("not in a ClickController callback");
+	return i.intValue();
+    }
+
     public Lob wrap(Lob l) {
 	return newInstance(l, button, eventType, action);
     }
@@ -60,7 +78,15 @@ public class ClickController extends AbstractDelegateLob {
 			 float x, float y) {
 	if(e.getType() == eventType && e.getButton() == button) {
 
-	    action.run();
+	    LocalContext.enter();
+	    try {
+		CLICK_SCENE.setValue(sc);
+		CLICK_CS.setValue(new Integer(cs));
+		action.run();
+	    } finally {
+		LocalContext.exit();
+	    }
+
 	    delegate.mouse(e, sc, cs, x, y);
 	    AbstractUpdateManager.chg();
 	    return true;
