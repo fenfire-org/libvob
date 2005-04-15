@@ -169,10 +169,12 @@ public class TableLob extends AbstractLob {
 
 	if(layoutableAxis == Axis.Y)
 	    doLayout(t.pos, rowMinH, rowNatH, rowMaxH, 
-		     size.minH, size.natH, size.maxH, axis_size, rows);
+		     size.minH, size.natH, size.maxH, axis_size, rows,
+		     layoutableAxis);
 	else
 	    doLayout(t.pos, colMinW, colNatW, colMaxW, 
-		     size.minW, size.natW, size.maxW, axis_size, cols);
+		     size.minW, size.natW, size.maxW, axis_size, cols,
+		     layoutableAxis);
 
 	return newInstance(t);
     }
@@ -201,10 +203,10 @@ public class TableLob extends AbstractLob {
 	int cols = table.getColumnCount();
 
 	doLayout(tl.posY, rowMinH, rowNatH, rowMaxH, 
-		 size.minH, size.natH, size.maxH, height, rows);
+		 size.minH, size.natH, size.maxH, height, rows, Axis.Y);
 
 	doLayout(tl.posX, colMinW, colNatW, colMaxW, 
-		 size.minW, size.natW, size.maxW, width, cols);
+		 size.minW, size.natW, size.maxW, width, cols, Axis.X);
 
 	tl.setSize(tl.posX[cols], tl.posY[rows]);
 	       
@@ -213,7 +215,7 @@ public class TableLob extends AbstractLob {
 
     private void doLayout(float[] pos, float[] min, float[] nat, float[] max, 
 			  float totalMin, float totalNat, float totalMax,
-			  float totalSize, int nitems) {
+			  float totalSize, int nitems, Axis axis) {
 
 	float totalStretch = totalMax - totalNat;
 	float totalShrink  = totalNat - totalMin;
@@ -241,7 +243,7 @@ public class TableLob extends AbstractLob {
 	    }
 	    
 	    if(diff < 0)
-		throw new Error("XXX negative size diff");
+		throw new Error("XXX negative size diff: "+diff+", axis "+axis);
 
 	    cur += nat[i] + diff;
 
