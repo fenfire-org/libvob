@@ -53,14 +53,13 @@ public class JUpdateManager extends AbstractUpdateManager {
 	JUpdateManager m = (JUpdateManager)instance;
 	synchronized(m.ordering) {
 
-	    // if there is too many drag event, kill some of them.
+	    // if events come faster than we can handle, kill some of them.
 	    // othervise the ui will freeze down
-	    if ((eventList.size() > 1) && (e instanceof MouseEvent)) {
-		MouseEvent me = (MouseEvent) e;
-		if (me.getID() == me.MOUSE_DRAGGED)
-		    if ((eventList.getLast() instanceof MouseEvent) &&
-			(((MouseEvent)eventList.getLast()).getID() == 
-			 me.MOUSE_DRAGGED)) {
+	    if (eventList.size() > 0) {
+		int type = e.getID();
+		if (type == MouseEvent.MOUSE_DRAGGED ||
+		    type == MouseEvent.MOUSE_MOVED)
+		    if (((AWTEvent) eventList.getLast()).getID() == type) {
 
 			// replace...
 			eventList.removeLast();
