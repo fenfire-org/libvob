@@ -74,7 +74,8 @@ public class DragManager extends AbstractDelegateLob {
 	    
 	    coords[0] = x; coords[1] = y;
 	    scene.coords.inverseTransformPoints3(dragCS, coords, coords);
-	    dragController.drag(scene, dragCS, coords[0], coords[1]);
+	    dragController.drag(scene, dragCS, coords[0], coords[1], e);
+
 	    return true;
 	} else if(dragController != null && e.getType() == e.MOUSE_RELEASED) {
 	    if (dbg) p("end drag");
@@ -83,7 +84,7 @@ public class DragManager extends AbstractDelegateLob {
 	    
 	    coords[0] = e.getX(); coords[1] = e.getY();
 	    scene.coords.inverseTransformPoints3(dragCS, coords, coords);
-	    dragController.endDrag(scene, dragCS, coords[0], coords[1]);
+	    dragController.endDrag(scene, dragCS, coords[0], coords[1], e);
 
 	    dragController = null;
 	    return true;

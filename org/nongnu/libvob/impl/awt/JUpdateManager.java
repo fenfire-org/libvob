@@ -58,6 +58,9 @@ public class JUpdateManager extends AbstractUpdateManager {
     private static LinkedList eventList = new LinkedList();
 
     public static void addEvent(EventProcessor proc, AWTEvent e) {
+	if (dbg) pa("proc "+proc+", e: "+e);
+
+
 	JUpdateManager m = (JUpdateManager)getInstance();
 	synchronized(m.ordering) {
 

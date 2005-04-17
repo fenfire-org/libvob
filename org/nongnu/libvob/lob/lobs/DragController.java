@@ -40,13 +40,16 @@ public abstract class DragController extends AbstractDelegateLob {
 
     protected DragController() {}
 
-    public void startDrag(VobScene scene, int cs, float x, float y) {
+    public void startDrag(VobScene scene, int cs, float x, float y, 
+			  VobMouseEvent e) {
     }
 
-    public void drag(VobScene scene, int cs, float x, float y) {
+    public void drag(VobScene scene, int cs, float x, float y, 
+		     VobMouseEvent e) {
     }
 
-    public void endDrag(VobScene scene, int cs, float x, float y) {
+    public void endDrag(VobScene scene, int cs, float x, float y, 
+			VobMouseEvent e) {
     }
 
     public void render(VobScene scene, int cs, int matchingParent,
@@ -73,7 +76,7 @@ public abstract class DragController extends AbstractDelegateLob {
 	    
 	    Object path = scene.matcher.getPath(xcs);
 	    DragManager.setDragController(this, path);
-	    startDrag(scene, cs, x, y);
+	    startDrag(scene, cs, x, y, e);
 
 	    startx = x;
 	    starty = y;

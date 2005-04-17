@@ -28,7 +28,8 @@ public class TranslationDemo extends NewLobMain {
 		return tr.dragController(l, button, tr);
 	    }
 	    
-	    public void drag(VobScene scene, int cs, float x, float y) {
+	    public void drag(VobScene scene, int cs, float x, float y, 
+			     VobMouseEvent e) {
 		//p("drag: "+scene+", cs: "+cs);
 		int xcs = scene.matcher.getCS(cs, "translate-lob-cs");
 		//p("xcs: "+xcs);
