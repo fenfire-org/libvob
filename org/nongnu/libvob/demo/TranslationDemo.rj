@@ -1,0 +1,98 @@
+// (c): Matti J. Katila
+
+
+package org.nongnu.libvob.demo;
+import org.nongnu.libvob.impl.NewLobMain;
+import org.nongnu.libvob.lob.lobs.*;
+import org.nongnu.libvob.lob.*;
+import org.nongnu.libvob.*;
+import javolution.realtime.*;
+import java.awt.Color;
+
+public class TranslationDemo extends NewLobMain {
+    static private void p(String s) { System.out.println("Trans:: "+s); }
+
+
+    public TranslationDemo(Color bg) {
+	super(bg);
+    }
+	
+    private Lob dragController(Lob delegate, int button, TranslationDemo tr) {
+	return new @realtime DragController(@set Lob delegate, 
+					    @set int button, 
+					    TranslationDemo tr) {
+	    public void startDrag(VobScene scene, int cs, float x, float y) {
+		p("startDrag: "+scene+", cs: "+cs);
+	    }
+	    protected Lob wrap(Lob l) {
+		return tr.dragController(l, button, tr);
+	    }
+	    
+	    public void drag(VobScene scene, int cs, float x, float y) {
+		//p("drag: "+scene+", cs: "+cs);
+		int xcs = scene.matcher.getCS(cs, "translate-lob-cs");
+		//p("xcs: "+xcs);
+
+		float panX = startx-x, 
+		    panY = starty-y;
+		//p(panX+" "+panY);
+		//p(x+":"+y);
+		long t0 = System.currentTimeMillis();
+		if (delegate instanceof TranslateLob) {
+		    int transCS = xcs;
+		    scene.coords.setTranslateParams(transCS, x,y, 0);
+		    tr.X = x; tr.Y = y;
+		    Lobs.getWindowAnimation().switchVS();
+		    return;
+		}
+	    }
+	}; 
+    }
+
+    Vob v = new AbstractVob() {
+	    public void render(java.awt.Graphics g, 
+				boolean fast,
+				Vob.RenderInfo info1,
+				Vob.RenderInfo info2
+		) {
+		//p("render");
+	    }
+
+	};
+
+    float X = 50, Y = 50;
+
+    public Lob createLob() {
+	Tray tray = Tray.newInstance(Lists.list(), false);
+	Lob l;
+	// put in a huge table to make things slower..
+	
+	TableLob.Table table = new @realtime-i TableLob.Table() {
+	    public int getRowCount() { return 100; }
+	    public int getColumnCount() { return 200; }
+
+	    public Lob getLob(int row, int column) {
+		return Lobs.filledRect(java.awt.Color.white);
+	    }
+	};
+	l = TableLob.newInstance(table);
+
+	l = Lobs.between(Lobs.vob(v), l, Lobs.nullLob());
+	//l = table; //Lobs.filledRect(java.awt.Color.black);
+	float w = 400;
+	float h = 200;
+	l = Lobs.request(l, w,w,w,h,h,h);
+	l = Lobs.translate(l, X, Y);
+	l = dragController(l, 1, this);
+	//l = Lobs.debug(l, "bluff");
+	tray.add(l);
+	l = DragManager.newInstance(tray);
+	return l;
+    }
+
+
+    public static void main(String[] argv) {
+	TranslationDemo demo = new TranslationDemo(new Color(1, 1, .8f));
+	demo.start();
+    }
+}
