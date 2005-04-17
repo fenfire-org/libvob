@@ -166,6 +166,10 @@ public class InputEventUtil {
 	if(k.isAltDown()) t = "Alt-"+t;
 	if(k.isControlDown()) t = "Ctrl-"+t;
 
+	// the following filters bad events from control keys on JDK1.5.0
+	if (t.indexOf(k.CHAR_UNDEFINED) != -1)
+	    t = "";
+
 	if(dbg) pa("KEYTEXT: '" + t + "', was by kt: '"+kt+"' and by char: '"
 	  +kbychar+"'");
 
