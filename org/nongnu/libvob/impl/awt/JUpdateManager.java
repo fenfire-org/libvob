@@ -108,20 +108,22 @@ public class JUpdateManager extends AbstractUpdateManager {
 
     private boolean handleEvents_nohang() {
 	boolean got = false;
-	while(eventList.size() != 0) {
-	    got = true;
-	    EventProcessor proc;
-	    AWTEvent evt;
-	    synchronized(ordering) {
-		proc = (EventProcessor)eventList.get(0);
-		evt = (AWTEvent)eventList.get(1);
+	if (eventList.size() == 0) // the common, fast case
+	    return got;
+	// synchronization was only for eventList get and remove before
+	// but it was done for each event and size() could still be 0
+	synchronized(ordering) {
+	    while(eventList.size() != 0) {
+		got = true;
+		EventProcessor proc = (EventProcessor)eventList.get(0);
+		AWTEvent evt = (AWTEvent)eventList.get(1);
 		eventList.remove(1);
 		eventList.remove(0);
 		if(dbg) pa("Unqueue "+evt+"; listlen="+eventList.size());
+		proc.zzProcessEvent(evt);
+		// XXX wait...
 	    }
-	    proc.zzProcessEvent(evt);
-	    // XXX wait...
-	} 
+	}
 	return got;
     }
 
