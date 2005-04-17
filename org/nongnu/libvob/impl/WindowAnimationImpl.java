@@ -25,15 +25,10 @@ public class WindowAnimationImpl extends Screen
     }
     private boolean createVS;
 
-    static protected final Object ANIM = new Object() { 
-	    public String toString() { return "ANIM"; } 
-	};
-    static protected final Object SWITCH = new Object() {
-	    public String toString() { return "SWITCH"; } 
-	};
-    static protected final Object RERENDER = new Object() {
-	    public String toString() { return "RERENDER"; } 
-	};
+    // The possible values for animMode:
+    static protected final Object ANIM = new String("ANIM"); 
+    static protected final Object SWITCH = new String("SWITCH"); 
+    static protected final Object RERENDER = new String("RERENDER");
 
     protected Object animMode = null;
 
