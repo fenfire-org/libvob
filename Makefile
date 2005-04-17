@@ -78,6 +78,9 @@ run_java:
 
 run_lobdemo:
 	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.LobDemo
+run_lobdemo_trans:
+	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.TranslationDemo
+
 run_bossbuzzle:
 	$(LDLIB) $(JAVA) -cp $(CLASSPATH) $(DBG) org.nongnu.libvob.demo.BossBuzzle
 
