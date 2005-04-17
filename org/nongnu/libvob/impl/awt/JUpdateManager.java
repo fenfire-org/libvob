@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.List;
 import java.awt.*;
 import java.awt.image.*;
+import java.awt.event.*;
 
 public class JUpdateManager extends AbstractUpdateManager {
     private static boolean dbg = false;
@@ -47,10 +48,30 @@ public class JUpdateManager extends AbstractUpdateManager {
 	void zzProcessEvent(AWTEvent e);
     }
 
-    private static List eventList = new LinkedList();
+    private static LinkedList eventList = new LinkedList();
     public static void addEvent(EventProcessor proc, AWTEvent e) {
 	JUpdateManager m = (JUpdateManager)instance;
 	synchronized(m.ordering) {
+
+	    // if there is too many drag event, kill some of them.
+	    // othervise the ui will freeze down
+	    if ((eventList.size() > 1) && (e instanceof MouseEvent)) {
+		MouseEvent me = (MouseEvent) e;
+		if (me.getID() == me.MOUSE_DRAGGED)
+		    if ((eventList.getLast() instanceof MouseEvent) &&
+			(((MouseEvent)eventList.getLast()).getID() == 
+			 me.MOUSE_DRAGGED)) {
+
+			// replace...
+			eventList.removeLast();
+			eventList.removeLast();
+			eventList.addLast(proc);
+			eventList.addLast(e);
+			m.ordering.notifyAll();
+			return;
+		    }
+	    }
+	    
 	    eventList.add(proc);
 	    eventList.add(e);
 	    m.ordering.notifyAll();
