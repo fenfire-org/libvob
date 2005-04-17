@@ -45,17 +45,9 @@ public class GLUpdateManager extends AbstractUpdateManager {
     public GLUpdateManager(Runnable r) { super(r); }
 
     static void startGLUpdateManager(Runnable r) {
-	setInstance(new GLUpdateManager(r));
-    }
-
-    /** The OpenGL thread for OpenGL update manager.
-     *  Starts AbstractUpdateManager's, which implements Runnable,
-     *  event and drawing loop.
-     */
-    private Thread t = new Thread(this);
-    {
+	GLUpdateManager m = new GLUpdateManager(r);
 	if(dbg) pa("STARTGLTHREAD");
-	t.start();
+	new Thread(m).start();
     }
 
     protected boolean handleEvents(boolean waitForEvent) {

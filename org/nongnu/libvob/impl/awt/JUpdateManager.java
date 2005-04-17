@@ -33,24 +33,32 @@ import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
 
+/** An AbstractUpdateManager made concrete with Java AWT specific parts.
+ *  AWTEvents can be queued for an EventProcessor and the update manager
+ *  will run the processing.
+ */
 public class JUpdateManager extends AbstractUpdateManager {
     private static boolean dbg = false;
     private static void pa(String s) { System.err.println(s); }
 
-    public JUpdateManager(Runnable r) { super(r); }
+    private JUpdateManager(Runnable r) { super(r); }
 
     /** An interface for avoiding the Java event queue, which we have
      * synchronization problems with.
      * This way we can encapsulate a call to the Java2 EventQueue API
      * if we want to.
      */
-    public interface EventProcessor {
+    public static interface EventProcessor {
 	void zzProcessEvent(AWTEvent e);
     }
 
+    /** New events from AWT are added to end of this list. 
+     *  All access should be synchronized on instance.ordering
+     */
     private static LinkedList eventList = new LinkedList();
+
     public static void addEvent(EventProcessor proc, AWTEvent e) {
-	JUpdateManager m = (JUpdateManager)instance;
+	JUpdateManager m = (JUpdateManager)getInstance();
 	synchronized(m.ordering) {
 
 	    // if events come faster than we can handle, kill some of them.
@@ -93,13 +101,9 @@ public class JUpdateManager extends AbstractUpdateManager {
     private static EventQueue systemEventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
 
     static void startJUpdateManager(Runnable r) {
-	setInstance(new JUpdateManager(r));
-    }
-
-    private Thread t = new Thread(this);
-    {
+	JUpdateManager m = new JUpdateManager(r);
 	if(dbg) pa("STARTORDTHREAD");
-	t.start();
+	new Thread(m).start();
     }
 
     private boolean handleEvents_nohang() {

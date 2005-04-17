@@ -54,13 +54,8 @@ public abstract class AbstractUpdateManager implements Runnable, org.nongnu.libv
     private static void pa(String s) { 
 	System.out.println("AbstractUpdateManager: "+s); }
 
-    protected static AbstractUpdateManager instance = null;
-    protected static void setInstance(AbstractUpdateManager in) {
-	if(instance != null)
-	    throw new Error("Trying to start two updateManagers");
-	if(dbg) pa("Updatemanager "+in);
-	instance = in;
-    }
+    private static AbstractUpdateManager instance = null;
+
     public static AbstractUpdateManager getInstance() {
 	return instance;
     }
@@ -74,6 +69,9 @@ public abstract class AbstractUpdateManager implements Runnable, org.nongnu.libv
     protected AbstractUpdateManager(Runnable r) {
 	if(dbg) pa("Starting updateManager: "+this);
 	initRunnable = r;
+	if(instance != null)
+	    throw new Error("Trying to create two updateManagers");
+	instance = this;
     }
 
     /** The order of windows, from the most important to the least.
