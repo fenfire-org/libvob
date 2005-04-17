@@ -63,25 +63,27 @@ public abstract class VobCoorder {
     abstract public void clear();
 
     public int translate(int into, float x, float y) {
-	return ortho(into, 0, x, y, 1, 1);
+	return translate(into, x, y, 0);
     }
     public int translate(int into, float x, float y, float z) {
-	return ortho(into, z, x, y, 1, 1);
+	throw new Error("unimpl.");
     }
     public int scale(int into, float sx, float sy) {
-	return ortho(into, 0, 0, 0, sx, sy);
+	return scale(into, sx, sy, 1);
     }
+    abstract public int scale(int into, float sx, float sy, float sz);
+    
 
     abstract public void setOrthoParams(int into, float depth, float x, float y, float sx, float sy);
 
     public void setTranslateParams(int into, float x, float y) {
-	setOrthoParams(into, 0, x, y, 1, 1);
+	setTranslateParams(into, x, y, 0);
     }
     public void setTranslateParams(int into, float x, float y, float z) {
-	setOrthoParams(into, z, x, y, 1, 1);
+	throw new Error("unimpl.");
     }
     public void setScaleParams(int into, float sx, float sy) {
-	setOrthoParams(into, 0, 0, 0, sx, sy);
+	throw new Error("unimpl.");
     }
 
     public int box(int into, float w, float h) {
