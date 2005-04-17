@@ -25,9 +25,15 @@ public class WindowAnimationImpl extends Screen
     }
     private boolean createVS;
 
-    static protected final Object ANIM = new Object();
-    static protected final Object SWITCH = new Object();
-    static protected final Object RERENDER = new Object();
+    static protected final Object ANIM = new Object() { 
+	    public String toString() { return "ANIM"; } 
+	};
+    static protected final Object SWITCH = new Object() {
+	    public String toString() { return "SWITCH"; } 
+	};
+    static protected final Object RERENDER = new Object() {
+	    public String toString() { return "RERENDER"; } 
+	};
 
     protected Object animMode = null;
 
@@ -110,6 +116,7 @@ public class WindowAnimationImpl extends Screen
      */
 
     public boolean generateEndState(int millis, float lod) { 
+	//p("end state! "+animMode);
 	if (animMode == RERENDER) {
 	    next = prev;
 	} else {
