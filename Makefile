@@ -152,7 +152,8 @@ runsnaps::
 	$(GLLIB) $(JYTHON) runsnaps.py $(DBG) $(SNAPS)
 
 copyrighted::
-	python ../fenfire/metacode/copyrighter.py Libvob
+	python ../fenfire/metacode/copyrighter.py Libvob org/
+	python ../fenfire/metacode/copyrighter.py Libvob vob/
 
 ##########################################################################
 # General documentation targets
