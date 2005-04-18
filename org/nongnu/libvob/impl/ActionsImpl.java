@@ -1,7 +1,7 @@
 /*
 ActionsImpl.java
  *    
- *    Copyright (c) 2005, Matti J. Katila
+ *    Copyright (c) 2004, Matti J. Katila
  *    This file is part of Libvob.
  *    
  *    Libvob is free software; you can redistribute it and/or modify it under
