@@ -42,18 +42,22 @@ public class DecoratorLob extends AbstractDelegateLob {
     protected Object key;
     protected int intKey;
 
+    protected float depthFract;
+
     private DecoratorLob() {}
 
     public static DecoratorLob newInstance(Lob delegate, Lob decoration,
-					   Object key, int intKey) {
+					   Object key, int intKey,
+					   float depthFract) {
 	DecoratorLob l = (DecoratorLob)LOB_FACTORY.object();
 	l.delegate = delegate; l.decoration = decoration;
 	l.key = key; l.intKey = intKey;
+	l.depthFract = depthFract;
 	return l;
     }
 
     public Lob wrap(Lob l) {
-	return newInstance(l, decoration, key, intKey);
+	return newInstance(l, decoration, key, intKey, depthFract);
     }
 
     public boolean move(ObjectSpace os) {
@@ -82,7 +86,7 @@ public class DecoratorLob extends AbstractDelegateLob {
 
 	if(cs >= 0) {
 	    scene.coords.getSqSize(cs, wh);
-	    cs = scene.coords.translate(cs, 0, 0, d); // XXX
+	    cs = scene.coords.translate(cs, 0, 0, depthFract*d); // XXX
 
 	    Lob layout = decoration.layout(wh[0], wh[1]);
 	    layout.render(scene, cs, matchingParent, d, visible);

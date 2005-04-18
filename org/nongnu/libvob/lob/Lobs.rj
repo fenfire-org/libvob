@@ -273,7 +273,12 @@ public class Lobs {
 
     public static Lob decorate(Lob child, Lob decoration, Object key,
 			       int intKey) {
-	return DecoratorLob.newInstance(child, decoration, key, intKey);
+	return decorate(child, decoration, key, intKey, 1);
+    }
+
+    public static Lob decorate(Lob child, Lob decoration, Object key,
+			       int intKey, float depthFract) {
+	return DecoratorLob.newInstance(child, decoration, key, intKey, depthFract);
     }
 
     public static Lob clickController(Lob child, int button, Action action) {
