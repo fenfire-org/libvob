@@ -48,7 +48,7 @@ class Scene:
         matcher = vob.impl.IndexedVobMatcher()
         scene = vob.VobScene(_.map, _.coords, matcher,
                              _.gfxapi, _.window, _.size)
-        scene.put(background((1,1,1)))
+        scene.put(background((.9,.9,.9)))
 
         
         #vob.lob.PoolContext.enter()
