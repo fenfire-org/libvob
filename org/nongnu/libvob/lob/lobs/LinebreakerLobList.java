@@ -83,9 +83,9 @@ public class LinebreakerLobList extends RealtimeList {
 
 	    float nextPreBreakWid = 0, nextPostBreakWid = 0;
 
-	    for(next=i+1; next<items.size(); next++) {
-		PoolContext.enter();
-		try {
+	    PoolContext.enter();
+	    try {
+		for(next=i+1; next<items.size(); next++) {
 		    Lob l = (Lob)items.get(next);
 		    SizeRequest r = l.getSizeRequest();
 
@@ -107,9 +107,9 @@ public class LinebreakerLobList extends RealtimeList {
 			nextwid = r.nat(lineAxis);
 			break;
 		    }
-		} finally {
-		    PoolContext.exit();
 		}
+	    } finally {
+		PoolContext.exit();
 	    }
 
 	    if(i>=0 && (pos+wid>lineSize || breakQuality >= INF)) {

@@ -67,6 +67,8 @@ public class BoxLob extends AbstractSequence {
 
     private float otherAxisSize; // size along the other axis; -1 if unknown
 
+    private TableLob tableLob;
+
     private BoxLob() {}
 
     public static BoxLob newInstance(Axis axis, List lobs) {
@@ -77,13 +79,17 @@ public class BoxLob extends AbstractSequence {
 				      float otherAxisSize) {
 	BoxLob bl = (BoxLob)FACTORY.object();
 	bl.axis = axis; bl.lobs = lobs; bl.otherAxisSize = otherAxisSize;
+	bl.tableLob = TableLob.newInstance(bl.getTable());
 	return bl;
     }
 
+    public void add(Lob l) {
+	super.add(l);
+	tableLob.init();
+    }
+
     public SizeRequest getSizeRequest() {
-	// XXX should cache the TableLob between getSizeRequest() and layout()
-	// but I'm not sure how to make that work with Javolution
-	return TableLob.newInstance(getTable()).getSizeRequest();
+	return tableLob.getSizeRequest();
     }
 
     public boolean mouse(VobMouseEvent e, VobScene sc, int cs, 
@@ -92,20 +98,28 @@ public class BoxLob extends AbstractSequence {
     }
 
     public Lob layout(float width, float height) {
-	return TableLob.newInstance(getTable()).layout(width, height);
+	return tableLob.layout(width, height);
     }
 
     public Axis getLayoutableAxis() {
-	return TableLob.newInstance(getTable()).getLayoutableAxis();
+	return tableLob.getLayoutableAxis();
     }
 
     public Lob layoutOneAxis(float size) {
-	return TableLob.newInstance(getTable()).layoutOneAxis(size);
+	return tableLob.layoutOneAxis(size);
     }
 
     public void render(VobScene scene, int into, int matchingParent, 
 		       float d, boolean visible) {
 	throw new UnsupportedOperationException("not layouted");
+    }
+
+    public boolean move(ObjectSpace os) {
+	if(super.move(os)) {
+	    tableLob.move(os);
+	    return true;
+	}
+	return false;
     }
 
     private static final Factory FACTORY = new Factory() {

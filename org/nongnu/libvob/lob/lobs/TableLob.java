@@ -68,13 +68,12 @@ public class TableLob extends AbstractLob {
 
     public static TableLob newInstance(Table table) {
 	TableLob tl = (TableLob)LOB_FACTORY.object();
-	tl.init(table);
+	tl.table = table;
+	tl.init();
 	return tl;
     }
 
-    private void init(Table table) {
-	this.table = table;
-
+    void init() {
 	int rows = table.getRowCount();
 	int cols = table.getColumnCount();
 
@@ -94,17 +93,17 @@ public class TableLob extends AbstractLob {
 
 	layoutableAxis = null;
 
-	for(int r=0; r<rows; r++) {
-	    for(int c=0; c<cols; c++) {
-		PoolContext.enter();
-		try {
+	PoolContext.enter();
+	try {
+	    for(int r=0; r<rows; r++) {
+		for(int c=0; c<cols; c++) {
 		    Lob l = table.getLob(r, c);
-
+		    
 		    if(layoutableAxis == null) {
 			Axis laxis = l.getLayoutableAxis();
 			if(laxis != null) {
 			    // XXX? we just take the first non-null one, if any
-
+			    
 			    layoutableAxis = laxis;
 			    if(layoutableAxis == Axis.X)
 				layoutableRowOrColumn = c;
@@ -112,7 +111,7 @@ public class TableLob extends AbstractLob {
 				layoutableRowOrColumn = r;
 			}
 		    }
-
+		    
 		    SizeRequest s = l.getSizeRequest();
 		    
 		    if(s.minH > rowMinH[r]) rowMinH[r] = s.minH;
@@ -125,12 +124,12 @@ public class TableLob extends AbstractLob {
 
 		    if(rowNatH[r] > rowMaxH[r]) rowNatH[r] = rowMaxH[r];
 		    if(colNatW[c] > colMaxW[c]) colNatW[c] = colMaxW[c];
-		} finally {
-		    PoolContext.exit();
 		}
 	    }
+	} finally {
+	    PoolContext.exit();
 	}
-
+	
 	size.minW = size.natW = size.maxW = 0;
 	size.minH = size.natH = size.maxH = 0;
 
@@ -286,33 +285,35 @@ public class TableLob extends AbstractLob {
     }
 
     protected static boolean keyImpl(Table table, String key) {
-	for(int r=0; r<table.getRowCount(); r++) {
-	    for(int c=0; c<table.getColumnCount(); c++) {
-		PoolContext.enter();
-		try {
+	PoolContext.enter();
+	try {
+	    for(int r=0; r<table.getRowCount(); r++) {
+		for(int c=0; c<table.getColumnCount(); c++) {
 		    if(table.getLob(r, c).key(key)) 
 			return true;
-		} finally {
-		    PoolContext.exit();
 		}
 	    }
+	} finally {
+	    PoolContext.exit();
 	}
-
+	
 	return false;
     }
 
     protected static List getFocusableLobsImpl(Table table) {
 	List result = Lists.list();
-	for(int r=0; r<table.getRowCount(); r++) {
-	    for(int c=0; c<table.getColumnCount(); c++) {
-		PoolContext.enter();
-		try {
+
+	PoolContext.enter();
+	try {
+	    for(int r=0; r<table.getRowCount(); r++) {
+		for(int c=0; c<table.getColumnCount(); c++) {
 		    result.addAll(table.getLob(r, c).getFocusableLobs());
-		} finally {
-		    PoolContext.exit();
 		}
 	    }
+	} finally {
+	    PoolContext.exit();
 	}
+
 	return result;
     }
 
@@ -366,47 +367,46 @@ public class TableLob extends AbstractLob {
 
 	    int rows = table.getRowCount();
 	    int cols = table.getColumnCount();
-
-	    for(int r=0; r<rows; r++) {
-
-		int lastCS = -1; // in DefaultVobMap chain
-		
-		for(int c=0; c<cols; c++) {
-
-		    float x = posX[c],     y = posY[r];
-		    float w = posX[c+1]-x, h = posY[r+1]-y;
-
-		    int cs = scene.coords.box(into, x, y, w, h);
-
-		    float lobW;
-
-		    PoolContext.enter();
-		    try {
+	    
+	    PoolContext.enter();
+	    try {
+		for(int r=0; r<rows; r++) {
+		    
+		    int lastCS = -1; // in DefaultVobMap chain
+		    
+		    for(int c=0; c<cols; c++) {
+			
+			float x = posX[c],     y = posY[r];
+			float w = posX[c+1]-x, h = posY[r+1]-y;
+			
+			int cs = scene.coords.box(into, x, y, w, h);
+			
+			float lobW;
+			
 			Lob lob = table.getLob(r, c);
 			Lob layout = lob.layout(w, h);
 			lobW = lob.getSizeRequest().natW;
-
+			
 			layout.render(scene, cs, matchingParent, d, visible);
-		    } finally {
-			PoolContext.exit();
-		    }
-
 	
-		    if((int)w == (int)lobW) {
-			if(lastCS >= 0 && scene.map instanceof DefaultVobMap)
-			    ((DefaultVobMap)scene.map).chain(lastCS, cs);
-		
-			lastCS = cs;
-		    } else {
-			// do not chain lobs that were stretched or shrunken:
-			// chaining is for rendering contiguous characters as a
-			// single AWT call, and of course that always renders
-			// spaces etc. the same width, so when a space between
-			// two words is stretched, we need to render the words
-			// separately.
-			lastCS = -1;
+			if((int)w == (int)lobW) {
+			    if(lastCS >= 0 && scene.map instanceof DefaultVobMap)
+				((DefaultVobMap)scene.map).chain(lastCS, cs);
+			    
+			    lastCS = cs;
+			} else {
+			    // do not chain lobs that were stretched or shrunken:
+			    // chaining is for rendering contiguous characters as a
+			    // single AWT call, and of course that always renders
+			    // spaces etc. the same width, so when a space between
+			    // two words is stretched, we need to render the words
+			    // separately.
+			    lastCS = -1;
+			}
 		    }
 		}
+	    } finally {
+		PoolContext.exit();
 	    }
 	}
 

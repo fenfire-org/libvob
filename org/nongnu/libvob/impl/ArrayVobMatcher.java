@@ -27,6 +27,7 @@ ArrayVobMatcher.java
  */
 package org.nongnu.libvob.impl;
 import org.nongnu.libvob.*;
+import javolution.realtime.*;
 import java.util.Arrays;
 
 /** An implementation of VobMatcher that does not create objects
@@ -82,6 +83,9 @@ public class ArrayVobMatcher implements VobMatcher {
 
     public int add(int parent, int cs, Object key) {
 	if(key == null) throw new NullPointerException("key == null");
+
+	if(key instanceof Realtime) 
+	    ((Realtime)key).move(Realtime.ObjectSpace.HOLD);
 
 	ensureMaxCS(cs);
 
@@ -166,6 +170,12 @@ public class ArrayVobMatcher implements VobMatcher {
     public void clear() {
 	ncs = 0;
 	maxCS = -1;
+
+	for(int i=0; i<csKey.length; i++) {
+	    if(csKey[i] instanceof Realtime) 
+		((Realtime)csKey[i]).move(Realtime.ObjectSpace.LOCAL);
+	}
+
 	Arrays.fill(hashtable, 0);
 	Arrays.fill(csKey, null);
     }
