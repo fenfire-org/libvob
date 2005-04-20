@@ -80,7 +80,7 @@ public class TextKeyController extends AbstractDelegateLob {
 	    cursorModel.set(tc-1);
 	    winAnim.switchVS();
 	    return true;
-	} else if(key.equals("Left")) {
+	} else if(key.equals("Left") || key.equals("Alt-Left")) {
 	    if(tc < 0)
 		tc = text.length();
 
@@ -88,7 +88,7 @@ public class TextKeyController extends AbstractDelegateLob {
 	    cursorModel.set(tc-1);
 	    winAnim.animate();
 	    return true;
-	} else if(key.equals("Right")) {
+	} else if(key.equals("Right") || key.equals("Alt-Right")) {
 	    if(tc < 0)
 		tc = 0;
 
