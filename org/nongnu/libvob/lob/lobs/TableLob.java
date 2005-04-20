@@ -241,9 +241,6 @@ public class TableLob extends AbstractLob {
 		}
 	    }
 	    
-	    if(diff < 0)
-		throw new Error("XXX negative size diff: "+diff+", axis "+axis);
-
 	    cur += nat[i] + diff;
 
 	    if(cur > totalSize) {
