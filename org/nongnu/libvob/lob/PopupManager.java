@@ -59,8 +59,10 @@ public class PopupManager extends AbstractDelegateLob {
     public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
 			 float x, float y) {
 
-	for(Iterator i = popups.fastKeyIterator(); i.hasNext();) {
-	    Lob lob = (Lob)i.next();
+	for(FastMap.Entry ee = popups.headEntry(), end = popups.tailEntry();
+	    (ee = ee.getNextEntry()) != end;) {
+
+	    Lob lob = (Lob)ee.getKey();
 	    Object path = popups.get(lob);
 	    int pcs = scene.matcher.getPathCS(path);
 
@@ -98,8 +100,10 @@ public class PopupManager extends AbstractDelegateLob {
 	    
 	    delegate.render(scene, into, matchingParent, d, visible);
 
-	    for(Iterator i = popups.fastKeyIterator(); i.hasNext();) {
-		Lob lob = (Lob)i.next();
+	    for(FastMap.Entry e = popups.headEntry(), end = popups.tailEntry();
+		(e = e.getNextEntry()) != end;) {
+
+		Lob lob = (Lob)e.getKey();
 		Object path = (Object)popups.get(lob);
 
 		SizeRequest r = lob.getSizeRequest();
