@@ -129,8 +129,6 @@ public abstract class NewLobMain extends Main {
 		}
 	    }
 
-	    boolean hadAnimModeSet = windowAnim.hasAnimModeSet();
-	    
 	    PoolContext.enter();
 	    LocalContext.enter();
 	    try {
@@ -140,8 +138,10 @@ public abstract class NewLobMain extends Main {
 		if(!key.equals("Tab")) {
 		    Lob l = (Lob)focusModel.get();
 		    if(l != null && l.key(key)) {
-			if(hadAnimModeSet || !windowAnim.hasAnimModeSet())
+			if(!windowAnim.hasAnimModeSet())
 			    windowAnim.animate();
+			else
+			    AbstractUpdateManager.chg();
 		    }
 		} else {
 		    Lob lob = createLob();
@@ -174,8 +174,6 @@ public abstract class NewLobMain extends Main {
 		VobScene sc = windowAnim.getCurrentVS();
 		Dimension size = ((Screen)windowAnim).window.getSize();
 
-		boolean hadAnimModeSet = windowAnim.hasAnimModeSet();
-	    
 		PoolContext.enter();
 		LocalContext.enter();
 		try {
@@ -185,10 +183,13 @@ public abstract class NewLobMain extends Main {
 		    Lob lob = createLob();
 		    lob = lob.layout(size.width, size.height);
 
-		    if(lob.mouse(e, sc, 0, e.getX(), e.getY()) &&
-		       (hadAnimModeSet || !windowAnim.hasAnimModeSet()))
-			//if(e.getType() == e.MOUSE_CLICKED)
-			windowAnim.animate();
+		    if(lob.mouse(e, sc, 0, e.getX(), e.getY())) {
+			if(!windowAnim.hasAnimModeSet())
+			    //if(e.getType() == e.MOUSE_CLICKED)
+			    windowAnim.animate();
+			else
+			    AbstractUpdateManager.chg();
+		    }
 		} finally {
 		    LocalContext.exit();
 		    PoolContext.exit();
