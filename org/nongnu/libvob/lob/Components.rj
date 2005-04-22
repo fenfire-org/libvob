@@ -181,6 +181,7 @@ public class Components {
         lob = Lobs.decorate(lob, cursor_lob, selected.get(), -1);
 
 	lob = Lobs.viewport(axis, lob, selected.get(), -1);
+	lob = Lobs.request(axis, lob, 20, -1, -1);
 
 	lob = frame(lob);
 	return lob;
