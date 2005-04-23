@@ -117,6 +117,29 @@ public class LinebreakerLobList extends RealtimeList {
 		lineCount++;
 		
 		pos = postBreakWid;
+
+		if(pos + wid > lineSize) {
+		    OUTER: 
+		    while(true) {
+			float xwid = 0;
+			for(int x=i+1; x<next; x++) {
+			    Lob l = (Lob)items.get(x);
+			    SizeRequest r = l.getSizeRequest();
+			    
+			    if(pos + xwid + r.nat(lineAxis) > lineSize) {
+				breaks[lineCount] = x;
+				lineCount++;
+				i = x;
+				pos = 0;
+				continue OUTER;
+			    } else {
+				xwid += r.nat(lineAxis);
+			    }
+			}
+
+			break;
+		    }
+		}
 	    }
 
 	    pos += wid + nextwid;
@@ -146,6 +169,8 @@ public class LinebreakerLobList extends RealtimeList {
 
 	int start = breaks[line]+1, end = breaks[line+1];
 	//if(end > items.size()) end = items.size(); // XXX huh?
+
+	if(end < start) end = start; // XXX
 
 	List lobs = items.subList(start, end);
 
