@@ -239,7 +239,7 @@ public class Components {
 	boolean multiline = multilineB.booleanValue();
 
 	Text txt = Text.valueOf((String)text.get());
-	List list = font.text(txt);
+	List list = font.textLn(txt);
 	list = Lobs.keyList(list, "text");
 	Lob lob = multiline ? Lobs.linebreaker(list) : Lobs.hbox(list);
 

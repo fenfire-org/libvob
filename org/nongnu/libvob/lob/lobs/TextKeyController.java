@@ -96,6 +96,14 @@ public class TextKeyController extends AbstractDelegateLob {
 	    cursorModel.set(tc+1);
 	    winAnim.animate();
 	    return true;
+	} else if(key.equals("Ctrl-V")) {
+	    String str = org.nongnu.libvob.util.PUIClipboard.getText();
+
+	    if(tc < 0) tc = text.length();
+	    textModel.set(text.substring(0, tc) + str + text.substring(tc));
+	    cursorModel.set(tc+str.length());
+	    winAnim.switchVS();
+	    return true;
 	} else {
 	    return delegate.key(key);
 	}
