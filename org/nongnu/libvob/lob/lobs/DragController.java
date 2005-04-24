@@ -40,6 +40,10 @@ public abstract class DragController extends AbstractDelegateLob {
 
     protected DragController() {}
 
+    protected Object getKey() {
+	return "drag-controller-cs";
+    }
+
     public void startDrag(VobScene scene, int cs, float x, float y, 
 			  VobMouseEvent e) {
     }
@@ -55,10 +59,11 @@ public abstract class DragController extends AbstractDelegateLob {
     public void render(VobScene scene, int cs, int matchingParent,
 		       float d, boolean visible) {
 	int xcs = scene.coords.translate(cs, 0, 0);
-	scene.matcher.add(matchingParent, xcs, "drag-controller-cs");
+	scene.matcher.add(matchingParent, xcs, getKey());
 	super.render(scene, cs, matchingParent, d, visible);
     }
 
+    private float[] coords = new float[3];
     public boolean mouse(VobMouseEvent e, VobScene scene, int cs, 
 			 float x, float y) {
 	SizeRequest r = getSizeRequest();
@@ -72,14 +77,18 @@ public abstract class DragController extends AbstractDelegateLob {
 	   e.getModifiers() == modifiers) {
 	    if (dbg) p("start drag");
 
-	    int xcs = scene.matcher.getCS(cs, "drag-controller-cs");
+	    int xcs = scene.matcher.getCS(cs, getKey());
 	    
 	    Object path = scene.matcher.getPath(xcs);
-	    DragManager.setDragController(this, path);
-	    startDrag(scene, cs, x, y, e);
 
-	    startx = x;
-	    starty = y;
+	    coords[0] = e.getX(); coords[1] = e.getY();
+	    scene.coords.inverseTransformPoints3(xcs, coords, coords);
+
+	    startx = coords[0];
+	    starty = coords[1];
+
+	    DragManager.setDragController(this, path);
+	    startDrag(scene, cs, startx, starty, e);
 
 	    return true;
 	} else {
