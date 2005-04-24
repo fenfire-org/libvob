@@ -157,6 +157,12 @@ public class TableLob extends AbstractLob {
 	if(layoutableAxis == null)
 	    throw new Error("neither axis is layoutable");
 
+	if(axis_size < size.nat(layoutableAxis)) {
+	    // we haven't been given enough size; try to work around it
+	    Lob l = layoutOneAxis(size.nat(layoutableAxis));
+	    return l;
+	}
+
 	OneAxisLayoutedTable t =
 	    (OneAxisLayoutedTable)TABLE_FACTORY.object();
 
