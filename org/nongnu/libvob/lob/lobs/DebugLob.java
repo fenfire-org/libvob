@@ -51,8 +51,9 @@ public class DebugLob extends AbstractDelegateLob {
     }
 
     public SizeRequest getSizeRequest() {
-	p("getSizeRequest");
-	return super.getSizeRequest();
+	SizeRequest r = super.getSizeRequest();
+	p("getSizeRequest: "+r);
+	return r;
     }
 
     public Lob layoutOneAxis(float size) {
