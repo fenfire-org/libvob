@@ -96,6 +96,10 @@ public class TextKeyController extends AbstractDelegateLob {
 	    cursorModel.set(tc+1);
 	    winAnim.animate();
 	    return true;
+	} else if(key.equals("Ctrl-C")) {
+	    // PUI-copy the whole contents -- we don't have selecting, yet
+	    org.nongnu.libvob.util.PUIClipboard.puiCopy(text);
+	    return true;
 	} else if(key.equals("Ctrl-V")) {
 	    String str = org.nongnu.libvob.util.PUIClipboard.getText();
 
