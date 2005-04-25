@@ -58,6 +58,9 @@ public class ViewportLob extends AbstractDelegateLob {
     }
 
     public Lob layout(float w, float h) {
+	if(w < 0 || h < 0)
+	    throw new IllegalArgumentException("negative size: "+w+" "+h);
+
 	Lob lob = delegate;
 
 	if(lob.getLayoutableAxis() == scrollAxis.other())

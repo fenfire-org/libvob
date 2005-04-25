@@ -32,7 +32,7 @@ import org.nongnu.libvob.*;
 /** A lob placing a margin around its contents.
  */
 public class DebugLob extends AbstractDelegateLob {
-    private void p(String s) { System.out.println("DebugLob "+name+":: "+s); }
+    private void p(String s) { System.out.println("DebugLob "+name+" @"+System.identityHashCode(this)+":: "+s); }
 
     protected String name;
 
@@ -46,8 +46,9 @@ public class DebugLob extends AbstractDelegateLob {
     }
 
     protected Lob wrap(Lob l) {
-	p("wrap "+l);
-	return newInstance(l, name);
+	Lob result = newInstance(l, name);
+	p("wrap "+l+" -> @"+System.identityHashCode(result));
+	return result;
     }
 
     public SizeRequest getSizeRequest() {
@@ -58,13 +59,15 @@ public class DebugLob extends AbstractDelegateLob {
 
     public Lob layoutOneAxis(float size) {
 	Lob l = super.layoutOneAxis(size);
-	p("layoutOneAxis("+size+") returns "+l+" size "+l.getSizeRequest());
+	p("layoutOneAxis("+size+") returns "+l+" size "+l.getSizeRequest()+" -> @"+System.identityHashCode(l));
 	return l;
     }
 
     public Lob layout(float w, float h) {
 	p("layout("+w+", "+h+")");
-	return super.layout(w, h);
+	Lob l = super.layout(w, h);
+	p("layout returns -> @"+System.identityHashCode(l));
+	return l;
     }
 
     public void render(VobScene scene, int into, int matchingParent,
