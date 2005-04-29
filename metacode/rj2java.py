@@ -269,8 +269,8 @@ while True:
         xm = variable.match(pstr)
         xclazz = xm.group(2)
         xvar = xm.group(3)
-        if xclazz in ('int', 'float', 'double', 'byte', 'short', 'char',
-                      'long'): continue
+        if xclazz in ('int', 'float', 'double', 'byte', 'boolean',
+                      'short', 'char', 'long'): continue
 
         # we first cast to Object because otherwise this generates
         # a compiler error for final classes not implementing Realtime
