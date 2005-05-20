@@ -1,0 +1,122 @@
+/* -*-java-*-
+LobHTML.java
+ *    
+ *    Copyright (c) 2005, Benja Fallenstein
+ *
+ *    This file is part of Libvob.
+ *    
+ *    Libvob is free software; you can redistribute it and/or modify it under
+ *    the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *    
+ *    Libvob is distributed in the hope that it will be useful, but WITHOUT
+ *    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *    or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ *    Public License for more details.
+ *    
+ *    You should have received a copy of the GNU General
+ *    Public License along with Libvob; if not, write to the Free
+ *    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ *    MA  02111-1307  USA
+ *    
+ *
+ */
+/*
+ * Written by Benja Fallenstein
+ */
+package org.nongnu.libvob.lob;
+import org.nongnu.libvob.*;
+import org.nongnu.libvob.fn.*;
+import org.nongnu.libvob.lob.lobs.*;
+import org.nongnu.libvob.vobs.*;
+import org.nongnu.libvob.util.*;
+import javolution.lang.*;
+import javolution.realtime.*;
+import java.awt.Color;
+import java.util.*;
+import java.io.*;
+import nu.xom.*;
+
+public class LobHTML {
+    public static List getLobs(String html, LobFont font) {
+	return getLobs(getXOM(html), font);
+    }
+
+    public static List getLobs(Node html, LobFont font) {
+	if(html instanceof nu.xom.Text) {
+	    String text = ((nu.xom.Text)html).getValue();
+	    StringBuffer buf = new StringBuffer(text.length());
+	    for(int i=0; i<text.length(); i++) {
+		if(text.charAt(i) == ' ' || text.charAt(i) == '\n') {
+		    buf.append(' ');
+		    while(i+1 < text.length() && 
+			  (text.charAt(i+1) == ' ' || 
+			   text.charAt(i+1) == '\n'))   i++;
+		} else {
+		    buf.append(text.charAt(i));
+		}
+	    }
+	    return font.text(buf.toString());
+	} else if(html instanceof ParentNode) {
+	    String name = "";
+	    if(html instanceof Element) 
+		name = ((Element)html).getLocalName();
+
+	    if(name.equals("i") || name.equals("em")) {
+		// XXX change font to italic...
+	    } else if(name.equals("b") || name.equals("strong")) {
+		// XXX change font to bold...
+	    } else if(name.equals("a")) {
+		// XXX change font to blue/underlined, if there's a href attr
+	    } else if(name.equals("br")) {
+		return font.text("\n");
+	    }
+	    
+	    ParentNode n = (ParentNode)html;
+	    List list = Lists.list();
+
+	    for(int i=0; i<n.getChildCount(); i++)
+		list.add(getLobs(n.getChild(i), font));
+
+	    if(name.equals("p")) {
+		list.add(font.text("\n\n"));
+	    }
+
+	    return Lists.concatElements(list);
+	} else {
+	    return Lists.list();
+	}
+    }
+
+    private static final org.w3c.tidy.Tidy tidy = new org.w3c.tidy.Tidy();
+    static {
+	tidy.setNumEntities(true);
+	tidy.setXmlOut(true);
+	tidy.setQuiet(true);
+    } 
+
+    private static Document getXOM(String html) {
+	try {
+	    Builder builder = new Builder();
+
+	    // AAARGH -- XOM can't read from Tidy's DOM properly
+	
+	    ByteArrayOutputStream o = new ByteArrayOutputStream();
+	    tidy.parse(new ByteArrayInputStream(html.getBytes("UTF-8")), o);
+	    byte[] b = o.toByteArray();
+	
+	    ByteArrayInputStream i = new ByteArrayInputStream(b);
+	    return builder.build(i);
+	} catch(ParsingException e) {
+	    e.printStackTrace();
+	    // This is Tidy's output -- it should be parsable,
+	    // if not, it's Tidy that's wrong, not the input file
+	    throw new Error(e);
+	} catch(IOException e) {
+	    // Since we're not doing IO, there shouldn't be a reason
+	    // for IO exceptions...
+	    throw new Error(e);
+	}
+    }
+}
