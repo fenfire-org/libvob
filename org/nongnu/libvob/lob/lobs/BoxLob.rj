@@ -53,6 +53,8 @@ public class BoxLob extends AbstractSequence {
 		   (axis == Axis.Y && column != 0))
 		    throw new IndexOutOfBoundsException(row+" "+column);
 		
+		if (lobs.size() == 0) return Lobs.nullLob();
+
 		Lob lob = (Lob)lobs.get((axis == Axis.X) ? column : row);
 		
 		if(otherAxisSize < 0 || axis.other() != lob.getLayoutableAxis())
