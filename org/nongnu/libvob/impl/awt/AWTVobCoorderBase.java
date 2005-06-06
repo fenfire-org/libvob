@@ -912,8 +912,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	float d  = coordinates.d(withCS);
 
 	for(int i=0; i<pt.length; i+=3) {
-	    into[i + 0] = x + sx * pt[i + 0];
-	    into[i + 1] = y + sy * pt[i + 1];
+	    into[i + 0] = x + pt[i + 0];
+	    into[i + 0] *= sx;
+	    into[i + 1] = y + pt[i + 1];
+	    into[i + 1] *= sy;
 	    into[i + 2] = d + pt[i + 2];
 	}
 	return into;
@@ -932,8 +934,10 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	float d  = coordinates.d(withCS);
 
 	for(int i=0; i<pt.length; i+=3) {
-	    into[i + 0] = pt[i + 0] / sx - x;
-	    into[i + 1] = pt[i + 1] / sy - y;
+	    into[i + 0] = pt[i + 0] - x;
+	    into[i + 0] /= sx;
+	    into[i + 1] = pt[i + 1] - y;
+	    into[i + 1] /= sy;
 	    into[i + 2] = pt[i + 2] - d;
 	}
 	return into;

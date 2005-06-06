@@ -35,7 +35,7 @@ import java.util.Arrays;
  */
 public class ArrayVobMatcher implements VobMatcher {
     public static boolean dbg = false;
-    private static void p(String s) { System.out.println(s); }
+    private static void p(String s) { System.out.println("ArrayVobMatcher:: "+s); }
 
     public static final int MAX_MILLIS = 5;
 
