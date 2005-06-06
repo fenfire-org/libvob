@@ -45,77 +45,89 @@ public class TranslationDemo extends NewLobMain {
 	return new @realtime DragController(@set Lob delegate, 
 					    @set int button, 
 					    TranslationDemo tr) {
-	    public void startDrag(VobScene scene, int cs, float x, float y) {
-		p("startDrag: "+scene+", cs: "+cs);
-	    }
+	    protected Object getKey() {	return super.getKey()+"DRAG"; }
+
 	    protected Lob wrap(Lob l) {
 		return tr.dragController(l, button, tr);
 	    }
 	    
 	    public void drag(VobScene scene, int cs, float x, float y, 
 			     VobMouseEvent e) {
-		//p("drag: "+scene+", cs: "+cs);
-		int xcs = scene.matcher.getCS(cs, "translate-lob-cs");
-		//p("xcs: "+xcs);
+		//p(e+" cs: "+cs+" xy: "+x+":"+y);
+		tr.X = x;
+		tr.Y = y;
+		Lobs.getWindowAnimation().switchVS();
+	    }
+	}; 
+    }
+    private Lob scaleController(Lob delegate, int button, TranslationDemo tr) {
+	return new @realtime DragController(@set Lob delegate, 
+					    @set int button, 
+					    TranslationDemo tr) {
+	    protected Object getKey() { return super.getKey()+"SCALE"; }
 
-		float panX = startx-x, 
-		    panY = starty-y;
-		//p(panX+" "+panY);
-		//p(x+":"+y);
-		long t0 = System.currentTimeMillis();
-		if (delegate instanceof TranslateLob) {
-		    int transCS = xcs;
-		    scene.coords.setTranslateParams(transCS, x,y, 0);
-		    tr.X = x; tr.Y = y;
-		    Lobs.getWindowAnimation().switchVS();
-		    return;
-		}
+	    protected Lob wrap(Lob l) {
+		return tr.scaleController(l, button, tr);
+	    }
+	    public void drag(VobScene scene, int cs, float x, float y, 
+			     VobMouseEvent e) {
+		//p(e+" cs: "+cs+" xy: "+x+":"+y);
+		float zoom = (starty-y)/100f;
+		//p("Z: "+tr.zoom+", zoom: "+zoom+", starty: "+starty+", y: "+y);
+		if (zoom > 0.3 || zoom < -0.3) zoom = 0;
+		starty = y;
+
+		//p("Z: "+tr.zoom+", zoom: "+zoom+", starty: "+starty+", y: "+y);
+		tr.zoom *= (1+ zoom);
+		Lobs.getWindowAnimation().switchVS();
 	    }
 	}; 
     }
 
-    Vob v = new AbstractVob() {
-	    public void render(java.awt.Graphics g, 
-				boolean fast,
-				Vob.RenderInfo info1,
-				Vob.RenderInfo info2
-		) {
-		//p("render");
-	    }
-
-	};
-
-    float X = 50, Y = 50;
+    float X = 50, Y = 50, zoom = 1;
+    boolean one = true;
 
     public Lob createLob() {
-	Tray tray = Tray.newInstance(Lists.list(), false);
 	Lob l;
 	// put in a huge table to make things slower..
 	
 	TableLob.Table table = new @realtime-i TableLob.Table() {
 	    public int getRowCount() { return 100; }
-	    public int getColumnCount() { return 200; }
+	    public int getColumnCount() { return 100; }
 
 	    public Lob getLob(int row, int column) {
-		return Lobs.filledRect(java.awt.Color.white);
+		return Lobs.filledRect(java.awt.Color.red);
 	    }
 	};
-	l = TableLob.newInstance(table);
 
-	l = Lobs.between(Lobs.vob(v), l, Lobs.nullLob());
-	//l = table; //Lobs.filledRect(java.awt.Color.black);
+	if (one)
+	    l = Lobs.filledRect(java.awt.Color.black);
+	else
+	    l = TableLob.newInstance(table);
 	float w = 400;
 	float h = 200;
 	l = Lobs.request(l, w,w,w,h,h,h);
+
+	l = Lobs.scale(l, zoom);
+	l = scaleController(l, 3, this);
+
 	l = Lobs.translate(l, X, Y);
 	l = dragController(l, 1, this);
+
 	//l = Lobs.debug(l, "bluff");
-	tray.add(l);
-	l = DragManager.newInstance(tray);
+	l = DragManager.newInstance(l);
+	l = Lobs.keyController(l, Maps.map(" ", 
+					   new Action() {
+					       public void run() {	
+						   System.out.println("ONE "+
+								      one);
+						   one = !one;
+					       }		
+					       public boolean move(javolution.realtime.Realtime.ObjectSpace o) { return false; }
+					       public javolution.lang.Text toText() { return null; }
+					   }));
 	return l;
     }
-
-
     public static void main(String[] argv) {
 	TranslationDemo demo = new TranslationDemo(new Color(1, 1, .8f));
 	demo.start();
