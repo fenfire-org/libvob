@@ -74,6 +74,8 @@ public class DragManager extends AbstractDelegateLob {
 	    
 	    coords[0] = e.getX(); coords[1] = e.getY();
 	    scene.coords.inverseTransformPoints3(dragCS, coords, coords);
+	    if (dbg) p("was: "+e.getX()+" - "+e.getY()+
+		", now: "+coords[0]+" - "+coords[1]);
 	    dragController.drag(scene, dragCS, coords[0], coords[1], e);
 
 	    return true;

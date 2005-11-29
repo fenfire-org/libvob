@@ -107,7 +107,8 @@ public class ClipLob extends AbstractDelegateLob {
 	}
 
 	GraphicsAPI api = GraphicsAPI.getInstance();
-	if(api instanceof org.nongnu.libvob.impl.awt.AWTAPI) {
+	if(api instanceof org.nongnu.libvob.impl.awt.AWTAPI ||
+	    api instanceof org.nongnu.libvob.impl.terminal.TERMINALAPI) {
 	    org.nongnu.libvob.impl.DefaultVobMap map = 
 		(org.nongnu.libvob.impl.DefaultVobMap)scene.map;
 	    map.clip(cs);

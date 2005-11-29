@@ -315,7 +315,7 @@ public abstract class AWTScreen
 	    }
 	    switch(me.getButton()) {
 	        case 0:
-		    // argh -- that's a bug in awt -- work around it
+		    // argh -- that's a bug in awt -- this's a work around
 		    veb = 1; break;
 		case MouseEvent.BUTTON1: veb = 1; break;
 		case MouseEvent.BUTTON2: veb = 2; break;

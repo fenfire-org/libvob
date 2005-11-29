@@ -1094,7 +1094,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     /** Internal API: to be called right after creation,
      * to leave room for other coordsyses.
      */
-    void setNumberOfParameterCS(int numberOfParameterCS) {
+    public void setNumberOfParameterCS(int numberOfParameterCS) {
 	ninds = this.numberOfParameterCS = numberOfParameterCS;
     }
     int numberOfParameterCS = 1;

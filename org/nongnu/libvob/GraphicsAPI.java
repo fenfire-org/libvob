@@ -61,8 +61,12 @@ public abstract class GraphicsAPI {
 	} else if(cl.equals("gl")) {
 	    gfxapi = new org.nongnu.libvob.impl.gl.GLAPI();
             type = "gl";
+	} else if(cl.equals("terminal")) {
+	    gfxapi = new org.nongnu.libvob.impl.terminal.TERMINALAPI();
+            type = "terminal";
 	} else
-	    throw new Error("Invalid client type '"+cl+"': should be awt or gl");
+	    throw new Error("Invalid client type '"+cl+"': should be "+
+			    "awt, applet, terminal or gl");
     }
 
     /** Get the singleton instance.
