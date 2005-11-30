@@ -34,7 +34,7 @@ public class TerminalWindow extends GraphicsAPI.AbstractWindow
 	    terminal.initializeTerminal();
 	    terminalSize = terminal.getTerminalSize();
 	    g = new TerminalGraphics(terminalSize);
-	    TerminalUpdateManager.getInstance().set(terminal);
+	    ((TerminalUpdateManager)AbstractUpdateManager.getInstance()).set(terminal);
 	} catch (Exception e) { e.printStackTrace(); }
 
     }

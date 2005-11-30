@@ -19,7 +19,7 @@ public class TerminalUpdateManager extends AbstractUpdateManager {
     
     private TerminalUpdateManager(Runnable r) { super(r); }
 
-    static public TerminalUpdateManager getInstance() { return mgr; }
+    //static public TerminalUpdateManager getInstance() { return mgr; }
 
     static void startUpdateManager(Runnable r) {
 	if (mgr != null) 

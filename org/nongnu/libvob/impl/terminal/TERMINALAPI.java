@@ -4,7 +4,7 @@ package org.nongnu.libvob.impl.terminal;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.awt.*;
 import org.nongnu.libvob.util.*;
-import jline.*;
+
 
 public class TERMINALAPI extends GraphicsAPI {
 

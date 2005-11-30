@@ -41,17 +41,6 @@ public class TerminalGraphics extends Graphics {
      * [49m  set background color to default (black)
      */
 
-    public final char 
-        BLACK = 1 << 0,
-	RED = 1 << 1,
-	GREEN = 1 << 2,
-	YELLOW = 1 << 3,
-	BLUE = 1 << 4,
-	MAGENTA = 1 << 5,
-	CYAN = 1 << 6,
-	WHITE = 1 << 7;
-
-
     private Dimension termSize, size;
     private int xBits = 8, yBits = 16;
     private Color buff[];
