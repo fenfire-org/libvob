@@ -18,35 +18,13 @@ public class TerminalGraphics extends Graphics {
 
 
 
-    /* Some ANSI color codes:
-     *
-     * [30m  set foreground color to black
-     * [31m  set foreground color to red
-     * [32m  set foreground color to green
-     * [33m  set foreground color to yellow
-     * [34m  set foreground color to blue
-     * [35m  set foreground color to magenta (purple)
-     * [36m  set foreground color to cyan
-     * [37m  set foreground color to white
-     * [39m  set foreground color to default (white)
-     *
-     * [40m  set background color to black
-     * [41m  set background color to red
-     * [42m  set background color to green
-     * [43m  set background color to yellow
-     * [44m  set background color to blue
-     * [45m  set background color to magenta (purple)
-     * [46m  set background color to cyan
-     * [47m  set background color to white
-     * [49m  set background color to default (black)
-     */
-
     private Dimension termSize, size;
     private int xBits = 8, yBits = 16;
     private Color buff[];
     private Color innerColor = Color.BLACK;
     private Color outerColor = Color.BLACK;
     private Rectangle clip;
+    private ANSIBuffer ansiBuff;
 
     private Color[] colors = {
         Color.BLACK,
@@ -62,12 +40,12 @@ public class TerminalGraphics extends Graphics {
 
     public TerminalGraphics(Dimension termSize) {
 	this.termSize = termSize;
-	p("size: "+termSize);
+	this.ansiBuff = new ANSIBuffer(termSize);
 	this.size = new Dimension(termSize.width * xBits, 
 				  termSize.height * yBits);
 	this.buff = new Color[size.width * size.height];
 
-	setBeginState();
+	dispose();
 
 	if (dbg) {
 	    dbgFrame = new Frame();
@@ -131,14 +109,96 @@ public class TerminalGraphics extends Graphics {
 	new TerminalGraphics(new Dimension(20,20));
     }
 
+    /** Converts the pixel buffer to character buffer.
+     */
+    public ANSIBuffer convert() {
+	int [] counts= new int[colors.length];
+	Color[] two = new Color[2];
+	int [] shapeCounts = new int[font8x16.length/16];
+	for (int xi = 0; xi<termSize.width; xi++){
+	    for (int yi = 0; yi<termSize.height; yi++){
+		// count the colors in area
+		countColors(xi,yi,counts);
 
+		// reduce
+		reduce(xi, yi, counts, two);
 
+		// find out character
+		char ch = findChar(xi, yi, two, shapeCounts);
 
-    public void setBeginState() {
-	this.clip = new Rectangle(0,0,size.width, size.height);
-	this.innerColor = outerColor = Color.BLACK;
-
+		// do aalib..
+		ansiBuff.set(xi,yi, two[1], two[0], ch);
+	    }
+	}
+	return ansiBuff;
     }
+
+    private void countColors(int x, int y, int[] counts) {
+	Arrays.fill(counts, 0);
+	for (int xi = 0; xi<xBits; xi++){
+	    for (int yi = 0; yi<yBits; yi++){
+		Color c = buff[(y+yi)*size.width + (x+xi)];
+		for (int i=0; i<colors.length; i++)
+		    if (colors[i] == c)
+			counts[i] += 1;
+	    }
+	}
+    }
+
+    private void reduce(int x, int y, int[] counts, Color two[]) {
+
+	// find out which colors are the most interesting
+	int tmp[] = new int[counts.length];
+	System.arraycopy(counts, 0, tmp, 0, counts.length);
+	Arrays.sort(tmp);
+
+	for (int i=0; i<colors.length; i++) {
+	    if (counts[i] == tmp[counts.length-1]) two[0] = colors[i];
+	    else if (counts[i] == tmp[counts.length-2]) two[1] = colors[i];
+	}
+
+	for (int xi = 0; xi<xBits; xi++){
+	    for (int yi = 0; yi<yBits; yi++){
+		int index = (y+yi)*size.width + (x+xi);
+		Color c = buff[index];
+		buff[index] = getClosestColor(c, two);
+		if (dbg) dbgArr[index] = buff[index].getRGB();
+	    }
+	}
+    }
+
+    private char findChar(int x, int y, Color [] two, int[] shapeCounts) {
+	Arrays.fill(shapeCounts, 0);
+
+	for (int i=33; i<128; i++)
+	{
+	    for (int yi = 0; yi<yBits; yi++){
+
+		char ch = font8x16[16*i + yi];
+
+		for (int xi = 0; xi<xBits; xi++){
+		    int index = (y+yi)*size.width + (x+7-xi);
+		    Color c = buff[index];
+		    boolean b = (ch & (1<<xi)) != 0;
+		    int inc = b?1:-1;
+		    if (two[0] == c)
+			shapeCounts[i] += inc;
+		    else
+			shapeCounts[i] -= inc;
+		}
+	    }
+	}
+
+	int max = 0;
+	for (int i=0; i<shapeCounts.length; i++)
+	{
+	    int val = shapeCounts[i];
+	    if (val < 0) val = -val;
+	    if (val > shapeCounts[max]) max = i;
+	}
+	return (char)max;
+    }
+
 
     public Dimension getSize() { return size; }
 
@@ -198,7 +258,10 @@ public class TerminalGraphics extends Graphics {
 	return this;
     }
 
-    public void dispose() {}
+    public void dispose() {
+	this.clip = new Rectangle(0,0,size.width, size.height);
+	this.innerColor = outerColor = Color.BLACK;
+    }
     
     public void draw3DRect(int x, int y, int width, int height, 
 				   boolean raised) {
@@ -286,6 +349,9 @@ public class TerminalGraphics extends Graphics {
 	    int fontIndex = ch*16;
 	    for (int yi=0; yi<16; yi++) {
 		for (int xi=0; xi<8; xi++) {
+		    if (y+yi >= size.height) break;
+		    if (x+xi >= size.width) break;
+
 		    if (y+yi>= clip.y+clip.height) continue;
 		    if (x+xi>= clip.x+clip.width) continue;
 

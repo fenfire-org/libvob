@@ -27,7 +27,7 @@ public class TerminalWindow extends GraphicsAPI.AbstractWindow
     VobScene listprev, listnext;
     int[] interplist;
 
-    public TerminalWindow(GraphicsAPI api) {
+    TerminalWindow(GraphicsAPI api) {
 	super(api);
 	try {
 	    terminal = new UnixTerminal();
@@ -36,8 +36,11 @@ public class TerminalWindow extends GraphicsAPI.AbstractWindow
 	    g = new TerminalGraphics(terminalSize);
 	    ((TerminalUpdateManager)AbstractUpdateManager.getInstance()).set(terminal);
 	} catch (Exception e) { e.printStackTrace(); }
-
+	instance = this;
     }
+
+    private TerminalWindow instance = null;
+    public TerminalWindow getInstance() { return instance; }
 
     public void renderStill(VobScene prev, float lod) {
 	renderAnim(prev, null, 0, lod, true);
@@ -50,6 +53,8 @@ public class TerminalWindow extends GraphicsAPI.AbstractWindow
 	if(dbg) p("renderanim: "+prev+" "+next);
 	if (g == null) return;
 	//canvas.paint(g);
+	// terminal .flush...
+	g.convert().flush();
 	g.dispose();
     }
 

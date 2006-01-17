@@ -11,15 +11,13 @@ import java.awt.*;
 /** A singleton class update manager for terminal.
  */
 public class TerminalUpdateManager extends AbstractUpdateManager {
-    private static boolean dbg = true;
+    private static boolean dbg = false;
     private static void p(String s) { System.out.println("TermUpdateMgr:: "+s); }
 
     static private TerminalUpdateManager mgr = null;
     private UnixTerminal terminal = null;
     
     private TerminalUpdateManager(Runnable r) { super(r); }
-
-    //static public TerminalUpdateManager getInstance() { return mgr; }
 
     static void startUpdateManager(Runnable r) {
 	if (mgr != null) 
@@ -52,7 +50,7 @@ public class TerminalUpdateManager extends AbstractUpdateManager {
     }
 
     protected void synchronizeToolkit() {
-	Toolkit.getDefaultToolkit().sync();
+	//Toolkit.getDefaultToolkit().sync();
     }
 
 }

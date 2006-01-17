@@ -7,6 +7,8 @@ import org.nongnu.libvob.util.*;
 
 
 public class TERMINALAPI extends GraphicsAPI {
+    static private void p(String s) { System.out.println("TERMAPI:: "+s); }
+
 
     public void startUpdateManager(java.lang.Runnable r){
 	TerminalUpdateManager.startUpdateManager(r);
@@ -27,6 +29,39 @@ public class TERMINALAPI extends GraphicsAPI {
 
     public TextStyle getTextStyle(java.lang.String family, 
 				  int style, int size) {
-	return new RawTextStyle(new ScalableFont(family, style, size), null);
+	//p("STYLE for: "+size);
+	return this.style; //new RawTextStyle(new ScalableFont(family, style, size), null);
     }
+
+
+    TextStyle style = new TextStyle(){
+
+	    /** Get the scale to use to get a font in this style of height h.
+	     */
+	    public float getScaleByHeight(float h) {
+		return 1;
+	    }
+
+	    /** Get a copy of this style, scaled so that getHeight(1)
+	     *  is (approximately) h.
+	     */
+	    public TextStyle getScaledStyle(float h) { return this; }
+
+	    public float getWidth(String s, float scale) {
+		return s.length()*8*scale;
+	    }
+	    public float getWidth(char[] chars, int offs,
+				  int len, float scale){
+		return chars.length*8*scale;
+	    }
+
+	    public float getHeight(float scale) { return 16*scale;}
+
+	    public float getAscent(float scale) { return 15*scale; }
+
+	    public float getDescent(float scale) { return scale; }
+
+	    public float getLeading(float scale) { return 0; }
+	};
+
 }
