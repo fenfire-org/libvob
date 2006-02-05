@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.StringTokenizer;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.gl.impl.LWJGL_Wrapper;
+import org.nongnu.libvob.gl.impl.NativeLoopBack;
 
 /** The interface to the native OpenGL library.
  * Note: here we must be VERY careful, as this is one of the places
@@ -94,14 +96,31 @@ public class GL {
      */
     public static boolean workaroundStupidBuggyAtiDrivers = false;
 
+    /**
+     * The instance of GL. 
+     */
+    private static GLinstance instance = null;
+
+    static public interface GLinstance {
+	String iGetGLString(String s);
+	
+    }
+    
+    
     /** Init the library - to be called once during startup.
      */
     public static void init() {
-	loadLib();
-	init(1);
-	if(getGLString("VENDOR").startsWith("ATI ")) {
-	    pa("WARNING: ATI Linux drivers still unstable - trying to work around what I can.");
-	    workaroundStupidBuggyAtiDrivers = true;
+	if (GraphicsAPI.getInstance() instanceof org.nongnu.libvob.impl.lwjgl.LWJGL_API)
+	{
+	    instance = new LWJGL_Wrapper();
+	} else {
+	    instance = new NativeLoopBack();
+	    loadLib();
+	    init(1);
+	    if(getGLString("VENDOR").startsWith("ATI ")) {
+		pa("WARNING: ATI Linux drivers still unstable - trying to work around what I can.");
+		workaroundStupidBuggyAtiDrivers = true;
+	    }
 	}
     }
 
@@ -1291,7 +1310,7 @@ public class GL {
     public static boolean hasExtension(String name) {
 	if(extensions == null) {
 	    extensions = new HashSet();
-	    String s = getGLString("EXTENSIONS");
+	    String s = instance.iGetGLString("EXTENSIONS");
 	    StringTokenizer st = new StringTokenizer(s);
 	    while (st.hasMoreTokens()) 
 		extensions.add(st.nextToken());

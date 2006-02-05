@@ -146,7 +146,7 @@ public class Stencil {
 		boolean needDepth) {
 	init();
 	if(drawOverStencil == null) drawOverStencil = drawStencil;
-	GLVobMap vm = (GLVobMap)vs.map;
+	VobMap vm = (VobMap)vs.map;
 
 	// First, draw the stencil
 	vm.put(initStencil);

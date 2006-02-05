@@ -28,16 +28,30 @@ GLRen.template.java
 
 package org.nongnu.libvob.gl;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.gl.impl.lwjgl.LWJGLRen;
+import org.nongnu.libvob.impl.lwjgl.LWJGL_API;
+
+import java.awt.Graphics;
+
 
 public class GLRen {
 
     public static Vob createCallList(String s) {
+	if (GraphicsAPI.getInstance() instanceof LWJGL_API) {
+	    return LWJGLRen.createCallList(s, LWJGLRen.NONE);
+	}
 	return createCallList(GL.createDisplayList(s));
     }
     public static Vob createCallListCoorded(String s) {
+	if (GraphicsAPI.getInstance() instanceof LWJGL_API) {
+	    return LWJGLRen.createCallList(s, LWJGLRen.COORDER);
+	}
 	return createCallListCoorded(GL.createDisplayList(s));
     }
     public static Vob createCallListBoxCoorded(String s) {
+	if (GraphicsAPI.getInstance() instanceof LWJGL_API) {
+	    return LWJGLRen.createCallList(s, LWJGLRen.BOX_COORDER);
+	}
 	return createCallListBoxCoorded(GL.createDisplayList(s));
     }
     /*
