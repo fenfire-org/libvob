@@ -517,9 +517,11 @@ public class DefaultVobMap implements VobMap {
 	}
         
 	g.setColor(info.fade(textRangeColor[range]));
-	((AWTTextStyle)style).render(g, (int)x, (int)ty, chars, 0, len,
-				     scale, info);
-
+	if (style instanceof AWTTextStyle)
+	    ((AWTTextStyle)style).render(g, (int)x, (int)ty, chars, 0, len,
+					 scale, info);
+	else
+	    g.drawString(new String(chars, 0, len), (int)x, (int)y);
 	return lastClip;
     }
 

@@ -32,6 +32,7 @@ Texture_pipetexture.cxx
 #include <stdlib.h>
 #include <stdarg.h>
 #include <iostream>
+#include <errno.h>
 
 using std::cerr;
 using std::string;

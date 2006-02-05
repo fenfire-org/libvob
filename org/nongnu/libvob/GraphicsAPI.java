@@ -56,7 +56,7 @@ public abstract class GraphicsAPI {
 	    gfxapi = new org.nongnu.libvob.impl.awt.AWTAPI();
             type = "awt";
 	} else if(cl.equals("applet")) {
-		gfxapi = new org.nongnu.libvob.impl.applet.APPLETAPI();
+	    gfxapi = new org.nongnu.libvob.impl.applet.APPLETAPI();
             type = "applet";
 	} else if(cl.equals("gl")) {
 	    gfxapi = new org.nongnu.libvob.impl.gl.GLAPI();
@@ -64,9 +64,12 @@ public abstract class GraphicsAPI {
 	} else if(cl.equals("terminal")) {
 	    gfxapi = new org.nongnu.libvob.impl.terminal.TERMINALAPI();
             type = "terminal";
+	} else if(cl.equals("lwjgl")) {
+	    gfxapi = new org.nongnu.libvob.impl.lwjgl.LWJGL_API();
+	    type = "lwjgl";
 	} else
 	    throw new Error("Invalid client type '"+cl+"': should be "+
-			    "awt, applet, terminal or gl");
+			    "awt, applet, terminal, gl  or lwjgl");
     }
 
     /** Get the singleton instance.

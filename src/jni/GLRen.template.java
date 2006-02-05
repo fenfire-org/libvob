@@ -27,6 +27,7 @@ GLRen.template.java
 
 package org.nongnu.libvob.gl;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.gl.impl.lwjgl.LWJGLRen;
 import org.nongnu.libvob.impl.lwjgl.LWJGL_API;
 
 import java.awt.Graphics;

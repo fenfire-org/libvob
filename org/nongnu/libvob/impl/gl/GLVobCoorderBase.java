@@ -39,11 +39,11 @@ public abstract class GLVobCoorderBase extends AffineVobCoorder {
     public static boolean dbg = false;
     private static void pa(String s) { System.err.println(s); }
 
-    float[] floats = new float[80000];
-    int nfloats = 0;
+    public float[] floats = new float[80000];
+    public int nfloats = 0;
 
-    int[] inds = new int[20000];
-    int ninds = 1; // zero is special (the root)
+    public int[] inds = new int[20000];
+    public int ninds = 1; // zero is special (the root)
 
     protected final void addFloats(int n) { nfloats += n; }
     protected final void addInds(int n) { ninds += n; }

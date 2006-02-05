@@ -379,7 +379,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
     Trans noOp = new Trans(){
 	    public String toString() { return "no op"; }
 	    void put(Coordinates into) {
-		into.copy(getParent(), cs());
+		into.copy(this.getParent(), cs());
 	    }
 	};
 
@@ -441,7 +441,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    public String toString() { return "translate"; }
 	    void put(Coordinates into) {
 		int f = inds[cs()+2];
-		into.copy(getParent(), cs());
+		into.copy(this.getParent(), cs());
 		into.setX(cs(), into.x(cs()) + floats[f+0]*into.sx(cs()));
 		into.setY(cs(), into.y(cs()) + floats[f+1]*into.sy(cs()));
 		into.setD(cs(), into.d(cs()) + floats[f+2]);
@@ -452,7 +452,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    public String toString() { return "scale"; }
 	    void put(Coordinates into) {
 		int f = inds[cs()+2];
-		into.copy(getParent(), cs());
+		into.copy(this.getParent(), cs());
 		into.setSX(cs(), into.sx(cs()) * floats[f+0]);
 		into.setSY(cs(), into.sy(cs()) * floats[f+1]);
 
@@ -474,7 +474,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	new Trans() {   // 12 box
 	    public String toString() { return "box"; }
 	    void put(Coordinates into) {
-		into.copy(getParent(), cs());
+		into.copy(this.getParent(), cs());
 	    }
 	    float w() {
 		int f = inds[cs()+2];
@@ -495,13 +495,13 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    public String toString() { return "ortho"; }
 	    void put(Coordinates into) {
 		int f = inds[cs()+2];
-		into.setX(cs(), floats[f+1]*into.sx(getParent()) + 
-			        into.x(getParent()));
-		into.setY(cs(), floats[f+2]*into.sy(getParent()) + 
-			        into.y(getParent()));
-		into.setSX(cs(), floats[f+3]*into.sx(getParent()));
-		into.setSY(cs(), floats[f+4]*into.sy(getParent()));
-		into.setD(cs(), floats[f+0] + into.d(getParent()));
+		into.setX(cs(), floats[f+1]*into.sx(this.getParent()) + 
+			        into.x(this.getParent()));
+		into.setY(cs(), floats[f+2]*into.sy(this.getParent()) + 
+			        into.y(this.getParent()));
+		into.setSX(cs(), floats[f+3]*into.sx(this.getParent()));
+		into.setSY(cs(), floats[f+4]*into.sy(this.getParent()));
+		into.setD(cs(), floats[f+0] + into.d(this.getParent()));
 	    }
 	    float sx() {
 		int f = inds[cs()+2];
@@ -650,13 +650,13 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	    public String toString() { return "orthoBox"; }
 	    void put(Coordinates into) {
 		int f = inds[cs()+2];
-		into.setX(cs(), floats[f+1]*into.sx(getParent()) + 
-			        into.x(getParent()));
-		into.setY(cs(), floats[f+2]*into.sy(getParent()) + 
-			        into.y(getParent()));
-		into.setSX(cs(), floats[f+3]*into.sx(getParent()));
-		into.setSY(cs(), floats[f+4]*into.sy(getParent()));
-		into.setD(cs(), floats[f+0] + into.d(getParent()));
+		into.setX(cs(), floats[f+1]*into.sx(this.getParent()) + 
+			        into.x(this.getParent()));
+		into.setY(cs(), floats[f+2]*into.sy(this.getParent()) + 
+			        into.y(this.getParent()));
+		into.setSX(cs(), floats[f+3]*into.sx(this.getParent()));
+		into.setSY(cs(), floats[f+4]*into.sy(this.getParent()));
+		into.setD(cs(), floats[f+0] + into.d(this.getParent()));
 	    }
 	    float sx() {
 		int f = inds[cs()+2];
@@ -680,7 +680,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	}, 
 	new Trans() {   // 20 unitSq
 	    void put(Coordinates into) {
-		into.copy(getParent(), cs());
+		into.copy(this.getParent(), cs());
 		into.setSX(cs(), sx()*into.sx(cs()));
 		into.setSY(cs(), sy()*into.sy(cs()));
 	    }
@@ -729,7 +729,7 @@ public abstract class AWTVobCoorderBase extends VobCoorder {
 	},
 	new Trans() {   // 22 translatePolar
 	    void put(Coordinates into) {
-		into.copy(getParent(), cs());
+		into.copy(this.getParent(), cs());
 
 		int f = inds[cs()+2];
 

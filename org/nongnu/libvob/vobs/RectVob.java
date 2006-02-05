@@ -29,6 +29,8 @@ RectVob.java
 package org.nongnu.libvob.vobs;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.gl.*;
+import org.nongnu.libvob.gl.impl.lwjgl.LWJGLRen;
+import org.nongnu.libvob.impl.gl.GLAPI;
 import org.nongnu.libvob.util.*;
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -134,9 +136,14 @@ public class RectVob extends AbstractVob {
 	    float[] tlc = ColorUtil.getRGBColorComponents(tlColor, null);
 	    float[] brc = ColorUtil.getRGBColorComponents(brColor, null);
 
-	    vob = GLRen.createNonFilledRectangle(lineWidth, 
+	    if (GraphicsAPI.getInstance() instanceof GLAPI)
+		vob = GLRen.createNonFilledRectangle(lineWidth, 
 						 tlc[0], tlc[1], tlc[2], 1, 
 						 brc[0], brc[1], brc[2], 1);
+	    else
+		vob = LWJGLRen.createNonFilledRectangle(lineWidth, 
+			 tlc[0], tlc[1], tlc[2], 1, 
+			 brc[0], brc[1], brc[2], 1);
 	}
 
         vs.map.put(vob, coordsys1);

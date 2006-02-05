@@ -30,9 +30,12 @@ import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.awt.*;
 import org.nongnu.libvob.impl.gl.*;
 import org.nongnu.libvob.linebreaking.*;
+import org.nongnu.libvob.Vob.RenderInfo;
 import org.nongnu.libvob.gl.*;
 import org.nongnu.libvob.util.*;
 import org.nongnu.navidoc.util.Obs;
+
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Color;
@@ -189,14 +192,19 @@ public class TextVob extends HBox.VobHBox {
     } 
 
     public Vob getPlainRenderableForBenchmarking() {
-	if(ht == null) {
+	if(ht == null && GraphicsAPI.getInstance() instanceof org.nongnu.libvob.impl.gl.GLAPI) {
 	    GLTextStyle gls = (GLTextStyle)style;
 	    ht = GLRen.createText1(
 		    gls.getQuadFont(),
 		    text, 
 		    (baselined ? 1 : gls.getGLFont().getYOffs()),
 		    0);
-	}
+	} else
+	    ht = new AbstractVob(){
+		public void render(Graphics g, boolean fast, RenderInfo info1, RenderInfo info2) {
+		}
+		public int putGL(VobScene vs, int cs) { return 0; }
+	    };
 	return ht;
     }
 

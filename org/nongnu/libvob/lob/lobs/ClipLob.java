@@ -114,7 +114,8 @@ public class ClipLob extends AbstractDelegateLob {
 	    map.clip(cs);
 	    run_render.run();
 	    map.unclip();
-	} else if(api instanceof org.nongnu.libvob.impl.gl.GLAPI) {
+	} else if(api instanceof org.nongnu.libvob.impl.gl.GLAPI ||
+		api instanceof org.nongnu.libvob.impl.lwjgl.LWJGL_API) {
 	    org.nongnu.libvob.gl.Stencil.drawStenciled(
 		scene,
 		run_put_stencil,

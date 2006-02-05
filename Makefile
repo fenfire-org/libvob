@@ -48,7 +48,7 @@ tags::
 
 DEPENDS = ../depends
 
-CLASSPATH := $(CLASSDIR):../navidoc/CLASSES:$(DEPENDS)/jython.jar:$(DEPENDS)/png.jar:$(CLASSPATH):$(DEPENDS)/javolution.jar:$(DEPENDS)/jtidy.jar:$(DEPENDS)/xom-1.0b7.jar
+CLASSPATH := $(CLASSDIR):../navidoc/CLASSES:$(DEPENDS)/jython.jar:$(DEPENDS)/png.jar:$(CLASSPATH):$(DEPENDS)/javolution.jar:$(DEPENDS)/jtidy.jar:$(DEPENDS)/xom-1.0b7.jar:$(DEPENDS)/jline.jar:$(DEPENDS)/lwjgl.jar
 export CLASSPATH
 
 ifeq (,$(JYTHONPATH))
