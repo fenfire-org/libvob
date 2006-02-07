@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.nongnu.libvob.AbstractVob;
+import org.nongnu.libvob.VobScene;
 import org.nongnu.libvob.Vob.RenderInfo;
 import org.nongnu.libvob.gl.impl.lwjgl.CallGL;
 import org.nongnu.libvob.gl.impl.lwjgl.LWJGLRen;
@@ -32,6 +33,12 @@ public class NonFilledRectangleVob extends AbstractVob implements LWJGLRen.Vob1 
 	this.b1 = b1;
     }
 
+    public int putGL(VobScene vs, int cs1) {
+	// it's not clear what should be returned in here!
+	// if 0 is returned, this vob is skipped.
+	return cs1;
+    }
+    
     public void render(Transform t, int callList) {
 	CallGL.checkGlError("Before NonFilledRect");
 	GL11.glPushMatrix();

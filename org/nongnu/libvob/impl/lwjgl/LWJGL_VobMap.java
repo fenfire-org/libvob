@@ -1,9 +1,10 @@
 /*   
-GLVobMap.java
+LWJGL_VobMap.java
  *    
  *    Copyright (c) 2000-2001, Ted Nelson and Tuomas Lukka
  *                  2003, Tuomas J. Lukka
  *                  2004, Matti J. Katila
+ *                  2006, Matti J. Katila
  *
  *    This file is part of Gzz.
  *    
@@ -35,7 +36,7 @@ import java.awt.*;
 
 public class LWJGL_VobMap implements VobMap {
     public static boolean dbg = false;
-    private static void p(String s) { System.out.println("GLVobMap:: "+s); }
+    private static void p(String s) { System.out.println("LWJGL_VobMap:: "+s); }
 
     LWJGL_Screen screen;
     VobScene vs;
@@ -46,17 +47,20 @@ public class LWJGL_VobMap implements VobMap {
 	list = new int[20000];
 	cs = new int[20000];
 	vobs = new Vob[20000];
+	index2vob = new Vob[20000];
 	clear();
     }
 
     public void setVS(VobScene vs) { this.vs = vs; }
 
-    int[] list;
+    public int[] list;
     int curs;
     int[] cs;
-    Object[] vobs;
+    public Object[] vobs, index2vob;
     int nvobs;
 
+    public int getSize() { return curs; }
+    
     public void clear() {
 	for(int i=0; i<curs; i++)
 	    list[i] = 0;
@@ -86,6 +90,7 @@ public class LWJGL_VobMap implements VobMap {
 	// Now, stash it away.
 	cs[nvobs] = scs[0];
 	vobs[nvobs++] = vob;
+	index2vob[curs] = vob;
 	list[curs++] = (GL.RENDERABLEN | ind);
 	list[curs++] = scs.length;
 	for(int i=0; i<scs.length; i++) 
@@ -100,6 +105,7 @@ public class LWJGL_VobMap implements VobMap {
 	// Now, stash it away.
 	cs[nvobs] = coordsys1;
 	vobs[nvobs++] = vob;
+	index2vob[curs] = vob;
 	list[curs++] = (GL.RENDERABLE3 | ind);
 	list[curs++] = coordsys1;
 	list[curs++] = coordsys2;
@@ -114,6 +120,7 @@ public class LWJGL_VobMap implements VobMap {
 	// Now, stash it away.
 	cs[nvobs] = coordsys1;
 	vobs[nvobs++] = vob;
+	index2vob[curs] = vob;
 	list[curs++] = (GL.RENDERABLE2 | ind);
 	list[curs++] = coordsys1;
 	list[curs++] = coordsys2;
@@ -127,6 +134,7 @@ public class LWJGL_VobMap implements VobMap {
 	// Now, stash it away.
 	cs[nvobs] = coordsys1;
 	vobs[nvobs++] = vob;
+	index2vob[curs] = vob;
 	list[curs++] = (GL.RENDERABLE1 | ind);
 	list[curs++] = coordsys1;
     }
@@ -137,8 +145,10 @@ public class LWJGL_VobMap implements VobMap {
 	if(ind == 0) return;
 	// Now, stash it away.
 	vobs[nvobs++] = vob;
+	index2vob[curs] = vob;
 	list[curs++] = (GL.RENDERABLE0 | ind);
     }
+    
     public void dump() {
 	p("GLVobMap");
 	for(int i=0; i<nvobs; i++) {

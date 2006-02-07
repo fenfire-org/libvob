@@ -28,7 +28,5 @@ public class CallListBoxCoorder extends CallGL implements LWJGLRen.Vob1  {
 	}
 	GL11.glPopMatrix();
 	CallGL.checkGlError("After boxcoorded calling list ");
-
     }
-    
 }

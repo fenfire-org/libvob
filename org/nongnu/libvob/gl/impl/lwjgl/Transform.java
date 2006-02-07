@@ -7,6 +7,8 @@ package org.nongnu.libvob.gl.impl.lwjgl;
 
 
 import java.io.OutputStream;
+import java.io.PrintStream;
+
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -90,7 +92,7 @@ public interface Transform {
     /**
      * Print this coordinate system into the given ostream.
      */
-    void dump(OutputStream out);
+    void dump(PrintStream out);
 
     /**
      * Get the size of the "unit square" of this coordinate system. For most

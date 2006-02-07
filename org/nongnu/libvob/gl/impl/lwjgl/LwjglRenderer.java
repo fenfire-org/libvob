@@ -4,6 +4,7 @@
 
 package org.nongnu.libvob.gl.impl.lwjgl;
 
+import java.awt.Dimension;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +50,10 @@ import org.nongnu.libvob.impl.lwjgl.LWJGL_VobMap;
  */
 public class LwjglRenderer {
 
+    public static boolean dbg = false;
+    
+    static private void p(String s) { System.out.println("LwjglRen:: "+s); }
+    
     public class TransformFactory {
 	Transform instantiate(int type) {
 	    switch(type) {
@@ -146,38 +151,51 @@ public class LwjglRenderer {
     }
 
     public void render(LWJGL_VobMap map, int[] interps,
-	    GLVobCoorder from, GLVobCoorder to, float fract) {
+	    GLVobCoorder from, GLVobCoorder to, float fract, Dimension dimension) {
 
 	// creates the coordinate systems according to given animation fraction.
 	// this coordinate system is the one that is linearly interpolated.
 	Coorder c = createCoorder(from, to, interps, fract);
 
 	// render vobs to coordinates
-	realRender(c, map);
+	realRender(c, map, dimension);
 	
 	transProxy.clear();
     }
 
     
-    private void realRender(Coorder c, LWJGL_VobMap map) {
+    private void realRender(Coorder c, LWJGL_VobMap map, Dimension d) {
+	GL11.glViewport(0, 0, d.width, d.height);
+	GL11.glMatrixMode(GL11.GL_PROJECTION);
+	GL11.glLoadIdentity();
+	GL11.glOrtho(0, d.width, d.height, 0, 10000, -10000);
+	GL11.glMatrixMode(GL11.GL_MODELVIEW);
+	GL11.glLoadIdentity();
+
+
+
 	int lastVobSize = 1;
-	for (int i=0; i<map.list.length && i<map.getSize() && map.list[i] != 0; i+= lastVobSize)
+	for (int i=0; i<map.getSize(); i+= lastVobSize)
 	{
 	    int vob = map.list[i];
 	    int code = map.list[i] & ~GL.RMASK;
 	    
 	    if ((vob & GL.RMASK) == GL.RENDERABLE0) {	
-		GL11.glCallList(code);
+		LWJGLRen.Vob0 v = (LWJGLRen.Vob0)map.index2vob[i];
+		if (dbg) p("Render 0: "+v.getClass().getName());
+		v.render(code);
 		lastVobSize = 1;
 	    } else if ((vob & GL.RMASK) == GL.RENDERABLE1) {	
 		int cs0 = map.list[i+1];
 		LWJGLRen.Vob1 v = (LWJGLRen.Vob1)map.index2vob[i];
+		if (dbg) p("Render 1: "+v.getClass().getName());
 		v.render(c.getTransform(cs0), code);
 		lastVobSize = 2;
 	    } else if ((vob & GL.RMASK) == GL.RENDERABLE2) {	
 		int cs0 = map.list[i+1];
 		int cs1 = map.list[i+2];
 		LWJGLRen.Vob2 v = (LWJGLRen.Vob2)map.index2vob[i];
+		if (dbg) p("Render 2: "+v.getClass().getName());
 		v.render(c.getTransform(cs0), c.getTransform(cs1), code);
 		lastVobSize = 3;
 	    } else if ((vob & GL.RMASK) == GL.RENDERABLE3) {	
@@ -185,15 +203,16 @@ public class LwjglRenderer {
 		int cs1 = map.list[i+2];
 		int cs2 = map.list[i+3];
 		LWJGLRen.Vob3 v = (LWJGLRen.Vob3)map.index2vob[i];
+		if (dbg) p("Render 3: "+v.getClass().getName());
 		v.render(c.getTransform(cs0), c.getTransform(cs1), c.getTransform(cs2), code);
 		lastVobSize = 4;
 	    } else if ((vob & GL.RMASK) == GL.RENDERABLEN) {	
 		int ncs = map.list[i+1];
 		System.out.println("renderable N ");
+//		if (dbg) p("Render 0: "+v.getClass().getName());
 		lastVobSize = ncs;
 	    } else if ((vob & GL.RMASK) == GL.RENDERABLE_VS) {	
 		throw new Error("un impl.");
-		
 	    } else throw new Error("out of vobs...");
 	}
 	

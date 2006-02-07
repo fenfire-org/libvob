@@ -172,6 +172,10 @@ public class GL {
      */
     public static final int RENDERABLE_VS = 0x6000000;
 
+    /** The mask for different renderables.
+     */
+    public static final int RMASK = GL.RENDERABLE0 | GL.RENDERABLE1 | GL.RENDERABLE2 | GL.RENDERABLE3 | GL.RENDERABLEN | GL.RENDERABLE_VS;
+    
     static ArrayList queue = new ArrayList();
 
     /** Because objects have to be released by the same thread

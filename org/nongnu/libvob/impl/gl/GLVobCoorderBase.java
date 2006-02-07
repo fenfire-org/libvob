@@ -29,6 +29,7 @@ package org.nongnu.libvob.impl.gl;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.*;
 import org.nongnu.libvob.gl.*;
+
 import java.util.*;
 
 /** This is an internal base class for GLVobCoorder.
@@ -56,6 +57,38 @@ public abstract class GLVobCoorderBase extends AffineVobCoorder {
 	ninds = 1;
 	childs.clear();
     }
+    
+    public int getIndSize(int type)
+    {
+	switch(type) {
+	case 0:
+	case 1:
+	case 2:
+	case 3: return 3;
+	case 4: return 5;
+	case 5:
+	case 6: return 4;
+	case 7:
+	case 8:
+	case 9: return 3;
+	case 10: return 4;
+	case 11: 
+	case 12: 
+	case 13: 
+	case 14: 
+	case 15: 
+	case 16: return 3;
+	case 17: 
+	case 18: return 4;
+	case 19: return 3;
+	case 20: return 3;
+	case 21: return 4;
+	case 22: return 3;
+	default:
+	    throw new IllegalArgumentException("No type known for type: "+type);
+	}
+    }
+    
 
     public void activate(int cs) {
 	inds[cs] |= GL.CSFLAG_ACTIVE;

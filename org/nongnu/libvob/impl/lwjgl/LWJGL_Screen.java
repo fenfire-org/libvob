@@ -14,7 +14,7 @@ import org.nongnu.libvob.VobScene;
 import org.nongnu.libvob.GraphicsAPI;
 import org.nongnu.libvob.gl.GL;
 import org.nongnu.libvob.gl.GLVobCoorder;
-import org.nongnu.libvob.gl.impl.lwjgl.LwjglCoorder;
+import org.nongnu.libvob.gl.impl.lwjgl.LwjglRenderer;
 import org.nongnu.libvob.impl.DefaultVobMatcher;
 import org.nongnu.libvob.impl.gl.GLVobMap;
 
@@ -55,7 +55,7 @@ public class LWJGL_Screen extends GraphicsAPI.AbstractRenderingSurface
     public void renderStill(VobScene vs, float lod) {
 	p("render still");
 
-	LwjglCoorder.getInstance().render(vs.map, null, (GLVobCoorder)vs.coords, null, 0, true, true);
+	LwjglRenderer.getInstance().render((LWJGL_VobMap)vs.map, null, (GLVobCoorder)vs.coords, null, 0, vs.getSize());
     }
 
     public void renderAnim(VobScene prev, VobScene next, float fract, float lod,
@@ -79,9 +79,9 @@ public class LWJGL_Screen extends GraphicsAPI.AbstractRenderingSurface
 
 	createInterpList(sc, osc, towardsOther);
 
-	LwjglCoorder.getInstance().render(sc.map, interplist, 
+	LwjglRenderer.getInstance().render((LWJGL_VobMap)sc.map, interplist, 
 			(GLVobCoorder) sc.coords, (GLVobCoorder)osc.coords, 
-			fract, true, showFinal);
+			fract, prev.getSize());
 
     }
 

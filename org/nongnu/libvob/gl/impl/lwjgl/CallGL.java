@@ -33,7 +33,7 @@ import org.nongnu.libvob.Vob;
 import org.nongnu.libvob.VobScene;
 import org.nongnu.libvob.Vob.RenderInfo;
 
-public class CallGL extends AbstractVob {
+public class CallGL extends AbstractVob implements LWJGLRen.Vob0 {
 
     private static boolean Begin;
 
@@ -619,6 +619,14 @@ public class CallGL extends AbstractVob {
     public int putGL(VobScene vs, int cs)
     {
 	return callList;
+    }
+
+    public void render(int callList) {
+	// push attrib?
+	checkGlError("before call list in callgl render");
+	GL11.glCallList(callList);
+	checkGlError("after call list in callgl render");
+	// pop attrib?
     }
     
 }
