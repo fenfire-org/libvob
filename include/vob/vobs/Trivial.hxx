@@ -45,7 +45,8 @@ Trivial.hxx
 namespace Vob {
 namespace Vobs {
 
-using namespace Vob::VecGL;
+//using namespace Vob::VecGL;
+//    using Vob::VecGL;
 
 /** A line (in screen space)
  * drawn between the centers of two coordinate systems.
@@ -296,8 +297,8 @@ struct Quad {
 		glBegin(GL_QUAD_STRIP);
 		for(int j=0; j<(dicey+1); j++) {
 		    float y = boxwh.y * j / (dicey+0.);
-		    glVertex(ZPt(x0,y,0));
-		    glVertex(ZPt(x1,y,0));
+		    VecGL::glVertex(ZPt(x0,y,0));
+		    VecGL::glVertex(ZPt(x1,y,0));
 		}
 		glEnd();
 	    }
@@ -309,8 +310,8 @@ struct Quad {
 		glBegin(GL_QUAD_STRIP);
 		for(int j=0; j<(dicey+1); j++) {
 		    float y = boxwh.y * j / (dicey+0.);
-		    glVertex(t.transform(ZPt(x0,y,0)));
-		    glVertex(t.transform(ZPt(x1,y,0)));
+		    VecGL::glVertex(t.transform(ZPt(x0,y,0)));
+		    VecGL::glVertex(t.transform(ZPt(x1,y,0)));
 		}
 		glEnd();
 	    }

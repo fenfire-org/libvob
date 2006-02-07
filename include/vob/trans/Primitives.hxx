@@ -28,6 +28,7 @@ Primitives.hxx
 #define VOB_PRIMITIVES_HXX
 
 #include <vob/Vec23.hxx>
+#include <vob/VecGL.hxx>
 #include <vob/Templates.hxx>
 #include <vob/Transform.hxx>
 #include <boost/type_traits.hpp>

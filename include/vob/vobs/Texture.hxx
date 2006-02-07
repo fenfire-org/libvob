@@ -43,10 +43,11 @@ Texture.hxx
 #define VOB_DEFINED(t)
 #endif
 
+using namespace Vob::VecGL;
+
 namespace Vob {
 namespace Vobs {
 
-using namespace Vob::VecGL;
 
 /** Copy into the currently bound texture
  * a rectangle from the screen.

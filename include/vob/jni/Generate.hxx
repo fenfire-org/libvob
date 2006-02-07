@@ -259,7 +259,7 @@ static Templates::IfTempl<!VOB_NON_LEAF, JNI::VobJNIGenerator<x> > x##generator(
 
 #define VOB_PRIMITIVETRANS_DEFINED_LEAF(x, n)  \
     static JNI::TransJNIGenerator<x> x##generator(#x, n); \
-    const char *Primitives::PrimitiveHierarchicalTransform<x>::name = #x
+    template<> const char *Primitives::PrimitiveHierarchicalTransform<x>::name = #x
 
 #define VOB_PRIMITIVETRANS_DEFINED_NONLEAF(x, n)  
 

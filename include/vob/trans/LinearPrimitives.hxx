@@ -66,6 +66,21 @@ PREDBGVAR(dbg_buoyoncircle);
 	}
     };
 
+    struct TranslateXYZ_Explicit : 
+	    public TranslateXYZ, 
+	    public ParametrizedPrimitiveTransform {
+    public:
+	enum { NParams = 3 };
+	
+	template<class Ptr> void setParams(Ptr p) {
+	    vec.x = p[0];
+	    vec.y = p[1];
+	    vec.z = p[2];
+	}
+    };
+    VOB_PRIMITIVETRANS_DEFINED(TranslateXYZ_Explicit, "translate");
+
+
     /** A simple scale in 3 dimensions.
      * Can't be used in HierarchicalTransform directly
      * because parameters are required.
@@ -90,16 +105,29 @@ PREDBGVAR(dbg_buoyoncircle);
 	    into.vec = ZPt(1.0/vec.x, 1.0/vec.y, 1.0/vec.z);
 	}
     };
+    struct ScaleXYZ_Explicit : 
+	    public ScaleXYZ, 
+	    public ParametrizedPrimitiveTransform {
+    public:
+	enum { NParams = 3 };
+	
+	template<class Ptr> void setParams(Ptr p) {
+	    vec.x = p[0];
+	    vec.y = p[1];
+	    vec.z = p[2];
+	}
+    };
+    VOB_PRIMITIVETRANS_DEFINED(ScaleXYZ_Explicit, "scale");
 
     /** Expose the vec in TranslateXYZ and ScaleXYZ and possibly
      * others explicitly.
-     */
+     * /
     template<class T> struct Vec_Explicit : 
 	    public T, 
 	    public ParametrizedPrimitiveTransform {
 
 	enum { NParams = 3 };
-
+	
 	template<class Ptr> void setParams(Ptr p) {
 	    vec.x = p[0];
 	    vec.y = p[1];
@@ -109,15 +137,16 @@ PREDBGVAR(dbg_buoyoncircle);
 
     /** An explicit translation by a 3D vector.
      * Parameters: x, y, z.
-     */
+     * /
     typedef Vec_Explicit<TranslateXYZ> TranslateXYZ_Explicit;
     /** An explicit scale by a 3D vector.
      * Parameters: sx, sy, sz.
-     */
+     * /
     typedef Vec_Explicit<ScaleXYZ> ScaleXYZ_Explicit;
-
+    
     VOB_PRIMITIVETRANS_DEFINED(TranslateXYZ_Explicit, "translate");
     VOB_PRIMITIVETRANS_DEFINED(ScaleXYZ_Explicit, "scale");
+    */
 
     /** Rotation clockwise. 
      */

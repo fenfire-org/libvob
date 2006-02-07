@@ -48,10 +48,10 @@ Trivial.hxx
 #endif
 
 using namespace Vob::Geom;
+using namespace Vob::VecGL;
 
 namespace Vob {
 namespace Vobs {
-using namespace Vob::VecGL;
 
     PREDBGVAR(dbg_vfillets);
 

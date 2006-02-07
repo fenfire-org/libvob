@@ -779,14 +779,14 @@ public:
     }
 
     template<class T> void render(const T &coords1, const T &coords2) const {
-	    DBG(dbg) << "Paper\\n";
+	    DBG(dbg_paperquad) << "Paper\\n";
 	    GLERR;
 
 	    const Transform &cs1inv = coords1.getInverse();
 	    const Transform &cs2inv = coords2.getInverse();
 
 	    for(Paper::Paper::iterator it = paper->begin(); it != paper->end(); ++it) {
-		if (dbg) cout << "Pass\\n";
+		if (dbg_paperquad) cout << "Pass\\n";
 
 		GLERR;
 

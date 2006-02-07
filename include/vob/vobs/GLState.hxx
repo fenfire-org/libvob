@@ -43,9 +43,12 @@ GLState.hxx
 #endif
 
 namespace Vob {
+
+//using namespace VecGL;
+
 namespace Vobs {
 
-using namespace Vob::VecGL;
+//using namespace Vob::VecGL;
 
 /** Cause the given GL matrix with to contain the matrix
  * for the given transformation.

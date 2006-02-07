@@ -110,7 +110,7 @@ namespace JNI {
     typedef std::vector<float> floatvector;
 
 #define START_VOB_JNI_CONVERSION(type, javaName_, jnitype_) 	\
-    struct JParameter<type> {					\
+    template<> struct JParameter<type> {					\
 	typedef jnitype_ jniType; 				\
 	static std::string javaParam(std::string paramPrefix) {  	\
 	    return std::string(javaName_)+" "+paramPrefix;  	\
@@ -147,7 +147,7 @@ namespace JNI {
 	    END_VOB_JNI_CONVERSION
 
 #define START_VOB_JNI_CONVERSION_IDDED(type, javaName_)		\
-    struct JParameter<type> {					\
+    template<> struct JParameter<type> {					\
 	typedef jint jniType; 				\
 	static std::string javaParam(std::string paramPrefix) {  	\
 	    return std::string(javaName_)+" "+paramPrefix;  	\
