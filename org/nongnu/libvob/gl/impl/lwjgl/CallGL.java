@@ -594,7 +594,7 @@ public class CallGL extends AbstractVob {
 	throw new Error("assert error.");
     }
 
-    private static void checkGlError(String context) {
+    public static void checkGlError(String context) {
 	int errno = GL11.glGetError();
 	if (errno != GL11.GL_NO_ERROR)
 	    throw new Error(GLU.gluErrorString(errno) + " " + context);
