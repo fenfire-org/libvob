@@ -37,19 +37,19 @@ public class GLRen {
 
     public static Vob createCallList(String s) {
 	if (GraphicsAPI.getInstance() instanceof LWJGL_API) {
-	    return LWJGLRen.createCallList(s, LWJGLRen.NONE);
+	    return LWJGLRen.createCallList(s);
 	}
 	return createCallList(GL.createDisplayList(s));
     }
     public static Vob createCallListCoorded(String s) {
 	if (GraphicsAPI.getInstance() instanceof LWJGL_API) {
-	    return LWJGLRen.createCallList(s, LWJGLRen.COORDER);
+	    return LWJGLRen.createCallListCoorder(s);
 	}
 	return createCallListCoorded(GL.createDisplayList(s));
     }
     public static Vob createCallListBoxCoorded(String s) {
 	if (GraphicsAPI.getInstance() instanceof LWJGL_API) {
-	    return LWJGLRen.createCallList(s, LWJGLRen.BOX_COORDER);
+	    return LWJGLRen.createCallListBoxCoorder(s);
 	}
 	return createCallListBoxCoorded(GL.createDisplayList(s));
     }
