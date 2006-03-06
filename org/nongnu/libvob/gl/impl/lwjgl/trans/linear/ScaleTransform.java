@@ -1,3 +1,6 @@
+// (c): Matti J. Katila
+
+// bases on code of Tuomas J. Lukka
 package org.nongnu.libvob.gl.impl.lwjgl.trans.linear;
 
 import java.io.OutputStream;
@@ -64,8 +67,9 @@ public class ScaleTransform implements Transform {
 
     public Vector2f getSqSize() {
 	Vector2f ret = parent.getSqSize();
-	ret.x *= xs;
-	ret.y *= ys;
+	// haha..  scale shall not affect to square at all..
+	// ret.x *= xs;
+	// ret.y *= ys;
 	return ret;
     }
 

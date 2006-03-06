@@ -534,10 +534,14 @@ public class CallGL extends AbstractVob implements LWJGLRen.Vob0 {
     }
 
     private static float getTokenf(String f) {
-	return Float.parseFloat(f);
+	try {
+	    return Float.parseFloat(f);
+	} catch (NumberFormatException e) {
+	    return getToken(f);
+	}
     }
 
-    private static int getToken(String token) {
+    public static int getToken(String token) {
 	//System.out.println("token: "+token);
 	Field f = null;
 	Class[] clzz = {

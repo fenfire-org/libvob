@@ -1,3 +1,6 @@
+// (c): Matti J. Katila
+
+// bases on code of Tuomas J. Lukka
 package org.nongnu.libvob.gl.impl.lwjgl.trans.linear;
 
 import java.io.OutputStream;

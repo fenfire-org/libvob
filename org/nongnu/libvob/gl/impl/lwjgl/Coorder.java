@@ -51,8 +51,10 @@ public class Coorder {
 	    out.print("Root");
 	}
 
-	Vector2f sq = new Vector2f(1,1);
+	Vector2f sq = new Vector2f();
 	public Vector2f getSqSize() {
+	    sq.x = 1;
+	    sq.y = 1;
 	    return sq;
 	}
     };
