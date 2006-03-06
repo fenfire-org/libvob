@@ -30,6 +30,8 @@ package org.nongnu.libvob.vobs;
 import org.nongnu.libvob.*;
 import java.awt.*;
 import org.nongnu.libvob.gl.GLCache;
+import org.nongnu.libvob.gl.GLUtil;
+import org.nongnu.libvob.util.ColorUtil;
 
 /** A vob which produces a small (about 3x3 pixel) rectangle at a specified place
  * with a specified color;
@@ -49,9 +51,13 @@ public class TestSpotVob extends AbstractVob {
     /** Create a white testspot.
      */
     public TestSpotVob(float x, float y, float z) {
+	this(x,y,z, Color.WHITE);
+    }
+    public TestSpotVob(float x, float y, float z, Color c) {
 	this.x = x;
 	this.y = y;
 	this.z = z;
+	this.color = c;
     }
 
     public void render(Graphics g,
@@ -69,7 +75,7 @@ public class TestSpotVob extends AbstractVob {
 "		Disable TEXTURE_2D     \n" +
 "		Disable BLEND     \n" +
 "		PointSize 3     \n" +
-"		Color 1 1 1     \n" +
+"		Color "+ColorUtil.colorGLString(color)+"\n" +
 "		Begin POINTS     \n" +
 "		Vertex "+x+" "+y+" "+z+" \n" +
 "		End     \n" +

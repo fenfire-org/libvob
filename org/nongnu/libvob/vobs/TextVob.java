@@ -29,9 +29,11 @@ package org.nongnu.libvob.vobs;
 import org.nongnu.libvob.*;
 import org.nongnu.libvob.impl.awt.*;
 import org.nongnu.libvob.impl.gl.*;
+import org.nongnu.libvob.impl.lwjgl.LWJGL_API;
 import org.nongnu.libvob.linebreaking.*;
 import org.nongnu.libvob.Vob.RenderInfo;
 import org.nongnu.libvob.gl.*;
+import org.nongnu.libvob.gl.impl.lwjgl.LWJGLRen;
 import org.nongnu.libvob.util.*;
 import org.nongnu.navidoc.util.Obs;
 
@@ -166,7 +168,7 @@ public class TextVob extends HBox.VobHBox {
 "   CombinerParameterNV CONSTANT_COLOR0_NV 0 0 0 0.4	\n" +
 "   CombinerInputNV COMBINER0_NV ALPHA VARIABLE_A_NV TEXTURE0 UNSIGNED_IDENTITY_NV ALPHA  \n" +
 "   CombinerInputNV COMBINER0_NV ALPHA VARIABLE_B_NV CONSTANT_COLOR0_NV UNSIGNED_IDENTITY_NV ALPHA	\n" +
-"   CombinerOutputNV COMBINER0_NV ALPHA SPARE0_NV DISCARD_NV DISCARD_NV SCALE_BY_FOUR_NV  NONE FALSE FALSE FALSE			\n" +
+"   CombinerOutputNV COMBINER0_NV ALPHA SPARE0_NV DISCARD_NV DISCARD_NV SCALE_BY_FOUR_NV  NONE FALSE FALSE FALSE	\n" +
 "    \n" +
 "    FinalCombinerInputNV VARIABLE_A_NV ZERO UNSIGNED_IDENTITY_NV RGB			\n" +
 "    FinalCombinerInputNV VARIABLE_B_NV ZERO UNSIGNED_IDENTITY_NV RGB			\n" +
@@ -192,19 +194,17 @@ public class TextVob extends HBox.VobHBox {
     } 
 
     public Vob getPlainRenderableForBenchmarking() {
-	if(ht == null && GraphicsAPI.getInstance() instanceof org.nongnu.libvob.impl.gl.GLAPI) {
-	    GLTextStyle gls = (GLTextStyle)style;
-	    ht = GLRen.createText1(
+	if(ht == null) {
+	    if (GraphicsAPI.getInstance() instanceof org.nongnu.libvob.impl.gl.GLAPI) {
+		GLTextStyle gls = (GLTextStyle)style;
+		ht = GLRen.createText1(
 		    gls.getQuadFont(),
 		    text, 
 		    (baselined ? 1 : gls.getGLFont().getYOffs()),
 		    0);
-	} else
-	    ht = new AbstractVob(){
-		public void render(Graphics g, boolean fast, RenderInfo info1, RenderInfo info2) {
-		}
-		public int putGL(VobScene vs, int cs) { return 0; }
-	    };
+	    } else
+		ht = LWJGLRen.createText(style, text);
+	}
 	return ht;
     }
 
@@ -225,10 +225,16 @@ public class TextVob extends HBox.VobHBox {
     private Vob ht;
     public int putGL(VobScene vs, int coordsys1) {
 	if(dbg) pa("Addtolistgl text "+text);
-	vs.map.put(getStartCode());
+	
+	boolean notLwjglUnknownBug = true;
+	if (GraphicsAPI.getInstance() instanceof LWJGL_API) notLwjglUnknownBug = false;
+	    
+	if (notLwjglUnknownBug)
+	    vs.map.put(getStartCode());
 	vs.map.put(setColor());
 	vs.map.put(getPlainRenderableForBenchmarking(), coordsys1);
-	vs.map.put(getStopCode());
+	if (notLwjglUnknownBug)
+	    vs.map.put(getStopCode());
 	return 0;
     }
 
