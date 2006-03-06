@@ -40,7 +40,11 @@ double getTime() {
   return t.tv_usec*1E-6 + t.tv_sec;
 }
 
-using namespace Vob;
+// this made a compile error of Vob::Vob::foo
+// so the compiler was thinking that we are now in 
+// the Vob namespace..
+//
+//using namespace Vob;
 
 namespace Vob {
 
