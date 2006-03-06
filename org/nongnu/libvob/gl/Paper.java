@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * added as empties - getPass gives the Pass object to use 
  * to place stuff into the pass.
  */
-public class Paper implements GLDeletable {
+public class Paper implements GLDeletable, org.nongnu.libvob.gl.PaperMill.Paper {
     public static boolean dbg = true;
     private static void pa(String s) { System.err.println(s); }
 
@@ -167,7 +167,7 @@ public class Paper implements GLDeletable {
 	c_id = 0;
     }
 
-    int getId() { return c_id; }
+    public int getId() { return c_id; }
 
     static private native int impl_create();
     static private native void impl_delete(int pid);

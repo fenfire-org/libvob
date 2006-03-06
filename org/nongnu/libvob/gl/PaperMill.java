@@ -27,11 +27,14 @@ PaperMill.java
  */
 
 package org.nongnu.libvob.gl;
-import org.nongnu.libvob.GraphicsAPI;
 import org.python.util.PythonInterpreter;
 
 public abstract class PaperMill {
 
+    public static interface Paper { 
+	int getId();
+    }
+    
     /** Get the paper corresponding to the given seed.
      */
     public abstract Paper getPaper(int seed);

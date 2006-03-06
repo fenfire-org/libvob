@@ -103,7 +103,7 @@ public class GL {
 
     static public interface GLinstance {
 	String iGetGLString(String s);
-	
+	Texture iCreateTexture();
     }
     
     
@@ -234,7 +234,8 @@ public class GL {
 	protected abstract void deleteObj();
 	/** Get the C++ integer id associated with this object.
 	 */
-	protected int getId() { return id; }
+	public
+	/*protected*/ int getId() { return id; }
     }
 
     /** A Java object which is not supposed to be placed on display lists.
@@ -427,35 +428,17 @@ public class GL {
     /** A texture object. Represents a single OpenGL texture object.
      * Here, id == directly the texture id.
      */
-    static public class Texture extends NonRenderableJavaObject {
-	/** Whether the destruction of this texture object
-	 * should cause the underlying implementation texture
-	 * object to be deleted.
-	 */
-	boolean delReal;
+    static public abstract class Texture extends NonRenderableJavaObject {
 
-	/** Create a texture object whose GL texture will not be deleted
-	 * upon the deletion of the Java object.
-	 */
-	private Texture(int id) { super(id); delReal = false; }
-	/** Create a texture object whose GL texture may be deleted
-	 * upon the deletion of the Java object.
-	 * @param delReal If true, delete the OpenGL texture
-	 */
-	private Texture(int id, boolean delReal) { super(id); 
-	    this.delReal = delReal; }
-	protected void deleteObj() { 
-	    if(delReal) impl_deleteTexture(getId()); 
+	protected Texture(int id) {
+	    super(id);
 	}
 
 	/** Delete this texture.
 	 * Do not use this object any more after calling this
 	 * method.
 	 */
-	public void deleteTexture() {
-	    delReal = false;
-	    impl_deleteTexture(getId());
-	}
+	public abstract void deleteTexture();
 
 	/** Get the OpenGL texture id of this texture.
 	 */
@@ -464,168 +447,124 @@ public class GL {
 	public void setTexParameter(String target, String param, float value) {
 	    this.setTexParameter(target, param, ""+value);
 	}
-	public void setTexParameter(String target, String param, String value) {
-	    call("BindTexture "+target+" "+getTexId()+"\n"+
-		    "TexParameter "+target+" "+param+" "+value+"\n"+
-		    "BindTexture "+target+" 0\n");
-	}
+	public abstract void setTexParameter(String target, String param, String value);
+//	{
+//	    call("BindTexture "+target+" "+getTexId()+"\n"+
+//		    "TexParameter "+target+" "+param+" "+value+"\n"+
+//		    "BindTexture "+target+" 0\n");
+//	}
 
 	/** Call libtexture to create the image into this texture object.
 	 */
-	public int shade(int w, int h, int d, int comps, 
+	public abstract int shade(int w, int h, int d, int comps, 
 		String internalFormat, String format,
-		String shaderName, String[] params) {
-	    return impl_Texture_shade(getId(), w, h, d, comps, internalFormat, format,
-		shaderName, params, false);
-	}
+		String shaderName, String[] params);
 
 	/** Call glGetCompressedTexImage.
 	 */
-	public byte[] getCompressedTexImage(int lod) {
-	    return impl_Texture_getCompressedTexImage(getId(), lod, null);
-	}
+	public abstract byte[] getCompressedTexImage(int lod);
 
 	/** Call glGetCompressedTexImage, with an array for the data.
 	 */
-	public byte[] getCompressedTexImage(int lod, byte[] prearr) {
-	    return impl_Texture_getCompressedTexImage(getId(), lod, prearr);
-	}
+	public abstract byte[] getCompressedTexImage(int lod, byte[] prearr);
 
-	public void getTexImage(int lod, String format, String type,
-			byte[] array) {
-	    impl_Texture_getTexImage(getId(), lod, format, type,
-			    array);
-	}
+	public abstract void getTexImage(int lod, String format, String type,
+			byte[] array);
+
 
 	/** Call glCompressedTexImage.
 	 * The length of data is used so it needs to be right.
 	 */
-	public void compressedTexImage(int level, 
+	public abstract void compressedTexImage(int level, 
 		    String internalFormat, int width, int height, 
-			int border, byte[] data) {
-	    compressedTexImage(level, internalFormat, width, height,
-		    border, data.length, data);
-	}
-	public void compressedTexImage(int level, 
+			int border, byte[] data);
+	public abstract void compressedTexImage(int level, 
 		    String internalFormat, int width, int height, 
-			int border, int size, byte[] data) {
-	    impl_Texture_compressedTexImage(getId(), 
-		    level, internalFormat, width, height,
-			border, size, data);
-	}
+			int border, int size, byte[] data);
 
-	public void compressedTexSubImage2D(int level,
+	public abstract void compressedTexSubImage2D(int level,
 		    int xoffs, int yoffs, int width, int height,
-		    String format, int size, byte[] data) {
-	    impl_Texture_compressedTexSubImage2D(getId(),
-		    level, xoffs, yoffs, width, height, format, size, data);
-	}
+		    String format, int size, byte[] data);
 
 	/** Call glTexImage2D.
 	 * The length of data is used so it needs to be right.
 	 */
-	public void texImage2D(int level, 
+	public abstract void texImage2D(int level, 
 			String internalFormat, int w, int h, 
 			int border, String format, String type, 
-			byte[] data) {
-	    impl_Texture_texImage2D(getId(), 
-			level, internalFormat, w, h, border, format, 
-			type, data);
-	}
+			byte[] data);
 
 	/** Call glTexSubImage2D.
 	 * The length of data is used so it needs to be right.
 	 */
-	public void texSubImage2D(int level, 
+	public abstract void texSubImage2D(int level, 
 			int x, int y, int w, int h, 
 			int border, String format, String type, 
-			byte[] data) {
-	    impl_Texture_texSubImage2D(getId(), 
-			level, x, y, w, h, border, format, 
-			type, data);
-	}
+			byte[] data);
 
 	/** Call libtexture to create the image for each mipmap level separately.
 	 */
-	public int shade_all_levels(int w, int h, int d, int comps, 
+	public abstract int shade_all_levels(int w, int h, int d, int comps, 
 		String internalFormat, String format,
-		String shaderName, String[] params) {
-	    return impl_Texture_shade(getId(), w, h, d, comps, internalFormat, format,
-		shaderName, params, true);
-	}
+		String shaderName, String[] params);
 
 	/** Load a NULL pointer to the texture, which clears the image
 	 * and sets the mip maps.
 	 */
-	public void loadNull2D(String target, int level, 
+	public abstract void loadNull2D(String target, int level, 
 			String internalFormat, int w, int h, 
-			int border, String format, String type) {
-	    impl_Texture_loadNull2D(getId(), target,
-			level, internalFormat, w, h, border, format, type);
-	}
-
+			int border, String format, String type);
 
 	/** Load an image into a part of this texture.
 	 */
-	public void loadSubImage(int level, Image img, int x, int y, int xoffs, int yoffs, int w, int h) {
-	    impl_Texture_loadSubImage(getId(), level, img.getId(), x, y, xoffs, yoffs, w, h);
-	}
+	public abstract void loadSubImage(int level, Image img, int x, int y, int xoffs, int yoffs, int w, int h);
 
 	/** Read into this texture from screen.
 	 */
-	public void copyTexImage2D(RenderingSurface win, String buffer,
+	public abstract void copyTexImage2D(RenderingSurface win, String buffer,
 		    String target, int level,
 		    String internalFormat, int x, int y,
-		    int w, int h, int border) {
-	    impl_Texture_copyTexImage2D(getId(), win.getId(), 
-			buffer, target,
-			level, internalFormat, x, y, w, h,
-			border);
-	}
-	public float[] getParameter(String name) {
-	    return getGLTexParameterFloat("TEXTURE_2D", getId(), name);
-	}
-	public float[] getLevelParameter(int level, String name) {
-	    return getGLTexLevelParameterFloat("TEXTURE_2D", getId(), level, name);
-	}
-
+		    int w, int h, int border);
+	public abstract float[] getParameter(String name);
+	public abstract float[] getLevelParameter(int level, String name);
     }
 
     /** Create a new OpenGL texture object.
      */
     static public Texture createTexture() { 
-	return new Texture(impl_createTexture(), true);
+	return instance.iCreateTexture(); 
+	//new Texture(impl_createTexture(), true);
     }
-    static private native int impl_createTexture();
-    static private native void impl_deleteTexture(int id);
-    static private native int impl_Texture_shade(int id, int w, int h, int d, int comps, 
+    static public /*private*/ native int impl_createTexture();
+    static public /*private*/ native void impl_deleteTexture(int id);
+    static public /*private*/ native int impl_Texture_shade(int id, int w, int h, int d, int comps, 
 		String internalFormat, String format,
 		String shaderName, String[] params, 
 		boolean shade_all_levels);
 
-    static private native void impl_Texture_loadNull2D(int id, String target, 
+    static public /*private*/ native void impl_Texture_loadNull2D(int id, String target, 
 			int level, 
 			String internalFormat, int w, int h, 
 			int border, String format, String type) ;
-    static private native void impl_Texture_texImage2D(int id, int level, 
+    static public /*private*/ native void impl_Texture_texImage2D(int id, int level, 
 			String internalFormat, int w, int h, 
 			int border, String format, String type, byte[] data) ;
-    static private native void impl_Texture_texSubImage2D(int id, int level, 
+    static public /*private*/ native void impl_Texture_texSubImage2D(int id, int level, 
 			int x, int y, int w, int h, 
 			int border, String format, String type, byte[] data) ;
-    static private native void impl_Texture_loadSubImage(int id,
+    static public /*private*/ native void impl_Texture_loadSubImage(int id,
 	int level, int imgid, int x, int y, int xoffs, int yoffs, int w, int h) ;
-    static private native void impl_Texture_copyTexImage2D(
+    static public /*private*/ native void impl_Texture_copyTexImage2D(
 		int id, int wid, String buffer,
 		    String target, int level,
 		    String internalFormat, int x, int y,
 		    int w, int h, int border) ;
-    static private native byte[] impl_Texture_getCompressedTexImage(int id, int lod, byte[] preArray);
-    static private native void impl_Texture_compressedTexImage(int id, int level, String internalFormat,
+    static public /*private*/ native byte[] impl_Texture_getCompressedTexImage(int id, int lod, byte[] preArray);
+    static public /*private*/ native void impl_Texture_compressedTexImage(int id, int level, String internalFormat,
 		    int width, int height, int border, int size, byte[] data);
-    static private native void impl_Texture_compressedTexSubImage2D(int id, int level,
+    static public /*private*/ native void impl_Texture_compressedTexSubImage2D(int id, int level,
 		    int xoffs, int yoffs, int width, int height, String format, int size, byte[] data);
-    static private native void impl_Texture_getTexImage(int id, 
+    static public /*private*/ native void impl_Texture_getTexImage(int id, 
 		    int lod, String format, String type, byte[] array) ;
 
 // -------- IndirectTexture

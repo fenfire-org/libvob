@@ -28,6 +28,7 @@ GLRen.template.java
 
 package org.nongnu.libvob.gl;
 import org.nongnu.libvob.*;
+import org.nongnu.libvob.gl.PaperMill.Paper;
 import org.nongnu.libvob.gl.impl.lwjgl.LWJGLRen;
 import org.nongnu.libvob.impl.lwjgl.LWJGL_API;
 
@@ -137,7 +138,7 @@ public class GLRen {
 // <vob/trans/LinearPrimitives.hxx>
  
 // <vob/vobs/Texture.hxx>
- static public class CopyTexSubImage2D extends GL.Renderable1JavaObject  { private CopyTexSubImage2D(int i) { super(i); }
+ static public class CopyTexSubImage2D extends GL.Renderable1JavaObject implements Ren.CopyTexSubImage2D { private CopyTexSubImage2D(int i) { super(i); }
 }
 static public CopyTexSubImage2D createCopyTexSubImage2D(String p0, int p1, int p2, int p3, int p4, int p5) { 
 CopyTexSubImage2D _ = new CopyTexSubImage2D(
@@ -146,7 +147,7 @@ implcreateCopyTexSubImage2D(p0, p1, p2, p3, p4, p5));
  return _; }
 
 static private native int implcreateCopyTexSubImage2D(String p0, int p1, int p2, int p3, int p4, int p5) ; 
-static public class TexSubImage2D extends GL.Renderable0JavaObject  { private TexSubImage2D(int i) { super(i); }
+static public class TexSubImage2D extends GL.Renderable0JavaObject implements Ren.TexSubImage2D { private TexSubImage2D(int i) { super(i); }
 GL.ByteVector p8;
 }
 static public TexSubImage2D createTexSubImage2D(String p0, int p1, int p2, int p3, int p4, int p5, String p6, String p7, GL.ByteVector p8) { 
@@ -159,7 +160,7 @@ _.p8 = p8;
 static private native int implcreateTexSubImage2D(String p0, int p1, int p2, int p3, int p4, int p5, String p6, String p7, int p8) ; 
 
 // <vob/vobs/Debug.hxx>
- static public class DebugSwitch extends GL.Renderable0JavaObject  { private DebugSwitch(int i) { super(i); }
+ static public class DebugSwitch extends GL.Renderable0JavaObject implements Ren.DebugSwitch { private DebugSwitch(int i) { super(i); }
 }
 static public DebugSwitch createDebugSwitch(String p0, int p1) { 
 DebugSwitch _ = new DebugSwitch(
@@ -170,7 +171,7 @@ implcreateDebugSwitch(p0, p1));
 static private native int implcreateDebugSwitch(String p0, int p1) ; 
 
 // <vob/vobs/Fillet.hxx>
- static public class SortedConnections extends GL.RenderableNJavaObject  { private SortedConnections(int i) { super(i); }
+ static public class SortedConnections extends GL.RenderableNJavaObject implements Ren.SortedConnections { private SortedConnections(int i) { super(i); }
 GL.RenderableNJavaObject p0;
 GL.RenderableNJavaObject p1;
 }
@@ -183,7 +184,7 @@ _.p1 = p1;
  return _; }
 
 static private native int implcreateSortedConnections(int p0, int p1, int p2) ; 
-static public class IterConnections extends GL.RenderableNJavaObject  { private IterConnections(int i) { super(i); }
+static public class IterConnections extends GL.RenderableNJavaObject implements Ren.IterConnections { private IterConnections(int i) { super(i); }
 GL.RenderableNJavaObject p0;
 GL.RenderableNJavaObject p1;
 }
@@ -196,7 +197,7 @@ _.p1 = p1;
  return _; }
 
 static private native int implcreateIterConnections(int p0, int p1, int p2) ; 
-static public class FilletSpan2 extends GL.RenderableNJavaObject  { private FilletSpan2(int i) { super(i); }
+static public class FilletSpan2 extends GL.RenderableNJavaObject implements Ren.FilletSpan2 { private FilletSpan2(int i) { super(i); }
 }
 static public FilletSpan2 createFilletSpan2(float p0, int p1, int p2) { 
 FilletSpan2 _ = new FilletSpan2(
@@ -205,7 +206,7 @@ implcreateFilletSpan2(p0, p1, p2));
  return _; }
 
 static private native int implcreateFilletSpan2(float p0, int p1, int p2) ; 
-static public class Fillet3D extends GL.RenderableNJavaObject  { private Fillet3D(int i) { super(i); }
+static public class Fillet3D extends GL.RenderableNJavaObject implements Ren.Fillet3D { private Fillet3D(int i) { super(i); }
 }
 static public Fillet3D createFillet3D(float p0, int p1, int p2) { 
 Fillet3D _ = new Fillet3D(
@@ -214,7 +215,7 @@ implcreateFillet3D(p0, p1, p2));
  return _; }
 
 static private native int implcreateFillet3D(float p0, int p1, int p2) ; 
-static public class Fillet3DBlend extends GL.RenderableNJavaObject  { private Fillet3DBlend(int i) { super(i); }
+static public class Fillet3DBlend extends GL.RenderableNJavaObject implements Ren.Fillet3DBlend { private Fillet3DBlend(int i) { super(i); }
 }
 static public Fillet3DBlend createFillet3DBlend(int p0, float p1, int p2, int p3) { 
 Fillet3DBlend _ = new Fillet3DBlend(
@@ -225,7 +226,7 @@ implcreateFillet3DBlend(p0, p1, p2, p3));
 static private native int implcreateFillet3DBlend(int p0, float p1, int p2, int p3) ; 
 
 // <vob/vobs/Lines.hxx>
- static public class ContinuousLine extends GL.Renderable1JavaObject  { private ContinuousLine(int i) { super(i); }
+ static public class ContinuousLine extends GL.Renderable1JavaObject implements Ren.ContinuousLine { private ContinuousLine(int i) { super(i); }
 }
 static public ContinuousLine createContinuousLine(int p0, float p1, int p2, boolean p3, float [] p4) { 
 ContinuousLine _ = new ContinuousLine(
@@ -236,7 +237,7 @@ implcreateContinuousLine(p0, p1, p2, p3, p4));
 static private native int implcreateContinuousLine(int p0, float p1, int p2, boolean p3, float [] p4) ; 
 
 // <vob/vobs/GLState.hxx>
- static public class TransMatrix extends GL.Renderable1JavaObject  { private TransMatrix(int i) { super(i); }
+ static public class TransMatrix extends GL.Renderable1JavaObject implements Ren.TransMatrix { private TransMatrix(int i) { super(i); }
 }
 static public TransMatrix createTransMatrix(String p0) { 
 TransMatrix _ = new TransMatrix(
@@ -245,7 +246,7 @@ implcreateTransMatrix(p0));
  return _; }
 
 static private native int implcreateTransMatrix(String p0) ; 
-static public class TestStateRetainSetup extends GL.Renderable0JavaObject  { private TestStateRetainSetup(int i) { super(i); }
+static public class TestStateRetainSetup extends GL.Renderable0JavaObject implements Ren.TestStateRetainSetup { private TestStateRetainSetup(int i) { super(i); }
 }
 static public TestStateRetainSetup createTestStateRetainSetup() { 
 TestStateRetainSetup _ = new TestStateRetainSetup(
@@ -254,7 +255,7 @@ implcreateTestStateRetainSetup());
  return _; }
 
 static private native int implcreateTestStateRetainSetup() ; 
-static public class TestStateRetainTest extends GL.Renderable0JavaObject  { private TestStateRetainTest(int i) { super(i); }
+static public class TestStateRetainTest extends GL.Renderable0JavaObject implements Ren.TestStateRetainTest { private TestStateRetainTest(int i) { super(i); }
 }
 static public TestStateRetainTest createTestStateRetainTest() { 
 TestStateRetainTest _ = new TestStateRetainTest(
@@ -265,7 +266,7 @@ implcreateTestStateRetainTest());
 static private native int implcreateTestStateRetainTest() ; 
 
 // <vob/vobs/Program.hxx>
- static public class ProgramLocalParameterARB extends GL.Renderable1JavaObject  { private ProgramLocalParameterARB(int i) { super(i); }
+ static public class ProgramLocalParameterARB extends GL.Renderable1JavaObject implements Ren.ProgramLocalParameterARB { private ProgramLocalParameterARB(int i) { super(i); }
 }
 static public ProgramLocalParameterARB createProgramLocalParameterARB(String p0, int p1) { 
 ProgramLocalParameterARB _ = new ProgramLocalParameterARB(
@@ -274,7 +275,7 @@ implcreateProgramLocalParameterARB(p0, p1));
  return _; }
 
 static private native int implcreateProgramLocalParameterARB(String p0, int p1) ; 
-static public class ProgramNamedParameterNV extends GL.Renderable1JavaObject  { private ProgramNamedParameterNV(int i) { super(i); }
+static public class ProgramNamedParameterNV extends GL.Renderable1JavaObject implements Ren.ProgramNamedParameterNV { private ProgramNamedParameterNV(int i) { super(i); }
 }
 static public ProgramNamedParameterNV createProgramNamedParameterNV(int p0, String p1) { 
 ProgramNamedParameterNV _ = new ProgramNamedParameterNV(
@@ -285,7 +286,7 @@ implcreateProgramNamedParameterNV(p0, p1));
 static private native int implcreateProgramNamedParameterNV(int p0, String p1) ; 
 
 // <vob/vobs/Irregu.hxx>
- static public class IrregularQuad extends GL.Renderable2JavaObject  { private IrregularQuad(int i) { super(i); }
+ static public class IrregularQuad extends GL.Renderable2JavaObject implements Ren.IrregularQuad { private IrregularQuad(int i) { super(i); }
 GL.DisplayList p7;
 }
 static public IrregularQuad createIrregularQuad(float p0, float p1, float p2, float p3, float p4, float p5, int p6, GL.DisplayList p7, float p8) { 
@@ -296,7 +297,7 @@ _.p7 = p7;
  return _; }
 
 static private native int implcreateIrregularQuad(float p0, float p1, float p2, float p3, float p4, float p5, int p6, int p7, float p8) ; 
-static public class IrregularEdge extends GL.Renderable2JavaObject  { private IrregularEdge(int i) { super(i); }
+static public class IrregularEdge extends GL.Renderable2JavaObject implements Ren.IrregularEdge { private IrregularEdge(int i) { super(i); }
 GL.DisplayList p13;
 }
 static public IrregularEdge createIrregularEdge(int p0, float p1, float p2, float p3, float p4, float p5, float p6, float p7, String p8, String p9, int p10, int p11, int p12, GL.DisplayList p13, float p14) { 
@@ -309,7 +310,7 @@ _.p13 = p13;
 static private native int implcreateIrregularEdge(int p0, float p1, float p2, float p3, float p4, float p5, float p6, float p7, String p8, String p9, int p10, int p11, int p12, int p13, float p14) ; 
 
 // <vob/vobs/Paper.hxx>
- static public class DiceTester extends GL.Renderable1JavaObject  { private DiceTester(int i) { super(i); }
+ static public class DiceTester extends GL.Renderable1JavaObject implements Ren.DiceTester { private DiceTester(int i) { super(i); }
 }
 static public DiceTester createDiceTester(float p0, float p1, int p2, int p3) { 
 DiceTester _ = new DiceTester(
@@ -318,7 +319,7 @@ implcreateDiceTester(p0, p1, p2, p3));
  return _; }
 
 static private native int implcreateDiceTester(float p0, float p1, int p2, int p3) ; 
-static public class FixedPaperQuad extends GL.Renderable1JavaObject  { private FixedPaperQuad(int i) { super(i); }
+static public class FixedPaperQuad extends GL.Renderable1JavaObject implements Ren.FixedPaperQuad { private FixedPaperQuad(int i) { super(i); }
 Paper p0;
 GL.TexAccum p9;
 }
@@ -331,7 +332,7 @@ _.p9 = p9;
  return _; }
 
 static private native int implcreateFixedPaperQuad(int p0, float p1, float p2, float p3, float p4, int p5, float p6, float p7, int p8, int p9, float p10) ; 
-static public class PaperQuad extends GL.Renderable2JavaObject  { private PaperQuad(int i) { super(i); }
+static public class PaperQuad extends GL.Renderable2JavaObject implements Ren.PaperQuad { private PaperQuad(int i) { super(i); }
 Paper p0;
 }
 static public PaperQuad createPaperQuad(Paper p0, float p1, float p2, float p3, float p4, float p5, float p6, int p7) { 
@@ -342,7 +343,7 @@ _.p0 = p0;
  return _; }
 
 static private native int implcreatePaperQuad(int p0, float p1, float p2, float p3, float p4, float p5, float p6, int p7) ; 
-static public class EasyPaperQuad extends GL.Renderable2JavaObject  { private EasyPaperQuad(int i) { super(i); }
+static public class EasyPaperQuad extends GL.Renderable2JavaObject implements Ren.EasyPaperQuad { private EasyPaperQuad(int i) { super(i); }
 Paper p0;
 }
 static public EasyPaperQuad createEasyPaperQuad(Paper p0, float p1, int p2) { 
@@ -353,7 +354,7 @@ _.p0 = p0;
  return _; }
 
 static private native int implcreateEasyPaperQuad(int p0, float p1, int p2) ; 
-static public class BasisPaperQuad extends GL.Renderable2JavaObject  { private BasisPaperQuad(int i) { super(i); }
+static public class BasisPaperQuad extends GL.Renderable2JavaObject implements Ren.BasisPaperQuad { private BasisPaperQuad(int i) { super(i); }
 Paper p0;
 GL.DisplayList p9;
 GL.DisplayList p10;
@@ -372,7 +373,7 @@ _.p11 = p11;
 static private native int implcreateBasisPaperQuad(int p0, float p1, float p2, float p3, float p4, float p5, float p6, float p7, float p8, int p9, int p10, int p11) ; 
 
 // <vob/vobs/Text.hxx>
- static public class Text1 extends GL.Renderable1JavaObject  { private Text1(int i) { super(i); }
+ static public class Text1 extends GL.Renderable1JavaObject implements Ren.Text1 { private Text1(int i) { super(i); }
 GL.QuadFont p0;
 }
 static public Text1 createText1(GL.QuadFont p0, String p1, float p2, int p3) { 
@@ -383,7 +384,7 @@ _.p0 = p0;
  return _; }
 
 static private native int implcreateText1(int p0, String p1, float p2, int p3) ; 
-static public class TextSuper4 extends GL.Renderable1JavaObject  { private TextSuper4(int i) { super(i); }
+static public class TextSuper4 extends GL.Renderable1JavaObject implements Ren.TextSuper4 { private TextSuper4(int i) { super(i); }
 GL.QuadFont p0;
 }
 static public TextSuper4 createTextSuper4(GL.QuadFont p0, String p1, float p2, int p3) { 
@@ -396,7 +397,7 @@ _.p0 = p0;
 static private native int implcreateTextSuper4(int p0, String p1, float p2, int p3) ; 
 
 // <vob/vobs/Pixel.hxx>
- static public class DrawPixels extends GL.Renderable1JavaObject  { private DrawPixels(int i) { super(i); }
+ static public class DrawPixels extends GL.Renderable1JavaObject implements Ren.DrawPixels { private DrawPixels(int i) { super(i); }
 GL.ByteVector p4;
 }
 static public DrawPixels createDrawPixels(int p0, int p1, String p2, String p3, GL.ByteVector p4) { 
@@ -407,7 +408,7 @@ _.p4 = p4;
  return _; }
 
 static private native int implcreateDrawPixels(int p0, int p1, String p2, String p3, int p4) ; 
-static public class ReadPixels extends GL.Renderable1JavaObject  { private ReadPixels(int i) { super(i); }
+static public class ReadPixels extends GL.Renderable1JavaObject implements Ren.ReadPixels { private ReadPixels(int i) { super(i); }
 GL.ByteVector p4;
 }
 static public ReadPixels createReadPixels(int p0, int p1, String p2, String p3, GL.ByteVector p4) { 
@@ -418,7 +419,7 @@ _.p4 = p4;
  return _; }
 
 static private native int implcreateReadPixels(int p0, int p1, String p2, String p3, int p4) ; 
-static public class CopyPixels extends GL.Renderable2JavaObject  { private CopyPixels(int i) { super(i); }
+static public class CopyPixels extends GL.Renderable2JavaObject implements Ren.CopyPixels { private CopyPixels(int i) { super(i); }
 }
 static public CopyPixels createCopyPixels(int p0, int p1, String p2) { 
 CopyPixels _ = new CopyPixels(
@@ -429,7 +430,7 @@ implcreateCopyPixels(p0, p1, p2));
 static private native int implcreateCopyPixels(int p0, int p1, String p2) ; 
 
 // <vob/vobs/Trivial.hxx>
- static public class LineConnector extends GL.Renderable2JavaObject  { private LineConnector(int i) { super(i); }
+ static public class LineConnector extends GL.Renderable2JavaObject implements Ren.LineConnector { private LineConnector(int i) { super(i); }
 }
 static public LineConnector createLineConnector(float p0, float p1, float p2, float p3) { 
 LineConnector _ = new LineConnector(
@@ -438,7 +439,7 @@ implcreateLineConnector(p0, p1, p2, p3));
  return _; }
 
 static private native int implcreateLineConnector(float p0, float p1, float p2, float p3) ; 
-static public class PinStub extends GL.Renderable2JavaObject  { private PinStub(int i) { super(i); }
+static public class PinStub extends GL.Renderable2JavaObject implements Ren.PinStub { private PinStub(int i) { super(i); }
 }
 static public PinStub createPinStub(float p0, float p1, float p2, float p3, float p4, float p5) { 
 PinStub _ = new PinStub(
@@ -447,7 +448,7 @@ implcreatePinStub(p0, p1, p2, p3, p4, p5));
  return _; }
 
 static private native int implcreatePinStub(float p0, float p1, float p2, float p3, float p4, float p5) ; 
-static public class NonFilledRectangle extends GL.Renderable1JavaObject  { private NonFilledRectangle(int i) { super(i); }
+static public class NonFilledRectangle extends GL.Renderable1JavaObject implements Ren.NonFilledRectangle { private NonFilledRectangle(int i) { super(i); }
 }
 static public NonFilledRectangle createNonFilledRectangle(float p0, float p1, float p2, float p3, float p4, float p5, float p6, float p7, float p8) { 
 NonFilledRectangle _ = new NonFilledRectangle(
@@ -456,7 +457,7 @@ implcreateNonFilledRectangle(p0, p1, p2, p3, p4, p5, p6, p7, p8));
  return _; }
 
 static private native int implcreateNonFilledRectangle(float p0, float p1, float p2, float p3, float p4, float p5, float p6, float p7, float p8) ; 
-static public class CallList extends GL.Renderable0JavaObject  { private CallList(int i) { super(i); }
+static public class CallList extends GL.Renderable0JavaObject implements Ren.CallList { private CallList(int i) { super(i); }
 GL.DisplayList p0;
 }
 static public CallList createCallList(GL.DisplayList p0) { 
@@ -467,7 +468,7 @@ _.p0 = p0;
  return _; }
 
 static private native int implcreateCallList(int p0) ; 
-static public class CallListCoorded extends GL.Renderable1JavaObject  { private CallListCoorded(int i) { super(i); }
+static public class CallListCoorded extends GL.Renderable1JavaObject implements Ren.CallListCoorded { private CallListCoorded(int i) { super(i); }
 GL.DisplayList p0;
 }
 static public CallListCoorded createCallListCoorded(GL.DisplayList p0) { 
@@ -478,7 +479,7 @@ _.p0 = p0;
  return _; }
 
 static private native int implcreateCallListCoorded(int p0) ; 
-static public class CallListBoxCoorded extends GL.Renderable1JavaObject  { private CallListBoxCoorded(int i) { super(i); }
+static public class CallListBoxCoorded extends GL.Renderable1JavaObject implements Ren.CallListBoxCoorded { private CallListBoxCoorded(int i) { super(i); }
 GL.DisplayList p0;
 }
 static public CallListBoxCoorded createCallListBoxCoorded(GL.DisplayList p0) { 
@@ -489,7 +490,7 @@ _.p0 = p0;
  return _; }
 
 static private native int implcreateCallListBoxCoorded(int p0) ; 
-static public class Quad extends GL.Renderable1JavaObject  { private Quad(int i) { super(i); }
+static public class Quad extends GL.Renderable1JavaObject implements Ren.Quad { private Quad(int i) { super(i); }
 }
 static public Quad createQuad(int p0, int p1, int p2) { 
 Quad _ = new Quad(
@@ -498,7 +499,7 @@ implcreateQuad(p0, p1, p2));
  return _; }
 
 static private native int implcreateQuad(int p0, int p1, int p2) ; 
-static public class TransTest extends GL.Renderable1JavaObject  { private TransTest(int i) { super(i); }
+static public class TransTest extends GL.Renderable1JavaObject implements Ren.TransTest { private TransTest(int i) { super(i); }
 }
 static public TransTest createTransTest(int p0, int p1) { 
 TransTest _ = new TransTest(
@@ -507,7 +508,7 @@ implcreateTransTest(p0, p1));
  return _; }
 
 static private native int implcreateTransTest(int p0, int p1) ; 
-static public class SelectVob extends GL.Renderable2JavaObject  { private SelectVob(int i) { super(i); }
+static public class SelectVob extends GL.Renderable2JavaObject implements Ren.SelectVob { private SelectVob(int i) { super(i); }
 GL.Renderable1JavaObject p0;
 GL.Renderable1JavaObject p1;
 GL.Renderable1JavaObject p2;
