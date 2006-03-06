@@ -10,7 +10,7 @@ public class LWJGL_API extends GraphicsAPI {
 
     public void startUpdateManager(Runnable r) {
 	LWJGLUpdateManager.startUpdateManager(r);
-	LWJGL_Text.getInstance().setImageDirectory(new File("./tmp/"));
+	LWJGL_Text.getInstance().setImageDirectory(new File("./res/font/"));
     }
 
     public Window createWindow() {
