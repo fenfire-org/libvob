@@ -1,12 +1,16 @@
 package org.nongnu.libvob.impl.lwjgl;
 
+import java.io.File;
+
 import org.nongnu.libvob.GraphicsAPI;
 import org.nongnu.libvob.TextStyle;
+import org.nongnu.libvob.gl.impl.lwjgl.mosaictext.LWJGL_Text;
 
 public class LWJGL_API extends GraphicsAPI {
 
     public void startUpdateManager(Runnable r) {
 	LWJGLUpdateManager.startUpdateManager(r);
+	LWJGL_Text.getInstance().setImageDirectory(new File("./tmp/"));
     }
 
     public Window createWindow() {
@@ -18,40 +22,7 @@ public class LWJGL_API extends GraphicsAPI {
     }
 
     public TextStyle getTextStyle(String family, int style, int size) {
-	return new TextStyle(){
-
-	    public float getScaleByHeight(float h) {
-		return 0;
-	    }
-
-	    public TextStyle getScaledStyle(float h) {
-		return this;
-	    }
-
-	    public float getWidth(String s, float scale) {
-		return 0;
-	    }
-
-	    public float getWidth(char[] chars, int offs, int len, float scale) {
-		return 0;
-	    }
-
-	    public float getHeight(float scale) {
-		return 0;
-	    }
-
-	    public float getAscent(float scale) {
-		return 0;
-	    }
-
-	    public float getDescent(float scale) {
-		return 0;
-	    }
-
-	    public float getLeading(float scale) {
-		return 0;
-	    }
-	};
+	return LWJGL_Text.getInstance().create(family, style, size);
     }
 
 }

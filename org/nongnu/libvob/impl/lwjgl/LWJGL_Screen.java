@@ -1,8 +1,12 @@
 package org.nongnu.libvob.impl.lwjgl;
 
 import java.awt.Dimension;
+import java.awt.image.PixelGrabber;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.AWTGLCanvas;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.nongnu.libvob.AbstractUpdateManager;
@@ -36,6 +40,8 @@ public class LWJGL_Screen extends GraphicsAPI.AbstractRenderingSurface
 	    Display.setDisplayMode(new DisplayMode(1, 1));
 	    Display.setFullscreen(false);
 	    Display.create();
+	    Mouse.create();
+	    Keyboard.create();
 	    Display.setTitle("Grazy Little Window");
 	} catch (LWJGLException e) {
 	    e.printStackTrace();
@@ -44,6 +50,8 @@ public class LWJGL_Screen extends GraphicsAPI.AbstractRenderingSurface
 
     public void finalize() throws Throwable {
 	super.finalize();
+	Keyboard.destroy();
+	Mouse.destroy();
 	Display.destroy();
     }
 
@@ -124,7 +132,16 @@ public class LWJGL_Screen extends GraphicsAPI.AbstractRenderingSurface
     }
 
     public int[] readPixels(int x, int y, int w, int h) {
-	return null;
+	int[] pix = new int[w*h];
+//	if(dbg) p("Readpixels: "+x+" "+y+" "+w+" "+h+" "+cache);
+	PixelGrabber pg = new PixelGrabber(((AWTGLCanvas)Display.getDrawable()).createImage(w,h).getSource(),
+			x, y, w, h, pix, 0, w);
+	try {
+	    pg.grabPixels();
+	} catch(InterruptedException e) {
+	    throw new Error("Interrupted readpixels");
+	}
+	return pix;
     }
 
     public void setLocation(int x, int y, int w, int h) {
@@ -139,10 +156,8 @@ public class LWJGL_Screen extends GraphicsAPI.AbstractRenderingSurface
     public void setCursor(String name) {
     }
 
-    Binder binder;
-
     public void registerBinder(Binder s) {
-	binder = s;
+	((LWJGLUpdateManager)AbstractUpdateManager.getInstance()).binder = s;
     }
 
     public void addTimeout(int ms, Object o) {
