@@ -148,7 +148,7 @@ namespace JNI {
 	    makerName + "<"+name +">";
 
 	    VOB_JAVASTREAM << "static public class "<<name<<
-		    " extends GL.Renderable"<<ntrans<<"JavaObject "<<
+		" extends GL.Renderable"<<ntrans<<"JavaObject implements Ren."<<name<<
 		    " { private "<<name<<"(int i) { super(i); }\n"
 		    <<pl.javaStructS<<
 			    "}\n";

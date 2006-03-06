@@ -40,6 +40,7 @@ Define.hxx
 #include <vob/Vob.hxx>
 #include <vob/trans/Primitives.hxx>
 
+
 namespace Vob {
     using Primitives::HierarchicalTransform;
 namespace JNI {
@@ -73,11 +74,13 @@ namespace JNI {
     };
 
 
-    typedef HierarchicalTransform *(*HierarchicalTransformFactory)();
+
 
     template<class T> HierarchicalTransform *HierFactImpl() {
 	return new Primitives::PrimitiveHierarchicalTransform<T>();
     }
+
+    extern HierarchicalTransform *((*transFactories[NTRANSFORMTYPES])());
 
     template<class T> class HierFact {
     public:
