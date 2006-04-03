@@ -65,10 +65,10 @@ public class SimpleTest implements Runnable {
 		    vs.put(new RectVob(Color.RED, 1), cs=vs.scaleCS(cs, "foo", 2,1.5f));
 		    vs.put(new TextVob(GraphicsAPI.getInstance().getTextStyle("sans", 0, 12), "foobar"), cs=vs.scaleCS(cs, "t", 10,10));
 		    
-//		    PaperMill.Paper paper = PaperMill.getInstance().getPaper(42);
-//		    Ren.PaperQuad pq = Ren.createPaperQuad(paper, 0, 0, 1, 1, 1);
-//		    int cs1 = vs.orthoCS(0, "1", 0, 0, 0, 200, 200);
-//		    vs.map.put(pq, cs1, 0);
+		    PaperMill.Paper paper = PaperMill.getInstance().getPaper(0);
+		    Ren.PaperQuad pq = Ren.createPaperQuad(paper, 0, 0, 1, 1, 1);
+		    int cs1 = vs.orthoCS(0, "1", 0, 0, 0, 200, 200);
+		    vs.map.put(pq, cs1, 0);
 
 		    return vs;
 		}

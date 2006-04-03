@@ -50,8 +50,13 @@ public class Ren {
     }
     public interface EasyPaperQuad {
     }
+    
+    final static public int PAPERQUAD_CS2_TO_SCREEN = 1;
+    final static public int PAPERQUAD_USE_VERTEX_PROGRAM = 2;
+    final static public int PAPERQUAD_NONL_MAXLEN = 4;
     public interface PaperQuad extends Vob {
     }
+
     public interface FixedPaperQuad {
     }
     public interface DiceTester {
@@ -95,7 +100,7 @@ public class Ren {
 	    lwjglRenderables = new LWJGLRen();
     }
     
-    public static PaperQuad createPaperQuad(Paper paper, 
+    public static PaperQuad createPaperQuad(PaperMill.Paper paper, 
 	    float x0, float y0, float x1, float y1, float dicefactor) {
 
 	if (lwjglRenderables != null)
