@@ -14,10 +14,16 @@ import org.nongnu.libvob.gl.impl.lwjgl.Transform;
 
 public class TranslateTransform implements Transform {
 
+    private Coorder coorder;
+    private int TYPE;
     private Transform parent;
     private float x=0, y=0, z=0;
     public void setYourself(Coorder base, int index, int[] inds, float[] floats) {
 //	System.out.println("translate");
+	
+	this.coorder = base;
+	this.TYPE = inds[index];
+	
 	int floatInd = inds[index+2];
 	int parentCS = inds[index+1];
 	parent = base.getTransform(parentCS);
@@ -31,7 +37,17 @@ public class TranslateTransform implements Transform {
     }
 
     public Vector3f transform(Vector3f p) {
-	return null;
+	p = parent.transform(p);
+	p.x += x;
+	p.y += y;
+	p.z += z;
+	return p;
+    }
+    public Vector2f transform(Vector2f p) {
+	p = parent.transform(p);
+	p.x += x;
+	p.y += y;
+	return p;
     }
 
     public void vertex(Vector3f p) {
@@ -57,7 +73,12 @@ public class TranslateTransform implements Transform {
     }
 
     public Transform getInverse() {
-	return null;
+	TranslateTransform inv = (TranslateTransform) coorder.createTransform(TYPE);
+	inv.x = -x;
+	inv.y = -y;
+	inv.z = -z;
+	inv.parent = parent.getInverse();
+	return inv;
     }
 
     public void dump(PrintStream out) {

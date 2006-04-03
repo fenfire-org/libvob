@@ -17,6 +17,7 @@ import org.lwjgl.opengl.ARBMultitexture;
 import org.lwjgl.opengl.ARBProgram;
 import org.lwjgl.opengl.ARBVertexProgram;
 import org.lwjgl.opengl.EXTSecondaryColor;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
@@ -560,6 +561,7 @@ public class CallGL extends AbstractVob implements LWJGLRen.Vob0 {
 		NVRegisterCombiners.class,
 		NVRegisterCombiners2.class,
 		NVVertexProgram.class,
+		EXTTextureFilterAnisotropic.class,
 	};
 	for (int i = 0; i < clzz.length; i++) {
 	    try {
@@ -633,4 +635,9 @@ public class CallGL extends AbstractVob implements LWJGLRen.Vob0 {
 	// pop attrib?
     }
     
+    public void call() {
+	checkGlError("before call list in callgl call");
+	GL11.glCallList(callList);
+	checkGlError("after call list in callgl call");
+    }
 }

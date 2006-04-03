@@ -17,7 +17,7 @@ public abstract class NamedTexture {
 //	if (strcmp(type, "circle") == 0) return new circle;
 //	if (strcmp(type, "coordinates") == 0) return new coordinates;
 //	if (strcmp(type, "filereader") == 0) return new filereader;
-//	if (strcmp(type, "fnoise") == 0) return new fnoise;
+	if (name.equals("fnoise")) return new FNoiseTex(); //fnoise;
 	if (name.equals("geometric")) return new GeometricTex(); //param, w,h,d,comps, data);
 //	if (strcmp(type, "irregu") == 0) return new irregu;
 //	if (strcmp(type, "irreguedge") == 0) return new irreguedge;

@@ -19,4 +19,10 @@ public class TextureParam extends HashMap{
 	else return ((Float)get(key)).floatValue();
     }
 
+    public long getLong(String key, int i) {
+	if (!containsKey(key))
+	    return i;
+	else return ((Float)get(key)).longValue();
+    }
+
 }

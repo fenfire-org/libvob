@@ -39,6 +39,10 @@ public class LWJGL_Wrapper implements GL.GLinstance {
 	    super(-1);
 	    GL11.glGenTextures(textId);
 	}
+	/** Get the OpenGL texture id of this texture.
+	 */
+	public int getTexId() { return textId.get(0); }
+
 	public void deleteTexture() {
 	}
 	public int shade(int w, int h, int d, int comps, String internalFormat, String format, String shaderName, String[] params) {
@@ -75,10 +79,12 @@ public class LWJGL_Wrapper implements GL.GLinstance {
 		      buildmipmaps = true;
 		  }
 	      } 
-		
+
+	      value.position(0);
+	      s.render(p, w, h, (d==0?1:d), comps, value);
+
 	      int level;
 	      for (level = 0;; level++) {
-		  s.render(p, w, h, (d==0?1:d), comps, value);
 
 		  if (buildmipmaps) {
 		      if (d != 0) //assert(d==0); // 3D buildmipmaps not implemented in libutil
@@ -92,6 +98,7 @@ public class LWJGL_Wrapper implements GL.GLinstance {
 		      TextureUtils.buildMipmaps(GL11.GL_TEXTURE_2D, CallGL.getToken(internalFormat),
 			      w,h, CallGL.getToken(format), GL11.GL_FLOAT, value);
 		  } else 
+		      value.flip();
 		      if (d == 0)
 			  GL11.glTexImage2D(GL11.GL_TEXTURE_2D, level, CallGL.getToken(internalFormat),
 				   w, h, 0, CallGL.getToken(format), GL11.GL_FLOAT, value);

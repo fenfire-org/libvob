@@ -15,11 +15,15 @@ import org.nongnu.libvob.gl.impl.lwjgl.Transform;
 public class ScaleTransform implements Transform {
 
     private Transform parent;
+    private Coorder coorder;
+    int TYPE;
     private float xs, ys, zs;
     public void setYourself(Coorder base, int index, int[] inds, float[] floats) {
 //	System.out.println("scale");
 	int floatInd = inds[index+2];
 	int parentCS = inds[index+1];
+	this.coorder = base;
+	this.TYPE = inds[index];
 	parent = base.getTransform(parentCS);
 	xs = floats[floatInd];
 	ys = floats[floatInd+1];
@@ -31,8 +35,17 @@ public class ScaleTransform implements Transform {
     }
 
     public Vector3f transform(Vector3f p) {
-	// TODO Auto-generated method stub
-	return null;
+	p = parent.transform(p);
+	p.x *= xs;
+	p.y *= ys;
+	p.z *= zs;
+	return p;
+    }
+    public Vector2f transform(Vector2f p) {
+	p = parent.transform(p);
+	p.x *= xs;
+	p.y *= ys;
+	return p;
     }
 
     public void vertex(Vector3f p) {
@@ -58,7 +71,12 @@ public class ScaleTransform implements Transform {
     }
 
     public Transform getInverse() {
-	return null;
+	ScaleTransform inverse = (ScaleTransform) coorder.createTransform(TYPE);
+	inverse.xs = 1f/xs;
+	inverse.ys = 1f/ys;
+	inverse.zs = 1f/zs;
+	inverse.parent = parent.getInverse();
+	return inverse;
     }
 
     public void dump(PrintStream out) {

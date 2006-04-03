@@ -17,6 +17,7 @@ import org.nongnu.libvob.gl.GL;
 import org.nongnu.libvob.gl.GLVobCoorder;
 import org.nongnu.libvob.gl.impl.lwjgl.trans.linear.BoxTransform;
 import org.nongnu.libvob.gl.impl.lwjgl.trans.linear.OrthoBoxTransform;
+import org.nongnu.libvob.gl.impl.lwjgl.trans.linear.OrthoTransform;
 import org.nongnu.libvob.gl.impl.lwjgl.trans.linear.ScaleTransform;
 import org.nongnu.libvob.gl.impl.lwjgl.trans.linear.TranslateTransform;
 import org.nongnu.libvob.impl.lwjgl.LWJGL_VobMap;
@@ -60,6 +61,7 @@ public class LwjglRenderer {
 	    case 7: return new TranslateTransform();
 	    case 8: return new ScaleTransform();
 	    case 12: return new BoxTransform();
+	    case 16: return new OrthoTransform();
 	    case 19: return new OrthoBoxTransform();
 	    
 	    default:

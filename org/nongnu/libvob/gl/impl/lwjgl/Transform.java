@@ -6,7 +6,6 @@ package org.nongnu.libvob.gl.impl.lwjgl;
 
 
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -39,6 +38,7 @@ public interface Transform {
      * a color in the Vector3f always, without regard to the parameter.
      */
     Vector3f transform(final Vector3f p);
+    Vector2f transform(final Vector2f p);
 
     /**
      * Call glVertex with the given Vector3f transformed into this
@@ -89,6 +89,8 @@ public interface Transform {
      */
     Transform getInverse();
 
+    //void inverse(Transform toBeInversedTransform);
+    
     /**
      * Print this coordinate system into the given ostream.
      */

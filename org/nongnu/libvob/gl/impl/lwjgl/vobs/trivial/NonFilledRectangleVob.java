@@ -48,7 +48,7 @@ public class NonFilledRectangleVob extends AbstractVob implements LWJGLRen.Vob1 
 	    GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 	    Vector2f box = t.getSqSize();
-
+	    System.out.println("box: "+box);
 	    GL11.glColor4d(r1, g1, b1, a1);
 
 	    // top strip

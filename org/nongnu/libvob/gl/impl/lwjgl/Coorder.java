@@ -9,6 +9,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.nongnu.libvob.gl.GLVobCoorder;
 import org.nongnu.libvob.gl.impl.lwjgl.LwjglRenderer.TransformProxy;
+import org.nongnu.libvob.gl.impl.lwjgl.trans.linear.ScaleTransform;
 
 /**
  * A java coorder.
@@ -26,6 +27,9 @@ public class Coorder {
 	    return true;
 	}
 	public Vector3f transform(Vector3f p) {
+	    return p;
+	}
+	public Vector2f transform(Vector2f p) {
 	    return p;
 	}
 	public void vertex(Vector3f p) {
@@ -47,8 +51,7 @@ public class Coorder {
 	    return this;
 	}
 	public void dump(PrintStream out) {
-	    System.
-	    out.print("Root");
+	    System.out.print("Root");
 	}
 
 	Vector2f sq = new Vector2f();
@@ -60,8 +63,11 @@ public class Coorder {
     };
     
     private Transform[] tr; 
+
+    private TransformProxy transProxy;
     
     public Coorder(GLVobCoorder from, TransformProxy transProxy) {
+	this.transProxy = transProxy;
 	tr = new Transform[from.ninds];
 
 	tr[0] = root;
@@ -91,6 +97,10 @@ public class Coorder {
 
     public Transform getTransform(int cs0) {
 	return tr[cs0];
+    }
+
+    public Transform createTransform(int type) {
+	return transProxy.instantiate(type);;
     }
 
 }

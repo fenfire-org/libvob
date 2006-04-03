@@ -14,10 +14,14 @@ import org.nongnu.libvob.gl.impl.lwjgl.Transform;
 
 public class OrthoBoxTransform implements Transform {
 
+    private Coorder coorder;
+    private int TYPE;
     private Transform parent;
     private float z,x,y,xs,ys,w,h;
     public void setYourself(Coorder base, int index, int[] inds, float[] floats) {
 //	System.out.println("orthobox");
+	this.coorder = base;
+	this.TYPE = inds[index];
 
 	int floatInd = inds[index+2];
 	int parentCS = inds[index+1];
@@ -36,7 +40,21 @@ public class OrthoBoxTransform implements Transform {
     }
 
     public Vector3f transform(Vector3f p) {
-	return null;
+	p = parent.transform(p);
+	p.x += x;
+	p.y += y;
+	p.z += z;
+	p.x *= xs;
+	p.y *= ys;
+	return p;
+    }
+    public Vector2f transform(Vector2f p) {
+	p = parent.transform(p);
+	p.x += x;
+	p.y += y;
+	p.x *= xs;
+	p.y *= ys;
+	return p;
     }
 
     public void vertex(Vector3f p) {
@@ -55,16 +73,25 @@ public class OrthoBoxTransform implements Transform {
     }
 
     public boolean performGL() {
-	parent.performGL();
+	boolean ret = parent.performGL();
 //	System.out.println("trans "+x+", "+y+", "+z);
 //	System.out.println("scale "+xs+", "+ys);
 	GL11.glTranslatef(x,y,z);
-	GL11.glScalef(xs,ys,0);
-	return true;
+	GL11.glScalef(xs,ys,1f);
+	return ret;
     }
 
     public Transform getInverse() {
-	return null;
+	OrthoBoxTransform inv = (OrthoBoxTransform) coorder.createTransform(TYPE);
+	inv.x = -x;
+	inv.y = -y;
+	inv.z = -z;
+	inv.xs = 1f/xs;
+	inv.ys = 1f/xs;
+	inv.w = -w;
+	inv.h = -h;
+	inv.parent = parent.getInverse();
+	return inv;
     }
 
     public void dump(PrintStream out) {
